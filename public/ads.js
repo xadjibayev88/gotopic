@@ -44,8 +44,12 @@
     const root = document.documentElement;
     let shown = false, hidden = false;
     const setHeight = px => root.style.setProperty("--ad-h", Math.max(0, Math.round(px || 0)) + "px");
+    // Pro/Topic obunachilarida reklama yo'q: billing.js tarif aniqlangach GoTopicAds.off() chaqiradi.
+    window.GoTopicAds = { off: () => { hidden = true; shown = false; setHeight(0); AdMob.hideBanner().catch(() => {}); } };
     (async () => {
+      if (window.GoTopicPaid) return;
       await AdMob.initialize({ initializeForTesting: testing });
+      if (window.GoTopicPaid) return;
       try { const info = await AdMob.requestConsentInfo(); if (info.isConsentFormAvailable && info.status === "REQUIRED") await AdMob.showConsentForm(); } catch (_) {}
       AdMob.addListener("bannerAdSizeChanged", size => setHeight(size && size.height));
       await AdMob.showBanner({ adId, adSize: "ADAPTIVE_BANNER", position: "BOTTOM_CENTER", margin: 0, isTesting: testing });
@@ -98,6 +102,8 @@
 
   const client = String(cfg.client || "").trim();
   if (!/^ca-pub-\d{10,20}$/.test(client)) return;
+  window.GoTopicAds = { off: () => { document.querySelectorAll(".ad-box,ins.adsbygoogle").forEach(el => el.remove()); } };
+  if (window.GoTopicPaid) return;
   const script = document.createElement("script");
   script.async = true;
   script.crossOrigin = "anonymous";

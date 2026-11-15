@@ -76,6 +76,42 @@ const MIGRATIONS: Array<{ id: string; statements: string[] }> = [
       ) ENGINE=InnoDB`,
     ],
   },
+  {
+    id: "100_billing",
+    statements: [
+      `CREATE TABLE IF NOT EXISTS billing_orders (
+        id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+        user_id CHAR(64) NOT NULL,
+        plan VARCHAR(16) NOT NULL,
+        provider VARCHAR(16) NOT NULL,
+        amount_uzs BIGINT UNSIGNED NOT NULL,
+        amount_usdt_micro BIGINT UNSIGNED NULL,
+        status VARCHAR(16) NOT NULL DEFAULT 'pending',
+        tx_id VARCHAR(160) NULL,
+        tx_state SMALLINT NULL,
+        tx_time BIGINT NULL,
+        tx_create BIGINT NULL,
+        tx_perform BIGINT NULL,
+        tx_cancel BIGINT NULL,
+        tx_reason SMALLINT NULL,
+        created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+        paid_at DATETIME(6) NULL,
+        PRIMARY KEY (id),
+        UNIQUE KEY billing_tx_uq (tx_id),
+        KEY billing_user (user_id, created_at),
+        KEY billing_pending (provider, status, created_at),
+        CONSTRAINT billing_user_fk FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      ) ENGINE=InnoDB`,
+      `CREATE TABLE IF NOT EXISTS subscriptions (
+        user_id CHAR(64) NOT NULL,
+        plan VARCHAR(16) NOT NULL,
+        expires_at DATETIME(6) NOT NULL,
+        updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+        PRIMARY KEY (user_id),
+        CONSTRAINT subscriptions_user_fk FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      ) ENGINE=InnoDB`,
+    ],
+  },
 ];
 
 export async function migrate(): Promise<void> {

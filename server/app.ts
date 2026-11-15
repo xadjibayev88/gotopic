@@ -7,6 +7,7 @@ import { dirname, resolve } from "node:path";
 import { searchDictionary, dictionaryStatistics } from "./dictionary.js";
 import { learningCatalog } from "./catalog.js";
 import { authRouter, getUser } from "./auth.js";
+import { activePlan, aiDailyLimitFor, billingWebhooks, checkUsdt, createOrder, orderInput, plansPayload } from "./billing.js";
 import { db, loadProgress, saveProgress, acquireLease, consumeBudget, refundBudget } from "./database.js";
 import { aiInput, tutorInput, jsonFragments, parseJson, safeAiError } from "./ai-service.js";
 import { tutorSession, maxKoFor } from "./tutor-session.js";
@@ -42,7 +43,7 @@ function beginStream(res: Response) {
 }
 async function userBudget(userId: string) {
   if (!await consumeBudget(`minute:${userId}`, minute(), number("AI_REQUESTS_PER_MINUTE", 6, 30))) throw budgetError();
-  if (!await consumeBudget(`daily:${userId}`, day(), number("AI_DAILY_LIMIT", 80, 1000))) throw budgetError();
+  if (!await consumeBudget(`daily:${userId}`, day(), await aiDailyLimitFor(userId, number("AI_DAILY_LIMIT", 80, 1000)))) throw budgetError();
 }
 function publicError(res: Response, error: unknown) {
   const safe = safeAiError(error);
@@ -68,6 +69,7 @@ export function createApp() {
   app.use(cookieParser());
   app.use(express.json({ limit: "512kb", strict: true }));
   app.use("/api", (_req, res, next) => { res.set("Cache-Control", "private, no-store"); next(); });
+  app.use("/api/billing/hooks", billingWebhooks);
   // A custom header blocks cross-site HTML forms. Unlisted CORS origins cannot set it.
   app.use("/api", (req, res, next) => {
     if (["POST", "PUT", "DELETE"].includes(req.method) && req.headers["x-gotopic-request"] !== "1") { res.status(403).json({ error: { code: "forbidden", message: "So‘rovga ruxsat yo‘q." } }); return; }
@@ -82,7 +84,7 @@ export function createApp() {
   app.get("/api/dictionary", async (req,res) => { try {res.set("Cache-Control","public, max-age=60");res.json(await searchDictionary(req.query));} catch(error) { const busy=(error as {code?:string}).code==="dictionary_busy",invalid=(error as Error).name==="ZodError";res.set("Retry-After","2").status(busy?429:invalid?400:503).json({error:{code:busy?"busy":invalid?"invalid_query":"dictionary_unavailable"}}); } });
   app.get("/api/catalog", async (_req,res) => { try { res.set("Cache-Control","public, max-age=60");res.json(await learningCatalog()); } catch { res.status(503).json({error:{code:"catalog_unavailable"}}); } });
   app.get("/api/session", async (req, res) => {
-    try { const user = await getUser(req); res.json({ user, voiceConfigured: !!process.env.ELEVENLABS_API_KEY, aiConfigured: !!process.env.GEMINI_API_KEY, limits: { dailyAiTurns: number("AI_DAILY_LIMIT", 80, 1000), voiceMonthlyCharacters: number("VOICE_MONTHLY_CHAR_LIMIT", 10000, 100000000) } }); }
+    try { const user = await getUser(req); const billing = user ? await activePlan(user.id).catch(() => ({ plan: "free", expiresAt: null })) : { plan: "free", expiresAt: null }; res.json({ user, billing, voiceConfigured: !!process.env.ELEVENLABS_API_KEY, aiConfigured: !!process.env.GEMINI_API_KEY, limits: { dailyAiTurns: number("AI_DAILY_LIMIT", 80, 1000), voiceMonthlyCharacters: number("VOICE_MONTHLY_CHAR_LIMIT", 10000, 100000000) } }); }
     catch { res.status(503).json({ error: { code: "unavailable", message: "Hisob xizmatiga hozir ulanib bo‘lmadi." } }); }
   });
   app.get("/api/progress", async (req, res) => {
@@ -186,6 +188,26 @@ export function createApp() {
       if(budget&&!paidInputStarted)await settleVoiceBudget(budget,0).catch(()=>{});
       await Promise.all([aiLease?.release().catch(()=>{}),voiceLease?.release().catch(()=>{})]);recordRequest(performance.now()-started,failed);
     }
+  });
+  app.get("/api/billing/plans", (_req, res) => { res.json(plansPayload()); });
+  app.get("/api/billing/me", async (req, res) => {
+    const user = await getUser(req).catch(() => null);
+    if (!user) { res.status(401).json({ error: { code: "login_required" } }); return; }
+    try { res.json(await activePlan(user.id)); } catch { res.status(503).json({ error: { code: "billing_unavailable" } }); }
+  });
+  app.post("/api/billing/orders", async (req, res) => {
+    const parsed = orderInput.safeParse(req.body); if (!parsed.success) { res.status(400).json({ error: { code: "invalid_input" } }); return; }
+    const user = await getUser(req).catch(() => null);
+    if (!user) { res.status(401).json({ error: { code: "login_required", message: "To‘lov uchun hisobga kiring." } }); return; }
+    try { res.json(await createOrder(user.id, parsed.data.plan, parsed.data.provider)); }
+    catch (error) { const status = (error as { status?: number }).status ?? 503; res.status(status).json({ error: { code: (error as Error).message || "billing_unavailable" } }); }
+  });
+  app.post("/api/billing/orders/:id/check", async (req, res) => {
+    const user = await getUser(req).catch(() => null);
+    if (!user) { res.status(401).json({ error: { code: "login_required" } }); return; }
+    const id = Number(req.params.id); if (!Number.isSafeInteger(id) || id <= 0) { res.status(400).json({ error: { code: "invalid_input" } }); return; }
+    try { res.json(await checkUsdt(user.id, id)); }
+    catch (error) { const status = (error as { status?: number }).status ?? 503; res.status(status).json({ error: { code: (error as Error).message || "billing_unavailable" } }); }
   });
   app.get("/api/league", async (req, res) => {
     const user = await getUser(req).catch(() => null);
