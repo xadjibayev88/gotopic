@@ -4,8 +4,8 @@ Ilova: `uz.gotopik.app` (Capacitor, AdMob banner + mukofotli video). Yig'ish: `x
 
 ## 1. Bir martalik tayyorgarlik (egasi)
 
-1. **Imzo kaliti.** `GoTopic-secrets.txt` dagi 4 ta qiymatni `hangeul-maktabi` → Settings → Secrets and variables → Actions ga qo'shing. `gotopic-upload.jks` faylini xavfsiz joyda saqlang.
-2. **Workflow'ni ishga tushiring** (Run workflow). Tugagach "Artifacts" ichida `GoTopic-play-release` → `GoTopic-play.aab` (Play uchun) va `GoTopic-release.apk` (telefonga o'rnatish uchun).
+1. **Imzo kaliti.** `hangeul-maktabi` → Settings → Secrets and variables → Actions da 3 ta secret: `RELEASE_KEY_ALIAS`, `RELEASE_STORE_PASSWORD`, `RELEASE_KEY_PASSWORD` (qo'shilgan). Kalitning o'zi repoda shifrlangan (`gotopik-app/upload-keystore.enc`); `gotopic-upload.jks` nusxasini ham xavfsiz joyda saqlang.
+2. **Workflow'ni ishga tushiring** (Run workflow). Tugagach Releases → "Go Topic APK (AdMob)" ichida `GoTopic-play.aab` (Play uchun) va `GoTopic-release.apk` (telefonga o'rnatish uchun).
 3. **Play Console** (play.google.com/console): hisob ochish 25 $ (bir marta) + shaxsni tasdiqlash.
 4. **Create app** → nomi "Go Topic", til: o'zbek, turi: App, bepul.
 5. **Maxfiylik siyosati URL:** `https://gotopik-a749akip.manus.space/privacy.html` (oldin sahifadagi `[ELEKTRON POCHTA]` o'rniga aloqa pochtasi qo'yilsin va sayt Publish qilinsin).
