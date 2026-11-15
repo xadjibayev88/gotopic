@@ -77,6 +77,23 @@ const MIGRATIONS: Array<{ id: string; statements: string[] }> = [
     ],
   },
   {
+    id: "110_waitlist",
+    statements: [
+      `CREATE TABLE IF NOT EXISTS waitlist (
+        id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+        name VARCHAR(60) NOT NULL,
+        contact VARCHAR(120) NOT NULL,
+        lang CHAR(2) NOT NULL DEFAULT 'uz',
+        level TINYINT UNSIGNED NOT NULL DEFAULT 0,
+        goal VARCHAR(16) NULL,
+        source VARCHAR(40) NULL,
+        created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+        PRIMARY KEY (id),
+        UNIQUE KEY waitlist_contact_uq (contact)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+    ],
+  },
+  {
     id: "100_billing",
     statements: [
       `CREATE TABLE IF NOT EXISTS billing_orders (

@@ -7,6 +7,7 @@ import { dirname, resolve } from "node:path";
 import { searchDictionary, dictionaryStatistics } from "./dictionary.js";
 import { learningCatalog } from "./catalog.js";
 import { authRouter, getUser } from "./auth.js";
+import { joinWaitlist, waitlistCount, waitlistCsv, waitlistInput } from "./waitlist.js";
 import { activePlan, aiDailyLimitFor, billingWebhooks, checkUsdt, createOrder, orderInput, plansPayload } from "./billing.js";
 import { db, loadProgress, saveProgress, acquireLease, consumeBudget, refundBudget } from "./database.js";
 import { aiInput, tutorInput, jsonFragments, parseJson, safeAiError } from "./ai-service.js";
@@ -188,6 +189,19 @@ export function createApp() {
       if(budget&&!paidInputStarted)await settleVoiceBudget(budget,0).catch(()=>{});
       await Promise.all([aiLease?.release().catch(()=>{}),voiceLease?.release().catch(()=>{})]);recordRequest(performance.now()-started,failed);
     }
+  });
+  app.get("/api/waitlist", async (_req, res) => {
+    try { res.set("Cache-Control", "public, max-age=60").json({ count: await waitlistCount(), launch: "2026-12-22" }); } catch { res.status(503).json({ error: { code: "unavailable" } }); }
+  });
+  app.post("/api/waitlist", async (req, res) => {
+    const parsed = waitlistInput.safeParse(req.body); if (!parsed.success) { res.status(400).json({ error: { code: "invalid_input" } }); return; }
+    try { res.json(await joinWaitlist(req, parsed.data)); }
+    catch (error) { const status = (error as { status?: number }).status ?? 503; res.status(status).json({ error: { code: (error as Error).message || "unavailable" } }); }
+  });
+  app.get("/api/admin/waitlist.csv", async (req, res) => {
+    const user = await getUser(req).catch(() => null);
+    if (!user?.isAdmin) { res.sendStatus(403); return; }
+    try { res.type("text/csv; charset=utf-8").set("Content-Disposition", "attachment; filename=waitlist.csv").send("\ufeff" + await waitlistCsv()); } catch { res.sendStatus(503); }
   });
   app.get("/api/billing/plans", (_req, res) => { res.json(plansPayload()); });
   app.get("/api/billing/me", async (req, res) => {

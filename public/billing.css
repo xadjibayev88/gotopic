@@ -28,3 +28,5 @@ html[data-theme="light"] .gb-card,html[data-theme="light"] .gb-modal{background:
 html[data-theme="light"] .gb-card.best{background:linear-gradient(#fff,#fff) padding-box,linear-gradient(120deg,#5ee7d0,#7c8bff,#c08bff) border-box}
 html[data-theme="light"] .gb-addr{background:#eef1fb}
 @media (prefers-reduced-motion:reduce){.gb-btn{transition:none}}
+#gt-lang{width:100%;margin:0 0 10px;padding:10px 12px;border-radius:14px;font:inherit;font-weight:600;color:inherit;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18)}
+#gt-lang option{color:#151a33}

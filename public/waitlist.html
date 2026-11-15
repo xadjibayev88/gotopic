@@ -1,0 +1,86 @@
+<!doctype html><html lang="uz"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Go Topic — 22-dekabr Play Market'da</title>
+<meta name="description" content="Koreys tilini o'zbek, rus yoki ingliz tilida AI ustoz bilan o'rganing. Go Topic 22-dekabr Play Market'da. Navbatga yoziling.">
+<meta property="og:title" content="Go Topic — koreys tili va AI ustoz"><meta property="og:description" content="22-dekabr Play Market'da. Navbatga yoziling."><meta property="og:image" content="icon-512.png">
+<link rel="icon" href="icon-192.png"><meta name="theme-color" content="#0b1024">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600;800&display=swap">
+<style>
+:root{--bg:#0b1024;--ink:#eef1fb;--muted:#a9b1cf;--line:rgba(255,255,255,.14);--grad:linear-gradient(120deg,#5ee7d0,#7c8bff,#c08bff)}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(900px 520px at 0% -10%,rgba(124,139,255,.35),transparent 60%),radial-gradient(700px 480px at 110% 20%,rgba(94,231,208,.22),transparent 60%),var(--bg);color:var(--ink);font:16px/1.55 Onest,system-ui,sans-serif}
+main{max-width:560px;margin:0 auto;padding:max(22px,env(safe-area-inset-top)) 16px 48px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem}.logo{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:var(--grad);color:#10162e;font-weight:800;font-size:1.3rem}
+select{font:inherit;color:inherit;background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:12px;padding:8px 10px}select option{color:#151a33}
+h1{font-size:clamp(1.9rem,7vw,2.6rem);line-height:1.1;margin:28px 0 10px}h1 b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{color:var(--muted);margin:0 0 18px}
+.count{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:18px 0}.count div{text-align:center;padding:12px 4px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid var(--line)}.count b{display:block;font-size:1.6rem}.count span{font-size:.78rem;color:var(--muted)}
+.card{margin-top:16px;padding:18px;border-radius:22px;background:rgba(20,30,61,.7);border:1px solid var(--line);backdrop-filter:blur(12px)}
+label{display:block;font-weight:600;font-size:.92rem;margin:12px 0 6px}input,.card select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:inherit;font:inherit}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{width:100%;margin-top:16px;padding:14px;border:0;border-radius:14px;background:var(--grad);color:#10162e;font:inherit;font-weight:800;font-size:1.05rem;cursor:pointer}button[disabled]{opacity:.6}
+.ok{display:none;text-align:center}.ok h2{margin:6px 0}.feat{list-style:none;padding:0;margin:18px 0 0;display:grid;gap:8px}.feat li{padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+.small{font-size:.8rem;color:var(--muted);margin-top:12px}.err{color:#ff9aa8;min-height:1.2em;margin:8px 0 0}a{color:#9fb0ff}
+.social{display:flex;gap:10px;justify-content:center;margin-top:18px}
+</style></head><body><main>
+<div class="top"><div class="brand"><span class="logo">한</span>Go Topic</div><select id="lang" aria-label="Til"><option value="uz">O'zbekcha</option><option value="ru">Русский</option><option value="en">English</option></select></div>
+<h1 data-t="h1"></h1>
+<p class="lead" data-t="lead"></p>
+<div class="count" aria-live="polite"><div><b id="d">0</b><span data-t="days"></span></div><div><b id="h">0</b><span data-t="hours"></span></div><div><b id="m">0</b><span data-t="min"></span></div><div><b id="n">—</b><span data-t="queue"></span></div></div>
+<div class="card" id="formCard"><form id="f" novalidate>
+<label for="name" data-t="name"></label><input id="name" name="name" maxlength="60" autocomplete="given-name" required>
+<label for="contact" data-t="contact"></label><input id="contact" name="contact" maxlength="120" required data-ph="contactPh">
+<div class="row"><div><label for="level" data-t="level"></label><select id="level" name="level"></select></div>
+<div><label for="goal" data-t="goal"></label><select id="goal" name="goal"></select></div></div>
+<button id="go" type="submit" data-t="cta"></button><p class="err" id="err" role="alert"></p>
+<p class="small" data-t="privacy"></p></form>
+<div class="ok" id="ok"><div style="font-size:2.4rem">🎉</div><h2 data-t="okTitle"></h2><p id="okText"></p><p class="small" data-t="okShare"></p></div></div>
+<ul class="feat" id="feat"></ul>
+<div class="social"><a href="https://instagram.com/gotopic.uz" rel="noopener" target="_blank">Instagram</a> · <a href="privacy.html" data-t="policy"></a></div>
+</main>
+<script>
+(() => {
+"use strict";
+const LAUNCH = new Date("2026-12-22T09:00:00+05:00");
+const T = {
+ uz:{h1:"Koreys tilini <b>AI ustoz</b> bilan o'rganing",lead:"Go Topic — TOPIK 1–6 gacha so'zlar, grammatika, tinglash va jonli suhbat. 22-dekabr Play Market'da. Birinchilardan bo'lib bilish uchun navbatga yoziling.",days:"kun",hours:"soat",min:"daqiqa",queue:"navbatda",name:"Ismingiz",contact:"Telegram, telefon yoki email",contactPh:"@username yoki +998 90 123 45 67",level:"Darajangiz",goal:"Maqsadingiz",cta:"Navbatga yozilish",privacy:"Faqat ilova chiqqani haqida xabar beramiz. Spam yo'q.",policy:"Maxfiylik siyosati",okTitle:"Siz navbatdasiz!",okPos:n=>`Sizning o'rningiz: №${n}. 22-dekabr ilova chiqishi bilan xabar beramiz.`,okAgain:n=>`Siz allaqachon ro'yxatdasiz (№${n}). Ma'lumotlaringiz yangilandi.`,okShare:"Do'stlaringizga ham yuboring — birga o'rganish osonroq.",errContact:"Telegram @username, telefon yoki email kiriting.",errName:"Ismingizni kiriting.",errRate:"Juda ko'p urinish. Birozdan keyin qayta urining.",errNet:"Ulanib bo'lmadi. Internetni tekshirib qayta urining.",levels:["Noldan boshlayman","TOPIK 1","TOPIK 2","TOPIK 3","TOPIK 4","TOPIK 5","TOPIK 6"],goals:{talk:"Erkin gapirish",topik:"TOPIK imtihoni",work:"Koreyada ishlash",study:"Koreyada o'qish",fun:"K-drama va qiziqish"},feat:["🤖 AI ustoz bilan ovozli suhbat va xatolarni darhol tuzatish","📚 30 000 so'zli lug'at va TOPIK 1–6 mashqlari","🏆 Haftalik liga, daraja va kunlik ritm","🌐 O'zbek, rus va ingliz tilida"]},
+ ru:{h1:"Учите корейский с <b>AI-учителем</b>",lead:"Go Topic — слова, грамматика, аудирование и живые диалоги до TOPIK 6. 22 декабря в Play Market. Запишитесь в очередь, чтобы узнать первыми.",days:"дн.",hours:"час.",min:"мин.",queue:"в очереди",name:"Ваше имя",contact:"Telegram, телефон или email",contactPh:"@username или +998 90 123 45 67",level:"Ваш уровень",goal:"Ваша цель",cta:"Записаться в очередь",privacy:"Сообщим только о запуске приложения. Без спама.",policy:"Политика конфиденциальности",okTitle:"Вы в очереди!",okPos:n=>`Ваше место: №${n}. Напишем 22 декабря, как только приложение выйдет.`,okAgain:n=>`Вы уже в списке (№${n}). Данные обновлены.`,okShare:"Отправьте друзьям — учиться вместе легче.",errContact:"Укажите Telegram @username, телефон или email.",errName:"Укажите имя.",errRate:"Слишком много попыток. Попробуйте позже.",errNet:"Нет соединения. Проверьте интернет и попробуйте снова.",levels:["Начинаю с нуля","TOPIK 1","TOPIK 2","TOPIK 3","TOPIK 4","TOPIK 5","TOPIK 6"],goals:{talk:"Свободно говорить",topik:"Экзамен TOPIK",work:"Работа в Корее",study:"Учёба в Корее",fun:"K-drama и интерес"},feat:["🤖 Голосовой диалог с AI и мгновенное исправление ошибок","📚 Словарь на 30 000 слов и упражнения TOPIK 1–6","🏆 Недельная лига, уровни и ежедневный ритм","🌐 На узбекском, русском и английском"]},
+ en:{h1:"Learn Korean with an <b>AI tutor</b>",lead:"Go Topic — words, grammar, listening and live conversation up to TOPIK 6. On Google Play on December 22. Join the waitlist to hear first.",days:"days",hours:"hours",min:"min",queue:"waiting",name:"Your name",contact:"Telegram, phone or email",contactPh:"@username or +998 90 123 45 67",level:"Your level",goal:"Your goal",cta:"Join the waitlist",privacy:"We'll only tell you when the app launches. No spam.",policy:"Privacy policy",okTitle:"You're on the list!",okPos:n=>`Your spot: #${n}. We'll message you on December 22 when the app is out.`,okAgain:n=>`You're already on the list (#${n}). Your details were updated.`,okShare:"Share it with friends — learning together is easier.",errContact:"Enter a Telegram @username, phone or email.",errName:"Enter your name.",errRate:"Too many attempts. Please try again later.",errNet:"Couldn't connect. Check your internet and try again.",levels:["Complete beginner","TOPIK 1","TOPIK 2","TOPIK 3","TOPIK 4","TOPIK 5","TOPIK 6"],goals:{talk:"Speak freely",topik:"TOPIK exam",work:"Work in Korea",study:"Study in Korea",fun:"K-dramas & fun"},feat:["🤖 Voice chat with an AI tutor that fixes mistakes instantly","📚 30,000-word dictionary and TOPIK 1–6 exercises","🏆 Weekly league, levels and daily streaks","🌐 In Uzbek, Russian and English"]}
+};
+const $ = s => document.querySelector(s);
+const q = new URLSearchParams(location.search);
+let lang = (() => { const v = q.get("lang") || (() => { try { return localStorage.getItem("gt-lang"); } catch (_) { return null; } })() || (navigator.language || "").slice(0, 2); return T[v] ? v : "uz"; })();
+function paint() {
+  const t = T[lang]; document.documentElement.lang = lang; $("#lang").value = lang;
+  document.querySelectorAll("[data-t]").forEach(el => { const v = t[el.dataset.t]; if (typeof v === "string") el.innerHTML = v; });
+  document.querySelectorAll("[data-ph]").forEach(el => el.placeholder = t[el.dataset.ph]);
+  const lv = $("#level").value || "0", gl = $("#goal").value || "talk";
+  $("#level").innerHTML = t.levels.map((l, i) => `<option value="${i}">${l}</option>`).join(""); $("#level").value = lv;
+  $("#goal").innerHTML = Object.entries(t.goals).map(([k, v]) => `<option value="${k}">${v}</option>`).join(""); $("#goal").value = gl;
+  $("#feat").innerHTML = t.feat.map(f => `<li>${f}</li>`).join("");
+}
+$("#lang").addEventListener("change", e => { lang = e.target.value; try { localStorage.setItem("gt-lang", lang); } catch (_) {} paint(); });
+function tick() {
+  const ms = Math.max(0, LAUNCH - Date.now());
+  $("#d").textContent = Math.floor(ms / 864e5); $("#h").textContent = Math.floor(ms / 36e5) % 24; $("#m").textContent = Math.floor(ms / 6e4) % 60;
+}
+tick(); setInterval(tick, 30000);
+fetch("/api/waitlist").then(r => r.json()).then(d => { if (Number.isFinite(d.count)) $("#n").textContent = d.count; }).catch(() => {});
+$("#f").addEventListener("submit", async e => {
+  e.preventDefault(); const t = T[lang], err = $("#err"); err.textContent = "";
+  const name = $("#name").value.trim(), contact = $("#contact").value.trim();
+  if (!name) { err.textContent = t.errName; return; }
+  if (contact.length < 3) { err.textContent = t.errContact; return; }
+  $("#go").disabled = true;
+  try {
+    const body = { name, contact, lang, level: $("#level").value, goal: $("#goal").value };
+    const src = (q.get("s") || q.get("utm_source") || "").replace(/[^A-Za-z0-9_.-]/g, "").slice(0, 40); if (src) body.source = src;
+    const r = await fetch("/api/waitlist", { method: "POST", headers: { "Content-Type": "application/json", "X-GoTopic-Request": "1" }, body: JSON.stringify(body) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) { const c = d?.error?.code; err.textContent = c === "invalid_contact" || c === "invalid_input" ? t.errContact : c === "rate_limited" ? t.errRate : t.errNet; return; }
+    $("#f").style.display = "none"; $("#ok").style.display = "block";
+    $("#okText").textContent = d.already ? t.okAgain(d.position) : t.okPos(d.position);
+    const n = $("#n"); if (!d.already && /^\d+$/.test(n.textContent)) n.textContent = Number(n.textContent) + 1;
+  } catch (_) { err.textContent = t.errNet; } finally { $("#go").disabled = false; }
+});
+paint();
+})();
+</script></body></html>

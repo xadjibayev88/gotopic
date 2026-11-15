@@ -29,3 +29,8 @@ Obuna avtomatik yechilmaydi: to'lov muddatni uzaytiradi, tugaganda bepul tarifga
 
 ## Google Play
 Play'dan o'rnatilgan ilovada raqamli obunani faqat Google Play Billing orqali sotish mumkin. Shuning uchun Android ilovada narxlar va tashqi to'lov tugmalari ko'rsatilmaydi; saytda sotib olgan foydalanuvchi ilovada hisobiga kirsa, tarifi ishlaydi. Play ichida sotish uchun keyinroq Play Billing qo'shiladi (Play Console kerak).
+
+# Navbat (waitlist) va tillar
+- Sahifa: `/waitlist.html` (uz/ru/en, 22-dekabrgacha sanoq). Instagram uchun havola: `/waitlist.html?s=instagram` (manba hisobga olinadi).
+- Ro'yxatni yuklab olish (admin): `/api/admin/waitlist.csv` — `ADMIN_OPEN_IDS` ga kirgan hisob bilan.
+- Ilova tili: menyuda til tanlash (O'zbekcha / Русский / English). AI ustoz tarjima va izohlarni tanlangan tilda beradi; lug'atda rus va ingliz tilida inglizcha Wiktionary ma'nosi ko'rsatiladi. Grammatika izohlari va AI yaratgan mashqlar hozircha o'zbekcha.

@@ -8,6 +8,7 @@ export const aiInput = z.object({
 export const tutorInput = z.object({
   level: z.number().int().min(1).max(6),
   scenario: z.number().int().min(0).max(4),
+  lang: z.enum(["uz", "ru", "en"]).optional(),
   focus: z.string().trim().max(160).optional(),
   topic: z.object({
     mainTopic: z.string().trim().min(1).max(160),

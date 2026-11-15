@@ -62,7 +62,7 @@
       forbiddenDrift: ["aloqasiz mavzular", "umumiy small talk", "boshqa scenario", "mavzularning uzun ro‘yxati"]
     };
   };
-  const inputFor = (text, voice, snapshot) => ({ text, level: S.lvl, scenario: C.scn, focus: focusFor(), topic: topicFor(), history: snapshot, confidence: voice?.confidence ?? null });
+  const inputFor = (text, voice, snapshot) => ({ text, lang: window.GoTopicI18n?.lang || "uz", level: S.lvl, scenario: C.scn, focus: focusFor(), topic: topicFor(), history: snapshot, confidence: voice?.confidence ?? null });
   window.chatSend = async function streamingChat(typed, voiceMeta) {
     if (voiceMeta?.voice) return originalChatSend(typed, voiceMeta);
     const text = (typeof typed === "string" ? typed : C.draft).trim().slice(0, 1000);

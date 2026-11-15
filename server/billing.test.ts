@@ -52,3 +52,13 @@ test("Click: imzosi noto'g'ri so'rov -1 bilan rad etiladi, bazaga tegmaydi", () 
   const body = await response.json() as { error: number };
   assert.equal(body.error, -1);
 })));
+
+import { normalizeContact } from "./waitlist.js";
+test("waitlist: kontakt normallashtiriladi", () => {
+  assert.equal(normalizeContact("@GoTopic_Fan"), "@gotopic_fan");
+  assert.equal(normalizeContact("https://t.me/someone1"), "@someone1");
+  assert.equal(normalizeContact("90 123 45 67"), "+998901234567");
+  assert.equal(normalizeContact("+998 90 123-45-67"), "+998901234567");
+  assert.equal(normalizeContact("Ali@Mail.UZ"), "ali@mail.uz");
+  assert.equal(normalizeContact("??"), null);
+});
