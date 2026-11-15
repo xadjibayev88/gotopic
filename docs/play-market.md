@@ -8,7 +8,7 @@ Ilova: `uz.gotopik.app` (Capacitor, AdMob banner + mukofotli video). Yig'ish: `x
 2. **Workflow'ni ishga tushiring** (Run workflow). Tugagach Releases → "Go Topic APK (AdMob)" ichida `GoTopic-play.aab` (Play uchun) va `GoTopic-release.apk` (telefonga o'rnatish uchun).
 3. **Play Console** (play.google.com/console): hisob ochish 25 $ (bir marta) + shaxsni tasdiqlash.
 4. **Create app** → nomi "Go Topic", til: o'zbek, turi: App, bepul.
-5. **Maxfiylik siyosati URL:** `https://gotopik-a749akip.manus.space/privacy.html` (oldin sahifadagi `[ELEKTRON POCHTA]` o'rniga aloqa pochtasi qo'yilsin va sayt Publish qilinsin).
+5. **Maxfiylik siyosati URL:** `https://gotopic-jmqzyljc.manus.space/privacy.html` (oldin sahifadagi `[ELEKTRON POCHTA]` o'rniga aloqa pochtasi qo'yilsin va sayt Publish qilinsin).
 6. `GoTopic-play.aab` ni yuklang (Play App Signing — yoqilgan holda qoldiring).
 
 ## 2. Do'kon matnlari
