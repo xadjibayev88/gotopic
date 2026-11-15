@@ -1,0 +1,29 @@
+# Go Topic — tayyorlik holati
+
+- [x] Mavjud GitHub arxitekturasi va Android TWA funksiyalarini buzmasdan davom ettirish. O‘zbekcha koreys tili bo‘limlari, darslar, TOPIK materiallari, lug‘at qidiruvi, mashqlar va natijalar saqlanadi. 31 mavzu, 90 grammatika va 2888 lug‘at yozuvi eksport qilindi; asl GitHub main hozircha production xavfsizligi uchun o‘zgartirilmagan.
+- [x] Sayt va Android uchun yagona, butunlay yangilangan responsive glassy-gradient interfeys. Har bir tugma va interaktiv elementda mikroeffekt bo‘ladi; telefonlarda katta blur va doimiy og‘ir animatsiyalar cheklanadi, reduced-motion va yengil rejim ishlaydi. 375 px mobil va 1280 px desktopda CSS ustuvorligi va dock layouti tekshirildi.
+- [x] 500–1000 foydalanuvchi uchun frontend cache, so‘rovlarni boshqarish, bounded queue, per-user limitlar, kuzatuv, xatolarga chidamlilik va AI yuklama himoyasi. Yakuniy concurrent sig‘im hosting va provider tarifiga moslanadi; o‘lchovsiz 1000 parallel ovoz va’da qilinmaydi. Local test: 1000 HTML so‘rov, 50 parallel, 0 xato; bu AI sig‘imi testi emas.
+- [x] Boshqariladigan MySQL: foydalanuvchi holati va progress, o‘quv katalogi, AI limit va parallel so‘rov lease’lari restartdan keyin saqlanadi. Additive migratsiya va katalog seed bajarildi; per-user va umumiy voice budget routega ulangan.
+- [x] O‘quv audio/rasm/hujjatlari uchun storage manzillari ishlatiladi; media secretlari frontendga chiqmaydi. Yangi hero project storage’da; ovoz PCM sifatida vaqtinchalik oqadi, foydalanuvchi raw audiosi serverga saqlanmaydi.
+- [x] Gemini streaming asosidagi matnli AI ustoz serverdagi kalitlar orqali ishlaydi. Ro‘yxatdan o‘tmagan foydalanuvchi darslarni ko‘ra oladi; pullik AI endpointlari autentifikatsiya va quota bilan himoyalanadi. Haqiqiy Gemini JSON/SSE testlari o‘tdi; anonim API 401, cross-site forma 403. OAuth origin va state tamper himoyasi regression bilan tekshirildi.
+- [x] ElevenLabs WebSocket ovoz pipeline’i brauzer PCM streaming playeri bilan integratsiya qilinadi. Abort, timeout, gap tugashi, fallback va eski turn audiosini tozalash ishlaydi. Haqiqiy pipeline birinchi audio ~2024 ms; offline queue, abort, SSE, resampling testlari o‘tdi. Free 10 000 belgi/oy limiti muntazam 500–1000 user tabiiy ovozini qoplamaydi; fallback saqlanadi.
+- [ ] PWA va Android release uchun manifest, cache yangilanishi, safe-area, ruxsatlar va APK yig‘ilishi tekshiriladi; debug APK release-signing deb ko‘rsatilmaydi. PWA va debug APK yig‘ilishi tekshirildi. Production domain publish qilindi; DEFAULT_URL va 2.0.1 versiya bilan debug APK qayta yig‘ildi va tekshirildi. Signed release uchun oldingi production keystore hali berilmagan.
+- [ ] Yakuniy sinovlar va checkpoint. Production uchun kalitlar, concurrent yuklama, hosting hamda domen bo‘yicha zarur javoblar aniq ko‘rsatiladi. Kalitlar kiritilgan, 23 test o‘tgan, birinchi checkpoint a00e8cc publish qilingan. Owner 500–1000 jami user va Reserved hostingni tasdiqladi; infra always_on match. Avvalgi domen publicationi va Public holati tasdiqlangan. Yangi Preview versiyasi owner tanloviga ko‘ra publish qilinmaydi.
+
+## Yangi talablar — 2026-11-13
+
+- [x] Har bir sahifa va mobil menyu oddiy tekis fon emas, alohida gradient/aurora bezaklari bilan boyitiladi. Yorug‘ va qorong‘i rejimlarda matn tiniq va kontrastli qoladi; mobil va embedded Preview’da og‘ir blur cheklanadi. Foydalanuvchi Chrome’da qotish kuzatilmaganini tasdiqladi.
+- [x] 30 000 haqiqiy, takrorlanmagan koreyscha lug‘at yozuvi litsenziya va manba bilan qo‘shiladi. Son sun’iy so‘z/sense takrorlari bilan to‘ldirilmaydi. O‘zbekcha tarjima coverage va AI/human tekshiruv cheklovi ochiq ko‘rsatiladi.
+- [x] Katta lug‘at paginated/indexlangan qidiruv bilan ishlaydi; telefon 30 ming qatorni bir vaqtda DOM yoki boshlang‘ich payloadga yuklamaydi. Saqlash va browserga so‘zlarni o‘qish chegaralangan.
+- [x] Har bir TOPIK 1–6 bosqichi va mavzu uchun ko‘p xil vazifalar: so‘z/grammatika, gap tartibi, cloze, o‘qish/tinglash, tarjima/yozish/gapirish. Rasmiy TOPIK savollari yoki rasmiy daraja tasnifi deb noto‘g‘ri ko‘rsatilmaydi.
+- [x] Yangi mashqlar ishlaydigan sahifalar, answer/review/progress oqimi va mavjud o‘quv reja/AI bilan bog‘lanadi. Yangi kontent, dizayn va APIlar tekshirilib checkpointga saqlanadi; keyingi publication joriy publish ruxsati bilan tekshiriladi.
+
+## Yangi Preview dalillari
+
+30 000 noyob bosh so‘z va 30 000 tarjima-status yozuvi tekshirildi; 29 280 o‘zbekcha AI izoh va 720 asl inglizcha fallback. 216 mualliflik va 8 982 lug‘at variantlari, jami 9 198; 34 kurs mavzusi. 26 test va typecheck o‘tdi. TOPIK 6 uchta mavzusi barcha mualliflik vazifalari bilan mos. Canonical checkpoint saqlanadi; owner 13:26 da avval Preview tekshirishni tanlagan, yangi publish bajarilmaydi. APK production domenidagi oldingi published versiyani ochadi, Preview o‘zgarishlari unga hali chiqmaydi.
+
+## AI ustoz kechikishi — 2026-11-13 13:42
+
+- [ ] 20–30 soniyalik ketma-ket Gemini → TTS → Gemini feedback → yana Gemini fallback oqimi bitta bilingual streaming so‘rovga almashtiriladi. Koreyscha javob va o‘zbekcha tarjima javob kelishi bilan ko‘rsatiladi; TTS yoki quota xatosi ikkinchi AI so‘rovini boshlamaydi.
+- [ ] Tabiiy ovoz band yoki limit tugaganida ayni javob qurilma ovozi/matn rejimiga o‘tadi, sababi ochiq ko‘rsatiladi. Pullik provider limitlari o‘zboshimchalik bilan oshirilmaydi. Qisqa navbat, timeout, cancel va birinchi text/audio latency o‘lchovi ishlaydi.
+- [ ] Chrome’dagi eski published dizayn bilan yangi Preview versiyasi farqi ochiq aytiladi. Foydalanuvchining «avval Preview» tanlovi saqlanadi; yangi publication bajarilmaydi.
