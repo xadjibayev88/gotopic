@@ -11,7 +11,7 @@
   📱 22-dekabr Play Market'da
   👇 Navbatga yoziling
   ```
-- **Havola:** `https://gotopic-jmqzyljc.manus.space/waitlist.html?s=instagram`
+- **Havola:** `https://gotopic-spcx7f2q.manus.space/waitlist.html?s=instagram`
 - **Profil rasmi:** `kit/profile.png`
 
 ## Highlights (muqovalar: `kit/highlights/`)

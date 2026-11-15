@@ -51,7 +51,7 @@ function isHttpsOrigin(value: unknown): value is string {
 
 function configuredOrigins(): Set<string> {
   return new Set(
-    ["https://gotopik-a749akip.manus.space", "https://gotopic-jmqzyljc.manus.space", "https://8328-ilfzq7bjfvvq6c0z1g3dy-4a0f1f75.us3.manus.computer", "https://8328-ijz6dibxhygs2m1fipo5c-62ca127c.us3.manus.computer", process.env.PUBLIC_ORIGIN ?? "", ...(process.env.ALLOWED_ORIGINS ?? "").split(",")]
+    ["https://gotopik-a749akip.manus.space", "https://gotopic-jmqzyljc.manus.space", "https://gotopic-spcx7f2q.manus.space", "https://8328-ilfzq7bjfvvq6c0z1g3dy-4a0f1f75.us3.manus.computer", "https://8328-ijz6dibxhygs2m1fipo5c-62ca127c.us3.manus.computer", process.env.PUBLIC_ORIGIN ?? "", ...(process.env.ALLOWED_ORIGINS ?? "").split(",")]
       .map((value) => value.trim().replace(/\/$/u, ""))
       .filter((value): value is string => isHttpsOrigin(value)),
   );

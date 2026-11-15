@@ -46,7 +46,7 @@ export function providers(): Provider[] {
 }
 
 function publicOrigin(): string {
-  return (env("PUBLIC_ORIGIN") || "https://gotopic-jmqzyljc.manus.space").replace(/\/$/u, "");
+  return (env("PUBLIC_ORIGIN") || "https://gotopic-spcx7f2q.manus.space").replace(/\/$/u, "");
 }
 
 // ---------------------------------------------------------------- obuna (entitlement)
