@@ -85,15 +85,17 @@
         try { localStorage.setItem(dayKey(), String(used() + 1)); } catch (_) {}
         try { window.gain(XP); } catch (_) {}
       };
+      let noAd = false, shownOk = false;
       const sub = await AdMob.addListener("onRewardedVideoAdReward", grant);
       try {
         if (!rewarded.ready) await AdMob.prepareRewardVideoAd({ adId: rId, isTesting: rTesting });
         rewarded.ready = false;
+        shownOk = true;
         const item = await AdMob.showRewardVideoAd();
         if (item && Number(item.amount) > 0) grant();
-      } catch (_) { /* not loaded or closed early */ }
+      } catch (_) { noAd = !shownOk; }
       finally { try { sub.remove(); } catch (_) {} rewarded.busy = false; prepare(); window.dispatchEvent(new CustomEvent("gotopic:rewarded")); }
-      return { ok: granted, reason: granted ? "" : "not_finished" };
+      return { ok: granted, reason: granted ? "" : noAd ? "no_ad" : "not_finished" };
     };
     window.GoTopicRewarded = rewarded;
     AdMob.initialize && setTimeout(prepare, 4000);

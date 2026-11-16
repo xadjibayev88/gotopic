@@ -171,7 +171,23 @@
     catch (_) { api.status = { offline: true, user: null }; api.user = null; }
     window.dispatchEvent(new CustomEvent("gotopic:session")); return api.status;
   };
-  api.login = () => { const origin = base ? new URL(base).origin : location.origin; location.assign(endpoint("/api/auth/login") + "?origin=" + encodeURIComponent(origin)); };
+  // Android ilovada: telefon Google hisobidan bir bosishda kirish. Ishlamasa — oddiy kirish sahifasi.
+  api.loginGoogle = async () => {
+    const cap = window.Capacitor, SL = cap && cap.isNativePlatform && cap.isNativePlatform() && cap.Plugins && cap.Plugins.SocialLogin;
+    if (!SL) return false;
+    const cfg = await (await request("/api/auth/config", { signal: timeoutSignal(6000) })).json().catch(() => ({}));
+    if (!cfg.google) return false;
+    await SL.initialize({ google: { webClientId: cfg.google, mode: "online", skipAuthOnlyAuthorizationAfterSignIn: true } });
+    const res = await SL.login({ provider: "google", options: {} });
+    const idToken = res && res.result && res.result.idToken;
+    if (!idToken) return false;
+    const r = await request("/api/auth/google", { method: "POST", body: JSON.stringify({ idToken }) });
+    if (!r.ok) return false;
+    await api.init(); window.GoTopicAccountRefresh?.(); location.hash = "#reyting";
+    return true;
+  };
+  const webLogin = () => { const origin = base ? new URL(base).origin : location.origin; location.assign(endpoint("/api/auth/login") + "?origin=" + encodeURIComponent(origin)); };
+  api.login = async () => { try { if (await api.loginGoogle()) return; } catch (error) { if (/cancel/i.test(String(error && error.message))) return; } webLogin(); };
   api.logout = async () => { api.cancel(); await request("/api/auth/logout", { method: "POST" }); api.user = null; api.progressVersion = 0; await api.init(); };
   api.scheduleProgress = state => {
     if (!api.user) return; latestState = state; clearTimeout(progressTimer);

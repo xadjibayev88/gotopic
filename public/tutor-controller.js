@@ -201,7 +201,7 @@
   const shield = (tier, size = 64) => `<svg class="tier-shield" width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="tg${tier}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset=".35" stop-color="${TIER_COLORS[tier]}"/><stop offset="1" stop-color="${TIER_COLORS[tier]}" stop-opacity=".75"/></linearGradient></defs><path d="M32 4 56 13v17c0 15-10 25-24 30C18 55 8 45 8 30V13z" fill="url(#tg${tier})" stroke="rgba(255,255,255,.7)" stroke-width="2"/><text x="32" y="40" text-anchor="middle" font-size="20" font-weight="800" fill="#1b1f3a">${tier + 1}</text></svg>`;
   const left = ms => { const h = Math.max(0, Math.floor(ms / 3600000)); return h >= 24 ? `${Math.floor(h / 24)} kun ${h % 24} soat` : `${h} soat`; };
   const rewardCard = () => {
-    const r = window.GoTopicRewarded; if (!r) return "";
+    const r = window.GoTopicRewarded; if (!r || (!r.ready && !r.busy && r.left() > 0)) return ""; // video yuklanmagan bo'lsa karta ko'rinmaydi
     const left = r.left();
     return `<div class="panel reward-card"><div class="row"><span class="reward-ico">▶</span><div style="flex:1;min-width:0"><b>Video ko‘ring — +${r.xp} XP</b><div class="muted">${left ? `Bugun yana ${left} ta video mavjud` : "Bugungi videolar tugadi. Ertaga yana keling!"}</div></div><button class="btn" data-reward ${left && !r.busy ? "" : "disabled"}>${r.busy ? "Yuklanmoqda…" : "Ko‘rish"}</button></div></div>`;
   };
@@ -211,7 +211,7 @@
     if (!event.target.closest("[data-reward]") || !window.GoTopicRewarded) return;
     const pending = window.GoTopicRewarded.show(); render(true);
     const res = await pending;
-    toast(res.ok ? `+${window.GoTopicRewarded.xp} XP qo‘shildi!` : res.reason === "limit" ? "Bugungi videolar tugadi." : "Video oxirigacha ko‘rilmadi yoki yuklanmadi.");
+    toast(res.ok ? `+${window.GoTopicRewarded.xp} XP qo‘shildi!` : res.reason === "limit" ? "Bugungi videolar tugadi." : (res.reason === "no_ad" ? "Hozircha video yo‘q. Birozdan keyin qayta urinib ko‘ring." : "Video oxirigacha ko‘rilmadi — XP berilmadi."));
     render(true);
   });
   V.reyting = () => {

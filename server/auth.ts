@@ -1,7 +1,7 @@
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import type { Request, RequestHandler, Response } from "express";
 import { Router } from "express";
-import { jwtVerify, SignJWT, type JWTPayload } from "jose";
+import { createRemoteJWKSet, jwtVerify, SignJWT, type JWTPayload } from "jose";
 import { ensureUser, findUserByOpenId, type AppUser } from "./database.js";
 
 export type { AppUser } from "./database.js";
@@ -270,6 +270,32 @@ authRouter.get("/callback", async (req, res) => {
     res.redirect(`${state.redirectUri.slice(0, -CALLBACK_PATH.length)}/#reyting`);
   } catch {
     authError(res, 502);
+  }
+});
+
+// ---- Google bilan bir bosishda kirish (Android ilovada telefon hisobidan, Credential Manager) ----
+const GOOGLE_JWKS = createRemoteJWKSet(new URL("https://www.googleapis.com/oauth2/v3/certs"));
+const googleClientIds = () => (process.env.GOOGLE_WEB_CLIENT_ID ?? "").split(",").map((v) => v.trim()).filter(Boolean);
+
+authRouter.get("/config", (_req, res) => {
+  res.set("Cache-Control", "public, max-age=300").json({ google: googleClientIds()[0] ?? null });
+});
+
+authRouter.post("/google", async (req, res) => {
+  const idToken = safeString(req.body?.idToken, 4096);
+  const audience = googleClientIds();
+  if (!idToken || audience.length === 0) { authError(res, 400); return; }
+  try {
+    const { payload } = await jwtVerify(idToken, GOOGLE_JWKS, { issuer: ["https://accounts.google.com", "accounts.google.com"], audience });
+    const sub = safeString(payload.sub, 255);
+    if (!sub || payload.email_verified === false) { authError(res, 401); return; }
+    const name = safeString(payload.given_name, 200) ?? safeString(payload.name, 200) ?? "Learner";
+    const openId = `google:${sub}`;
+    await ensureUser(openId, name);
+    res.cookie(SESSION_COOKIE, await sessionToken(openId, name), cookieOptions(SESSION_MAX_AGE_SECONDS * 1000));
+    res.json({ ok: true });
+  } catch {
+    authError(res, 401);
   }
 });
 

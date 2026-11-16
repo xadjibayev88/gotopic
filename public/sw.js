@@ -1,6 +1,6 @@
 /* Go Topic service worker: bounded, same-origin-only caching for a GitHub Pages PWA. */
 const CACHE_PREFIX = "gotopik-";
-const CACHE_VERSION = "v12";
+const CACHE_VERSION = "v13";
 const SHELL_CACHE = `${CACHE_PREFIX}shell-${CACHE_VERSION}`;
 const ASSET_CACHE = `${CACHE_PREFIX}assets-${CACHE_VERSION}`;
 const MAX_ASSET_ENTRIES = 48;
