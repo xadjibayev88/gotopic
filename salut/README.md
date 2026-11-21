@@ -23,13 +23,22 @@ Nomi, maskoti (Krua — beretli kruasan), dizayni va kurs mazmuni original.
 - **O'yin elementlari:** ball, kunlik maqsad, quyosh seriyasi (soyabon bilan), kofe ☕ (xato qilinsa kamayadi,
   30 daqiqada bitta chashka tayyorlanadi), tangalar 🪙, sovg'a bekatlari, Fransiya shaharlari bo'ylab haftalik turnir
   (Ruandan Parijgacha), 15 ta yutuq.
-- **Dizayn:** o'ziga xos "Parij" uslubi — darslar yo'li Parij metrosi xaritasi ko'rinishida (bo'lim = liniya,
-  dars = bekat), krem fon, siyoh-ko'k va marjon ranglar, Onest shrifti.
+- **Dizayn:** GoTopic ranglari (to'q siyoh-ko'k fon, feruza → indigo → binafsha gradient) va "liquid glass"
+  uslubi: shishasimon xira kartalar, yorug' chegaralar, aurora fon. Kuchsiz telefonlar uchun "Yengil rejim"
+  (Profil) — blur o'chadi, animatsiyalar kamayadi, ilova qotmaydi.
+- **Hisoblar:** Google bilan kirish (veb — Google Identity Services, Android — Credential Manager), email + parol,
+  yoki mehmon sifatida. Progress serverga sinxronlanadi va istalgan qurilmada davom etadi. Hisobni o'chirish.
+- **Super obunasi:** oylik / yillik, Payme va Click orqali. Cheksiz kofe, reklamasiz, Krua bilan 30 daqiqalik
+  suhbatlar tanaffussiz, seriyani bepul tiklash, har oy bepul soyabon.
+- **Reklama:** Android ilovada AdMob (banner, interstitial, mukofotli video), vebda AdSense. Darsda, qo'ng'iroqda
+  va Super a'zolarida reklama ko'rsatilmaydi. Sozlamalar: `public/ads-config.js`, `public/app-ads.txt`.
+- **Kunlik vazifalar, 2x ball kuchaytirgichi, seriyani tiklash.**
+- **Huquqiy sahifalar:** `privacy.html`, `terms.html` (Play Market va AdMob talab qiladi).
 - **Takrorlash:** so'z kuchi vaqt o'tishi bilan susayadi (spaced repetition); "Aqlli takrorlash",
   "Xatolar ustida ishlash" va "Tinglash" mashqlari.
 - **Talaffuz:** brauzerning fransuzcha ovozi (Web Speech API), sekin tinglash rejimi.
 - **PWA:** telefonga o'rnatiladi, internetsiz ishlaydi; qorong'i rejim; mobil va kompyuter uchun moslashgan.
-- Progress qurilmada saqlanadi (`localStorage`), server shart emas.
+- Progress qurilmada saqlanadi (`localStorage`); hisob ochilsa — serverda ham (SQLite).
 
 ## Ishga tushirish
 
@@ -59,10 +68,33 @@ Ishlab chiqishda: bir terminalda `GEMINI_API_KEY=... npm run server`, ikkinchisi
 | `ALLOWED_ORIGINS` | — | Boshqa domendan so'rovga ruxsat (vergul bilan) |
 | `ELEVENLABS_API_KEY` | — | Tabiiy ovoz (o'zbekcha ham). Bo'lmasa — qurilmadagi brauzer ovozi |
 | `ELEVENLABS_VOICES` | — | `Nomi:voiceId` ro'yxati, masalan `Krua:abc123,Professor:def456` |
-| `ELEVENLABS_MODEL_ID` | `eleven_v3` | v3 — hissiyot teglari ([laughs]) bilan; o'zbek tili qo'llab-quvvatlanishini tekshiring |
+| `ELEVENLABS_MODEL_ID` | `eleven_v4` | o'zbek tilini qo'llaydi (v3 qo'llamaydi) |
 | `VOICE_SESSION_MINUTES` / `VOICE_COOLDOWN_MINUTES` | `10` / `20` | Sessiya uzunligi va undan keyingi tanaffus |
 | `TTS_CHARS_PER_DAY` | `12000` | Bitta IP uchun kunlik ovoz belgilari |
 | `STT_PER_MINUTE` / `TTS_PER_MINUTE` / `FEEDBACK_PER_DAY` | `20` / `60` / `40` | Ovoz yo'nalishlari limitlari |
+| `VOICE_SESSION_MINUTES_SUPER` | `30` | Super a'zolari uchun sessiya (tanaffussiz) |
+| `GEMINI_HEDGE_MS` | `1500` | Birinchi so'z kechiksa parallel zaxira so'rov |
+| `SESSION_SECRET` | avtomatik | Sessiya imzosi (bo'sh bo'lsa `data/` da yaratiladi) |
+| `SALUT_DATA_DIR` | `data` | SQLite bazasi papkasi (doimiy disk) |
+| `GOOGLE_CLIENT_ID` | — | Google OAuth Web client ID (vergul bilan bir nechta) |
+| `PUBLIC_ORIGIN` | — | Ochiq manzil, masalan `https://salut.uz` |
+| `PRICE_UZS_MONTH` / `PRICE_UZS_YEAR` | `49000` / `399000` | Narxlar (so'm) |
+| `PAYME_MERCHANT_ID` / `PAYME_KEY` / `PAYME_TEST` | — | Payme kassa; `PAYME_TEST=1` — test |
+| `CLICK_SERVICE_ID` / `CLICK_MERCHANT_ID` / `CLICK_SECRET_KEY` | — | Click Merchant |
+
+### To'lov tizimlarini ulash
+
+- **Payme:** Payme Business kabinetida kassa yarating, endpoint: `https://<domen>/api/billing/payme`.
+  `PAYME_MERCHANT_ID` va `PAYME_KEY` (test uchun test kaliti va `PAYME_TEST=1`) ni kiriting.
+- **Click:** Click Merchant'da xizmat yarating. Prepare URL: `https://<domen>/api/billing/click/prepare`,
+  Complete URL: `https://<domen>/api/billing/click/complete`.
+- Kalitlar kiritilmasa, obuna sahifasida "To'lov tizimi tez orada ulanadi" deb chiqadi — ilova ishlashda davom etadi.
+
+### Android ilova (APK / AAB)
+
+`android/` — ilovani WebView'da ochadigan qobiq (AdMob va Google kirish ko'priklari bilan). Yig'ish GitHub Actions'da:
+**Actions → "Salut Android APK" → Run workflow**, `start_url` ga ilova manzilini yozing. AdMob App ID ni
+repo Secrets'ga `SALUT_ADMOB_APP_ID` nomi bilan qo'shing. Reklama bloklari ID'lari — `public/ads-config.js`.
 
 Nutqni aniqlash: brauzerning o'zi (Chrome/Edge/Safari) ishlatiladi. Brauzer ishlamasa yoki jim qolsa, o'sha replika
 yozuvi avtomatik ravishda Gemini orqali aniqlanadi (`/api/stt`), shuning uchun hech bir gap yo'qolmaydi.
@@ -72,7 +104,10 @@ yozuvi avtomatik ravishda Gemini orqali aniqlanadi (`/api/stt`), shuning uchun h
 ```
 server/tutor.ts         Krua personasi, prompt, kiruvchi ma'lumot tekshiruvi, Gemini SSE oqimi
 server/voice.ts         STT (Gemini audio), TTS (ElevenLabs proksi), suhbat tahlili
-server/main.ts          HTTP server: statik fayllar + /api/tutor (limitlar, xatolarni tushunarli qilish)
+server/main.ts          HTTP server: statik fayllar + barcha /api yo'nalishlari (limitlar, xatolar)
+server/accounts.ts      hisoblar: scrypt parol, imzolangan sessiya, Google ID token tekshiruvi, progress
+server/billing.ts       Super: Payme (JSON-RPC) va Click (prepare/complete) to'lovlari
+server/db.ts            SQLite (node:sqlite) jadvallari
 src/data/course.ts      kurs mazmuni (so'zlar, gaplar, qo'llanmalar)
 src/engine/             sof mantiq: mashq generatori, tekshiruv, o'yin qoidalari, SRS, ovoz
 src/engine/voice/       ovozli suhbat: mikrofon+VAD, STT, TTS navbati, belgilar, boshqaruvchi (call.ts)

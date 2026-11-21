@@ -157,6 +157,9 @@ export function Profile() {
           </div>
         </div>
       </div>
+      <p className="legal-links">
+        <a href="./privacy.html" target="_blank" rel="noreferrer">Maxfiylik siyosati</a> · <a href="./terms.html" target="_blank" rel="noreferrer">Foydalanish shartlari</a>
+      </p>
       <button type="button" className="btn btn-text danger" onClick={() => setConfirmReset(true)}>
         Progressni o'chirish
       </button>

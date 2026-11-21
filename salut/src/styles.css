@@ -836,3 +836,4 @@ html.lite .pick-card, html.lite .choice, html.lite .token, html.lite .match-card
 .ad-label { display: block; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
 html.has-banner .bottombar { bottom: calc(66px + env(safe-area-inset-bottom)); }
 .shop-item.rewarded.compact { width: 100%; text-align: left; }
+.auth-legal a, .legal-links a { color: #a5b4fc; } .legal-links { text-align: center; font-size: 13px; color: var(--muted); }

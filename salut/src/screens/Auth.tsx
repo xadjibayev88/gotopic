@@ -154,7 +154,17 @@ export function AuthScreen({ initial = 'register', onDone, onSkip, title }: { in
           </button>
         )}
       </div>
-      <p className="auth-legal">Davom etish orqali siz foydalanish shartlari va maxfiylik siyosatiga rozilik bildirasiz.</p>
+      <p className="auth-legal">
+        Davom etish orqali siz{' '}
+        <a href="./terms.html" target="_blank" rel="noreferrer">
+          foydalanish shartlari
+        </a>{' '}
+        va{' '}
+        <a href="./privacy.html" target="_blank" rel="noreferrer">
+          maxfiylik siyosati
+        </a>
+        ga rozilik bildirasiz.
+      </p>
     </div>
   );
 }
