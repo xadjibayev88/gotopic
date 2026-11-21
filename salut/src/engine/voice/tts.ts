@@ -62,12 +62,8 @@ export class TtsQueue {
 
   push(raw: string) {
     if (this.stopped) return;
-    const item: Item = { raw };
-    if (this.engine === 'elevenlabs') {
-      item.ac = new AbortController();
-      item.audio = this.fetchAudio(raw, item.ac.signal);
-    }
-    this.items.push(item);
+    this.items.push({ raw });
+    this.prefetch();
     if (!this.playing) void this.next();
   }
 
@@ -98,6 +94,24 @@ export class TtsQueue {
     this.ctx = null;
   }
 
+  /**
+   * Ovoz faqat navbatdagi 2 ta gap uchun oldindan so'raladi (hozirgisi + keyingisi).
+   * ElevenLabs tarifida bir vaqtdagi so'rovlar soni cheklangan — hammasini birdan so'rash 429 beradi.
+   */
+  private prefetch() {
+    if (this.engine !== 'elevenlabs') return;
+    const inflight = (this.playing ? 1 : 0) + 0;
+    let budget = Math.max(0, 2 - inflight);
+    for (const it of this.items) {
+      if (budget <= 0) break;
+      if (!it.audio) {
+        it.ac = new AbortController();
+        it.audio = this.fetchAudio(it.raw, it.ac.signal);
+      }
+      budget--;
+    }
+  }
+
   private async fetchAudio(raw: string, signal: AbortSignal): Promise<Blob | null> {
     const text = speechText(raw, this.audioTags);
     if (!/[\p{L}\p{N}]/u.test(text)) return null;
@@ -111,7 +125,16 @@ export class TtsQueue {
         });
         if (res.status === 429) {
           const b = (await res.json().catch(() => ({}))) as { code?: string };
-          this.onFail?.(b.code === 'tts_quota' ? 'tts_quota' : 'tts_failed');
+          if (b.code === 'tts_quota') {
+            this.onFail?.('tts_quota');
+            return null;
+          }
+          // Bir vaqtdagi so'rovlar limiti — qisqa kutib, qayta urinamiz.
+          if (attempt === 0) {
+            await new Promise((r) => setTimeout(r, 350));
+            continue;
+          }
+          this.onFail?.('tts_failed');
           return null;
         }
         if (!res.ok) throw new Error(`tts ${res.status}`);
@@ -135,6 +158,11 @@ export class TtsQueue {
       return;
     }
     this.playing = true;
+    if (this.engine === 'elevenlabs' && !item.audio) {
+      item.ac = new AbortController();
+      item.audio = this.fetchAudio(item.raw, item.ac.signal);
+    }
+    this.prefetch(); // keyingi gap ovozi shu gap ijro etilayotganda tayyorlanadi
     try {
       if (this.engine === 'elevenlabs' && item.audio) {
         const blob = await item.audio;

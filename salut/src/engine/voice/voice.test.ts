@@ -8,6 +8,11 @@ describe('markers', () => {
     expect(cue).toEqual({ shape: 'heart', actions: ['hop'] });
     expect(clean.trim()).toBe("Zo'r!");
   });
+  it('accepts shorthand markers and drops unknown ones', () => {
+    const { clean, cue } = extractCues('[[tall]] [[point]] [[zzz]] Yetarli emas.');
+    expect(cue).toEqual({ shape: 'tall', actions: ['point'] });
+    expect(clean.trim()).toBe('Yetarli emas.');
+  });
   it('strips audio tags for display and for non-v3 speech', () => {
     expect(displayText('[laughs] [fr]Oui[/fr] juda yaxshi')).toBe('[fr]Oui[/fr] juda yaxshi');
     expect(speechText('[laughs] [fr]Oui[/fr]', false)).toBe('Oui');

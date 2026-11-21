@@ -20,12 +20,16 @@ export interface Cue {
 export function extractCues(text: string): { clean: string; cue: Cue } {
   const cue: Cue = { actions: [] };
   const clean = text
-    .replace(/\[\[(shape|do):([a-z]+)\]\]/gi, (_m, kind: string, name: string) => {
+    // To'g'ri shakl: [[shape:star]] / [[do:hop]]. Model ba'zan [[star]] yoki [[hop]] deb yozadi —
+    // nomidan qaysi turligini aniqlaymiz. Noma'lum [[...]] belgilar shunchaki olib tashlanadi.
+    .replace(/\[\[\s*(?:(shape|do)\s*:\s*)?([a-z]+)\s*\]\]/gi, (_m, kind: string | undefined, name: string) => {
       const n = name.toLowerCase();
-      if (kind.toLowerCase() === 'shape' && (SHAPES as readonly string[]).includes(n)) cue.shape = n as Shape;
-      if (kind.toLowerCase() === 'do' && (ACTIONS as readonly string[]).includes(n)) cue.actions.push(n as Action);
+      const k = kind?.toLowerCase();
+      if ((k === 'shape' || !k) && (SHAPES as readonly string[]).includes(n)) cue.shape = n as Shape;
+      else if ((k === 'do' || !k) && (ACTIONS as readonly string[]).includes(n)) cue.actions.push(n as Action);
       return '';
     })
+    .replace(/\[\[[^\]]*\]\]/g, '')
     .replace(/\[\[[^\]]*$/, '') // oqim paytidagi chala belgi
     .replace(/[ \t]{2,}/g, ' ');
   return { clean, cue };
@@ -38,7 +42,11 @@ export function displayText(text: string): string {
 
 /** TTS ga yuboriladigan matn. audioTags=false bo'lsa teglar olib tashlanadi. */
 export function speechText(text: string, audioTags: boolean): string {
-  let t = extractCues(text).clean.replace(/\[\/?fr\]/gi, '').replace(/\*\*/g, '');
+  // Fransuzcha iboradan keyingi qavs — talaffuz/tarjima izohi: subtitrda qoladi, ovozda o'qilmaydi.
+  let t = extractCues(text)
+    .clean.replace(/(\[\/fr\])\s*\([^)]{1,80}\)/gi, '$1')
+    .replace(/\[\/?fr\]/gi, '')
+    .replace(/\*\*/g, '');
   if (!audioTags) t = t.replace(AUDIO_TAGS, '');
   return t.replace(/\s+/g, ' ').trim();
 }
@@ -49,9 +57,19 @@ export function speechText(text: string, audioTags: boolean): string {
  */
 export class SentenceSplitter {
   private buf = '';
+  private emitted = 0;
   push(delta: string): string[] {
     this.buf += delta;
     const out: string[] = [];
+    // Birinchi bo'lak: ovoz tezroq boshlanishi uchun uzun gapni vergul yoki tire joyida bo'lamiz.
+    if (this.emitted === 0) {
+      const m = /^([\s\S]{40,}?[^\d][,;—–])\s+/.exec(this.buf);
+      if (m && !/[.!?…]/.test(m[1]) && (m[1].match(/\[fr\]/gi) ?? []).length === (m[1].match(/\[\/fr\]/gi) ?? []).length) {
+        out.push(m[1].trim());
+        this.buf = this.buf.slice(m[0].length);
+        this.emitted++;
+      }
+    }
     for (;;) {
       // [fr]...[/fr] ichida bo'lishmaymiz.
       const re = /([.!?…]+["»)]?)(\s+)|\n+/g;
@@ -70,7 +88,10 @@ export class SentenceSplitter {
       if (cut < 0) break;
       const s = this.buf.slice(0, cut).trim();
       this.buf = this.buf.slice(cut);
-      if (s) out.push(s);
+      if (s) {
+        out.push(s);
+        this.emitted++;
+      }
     }
     return out;
   }

@@ -12,7 +12,8 @@ const ROOT = resolve(fileURLToPath(new URL('.', import.meta.url)), '..', 'dist')
 const env = process.env;
 const num = (k: string, d: number) => (Number(env[k]) > 0 ? Number(env[k]) : d);
 const PORT = num('PORT', 8787);
-const MODEL = env.GEMINI_MODEL || 'gemini-3.1-flash-lite';
+// gemini-3.5-flash-lite: sinovda birinchi so'z ~0,55 s (3.1-flash-lite: ~3,4 s) — ovozli suhbat uchun eng tezi.
+const MODEL = env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
 const TRUST_PROXY = env.TRUST_PROXY === '1';
 const VOICES = parseVoices(env.ELEVENLABS_VOICES);
 // eleven_v4: o'zbek tilini qo'llaydi (eleven_v3 — yo'q) va [laughs] kabi hissiyot teglarini tushunadi.
@@ -154,7 +155,9 @@ async function guarded<T>(
   }
 }
 
-const gem = (signal: AbortSignal) => ({ apiKey: env.GEMINI_API_KEY!, model: MODEL, base: env.GEMINI_API_BASE, signal });
+const FALLBACK_MODEL = env.GEMINI_FALLBACK_MODEL ?? 'gemini-3.1-flash-lite';
+const HEDGE_MS = env.GEMINI_HEDGE_MS !== undefined ? Number(env.GEMINI_HEDGE_MS) : 1500;
+const gem = (signal: AbortSignal) => ({ apiKey: env.GEMINI_API_KEY!, model: MODEL, fallbackModel: FALLBACK_MODEL || undefined, hedgeMs: HEDGE_MS, base: env.GEMINI_API_BASE, signal });
 
 // ---------- Yo'nalishlar ----------
 const routes: Record<string, (req: IncomingMessage, res: ServerResponse) => Promise<void> | void> = {

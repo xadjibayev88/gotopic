@@ -50,7 +50,8 @@ Ishlab chiqishda: bir terminalda `GEMINI_API_KEY=... npm run server`, ikkinchisi
 | O'zgaruvchi | Standart | Ma'nosi |
 |---|---|---|
 | `GEMINI_API_KEY` | — | Google AI Studio kaliti (faqat serverda saqlanadi, brauzerga chiqmaydi) |
-| `GEMINI_MODEL` | `gemini-3.1-flash-lite` | Model |
+| `GEMINI_MODEL` | `gemini-3.5-flash-lite` | Model (eng tez: birinchi so'z ~0,55 s) |
+| `GEMINI_FALLBACK_MODEL` | `gemini-3.1-flash-lite` | Zaxira model (asosiysi 5xx qaytarsa) |
 | `PORT` | `8787` | Port |
 | `TUTOR_PER_MINUTE` / `TUTOR_PER_DAY` | `8` / `150` | Bitta IP uchun limitlar |
 | `TUTOR_CONCURRENCY` | `8` | Bir vaqtdagi AI so'rovlar |

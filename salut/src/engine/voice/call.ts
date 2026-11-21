@@ -333,6 +333,14 @@ export class VoiceCall {
     const split = new SentenceSplitter();
     let acc = '';
     const weak = window.setTimeout(() => !acc && this.notice('weak'), 3500);
+    // Kuzatuvchi: 9 soniyada birinchi so'z kelmasa — so'rov osilib qolgan, bekor qilib qayta yuboramiz.
+    let stalled = false;
+    const watchdog = window.setTimeout(() => {
+      if (!acc && !ac.signal.aborted) {
+        stalled = true;
+        ac.abort();
+      }
+    }, 9000);
     try {
       const res = await fetch('./api/tutor', {
         method: 'POST',
@@ -369,6 +377,7 @@ export class VoiceCall {
           const ev = JSON.parse(line) as { t?: string; done?: boolean; error?: string; message?: string };
           if (ev.error) throw Object.assign(new Error(ev.message ?? 'upstream'), { code: ev.error });
           if (ev.t) {
+            clearTimeout(watchdog);
             acc += ev.t;
             this.set({ live: displayText(acc) });
             for (const s of split.push(ev.t)) this.tts.push(s);
@@ -378,11 +387,17 @@ export class VoiceCall {
       }
       for (const s of split.flush()) this.tts.push(s);
       clearTimeout(weak);
+      clearTimeout(watchdog);
       if (ac.signal.aborted) return;
       this.addTurn('tutor', acc.trim());
       this.tts.end();
     } catch (e) {
       clearTimeout(weak);
+      clearTimeout(watchdog);
+      if (stalled && retry === 0 && this.ac === ac) {
+        this.notice('reconnecting');
+        return this.ask(message, 1);
+      }
       if (ac.signal.aborted || (e as Error).name === 'AbortError') return;
       const code = (e as { code?: string }).code;
       const http = (e as { http?: number }).http;

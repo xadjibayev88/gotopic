@@ -80,6 +80,64 @@ describe('streamTutor', () => {
   });
 });
 
+describe('resilience', () => {
+  const req = parseTutorRequest(base) as TutorRequest;
+  it('retries transient 503 and falls back to another model', async () => {
+    const calls: string[] = [];
+    const ok = sse([{ candidates: [{ content: { parts: [{ text: 'Salut' }] }, finishReason: 'STOP' }] }]);
+    const f = (async (url: string, init: RequestInit) => {
+      calls.push(String(url).split('/models/')[1].split(':')[0]);
+      return calls.length <= 2 ? new Response('{}', { status: 503 }) : ok(url, init);
+    }) as unknown as typeof fetch;
+    let out = '';
+    for await (const t of streamTutor(req, { apiKey: 'k', model: 'main-model', fallbackModel: 'backup-model', fetchImpl: f })) out += t;
+    expect(out).toBe('Salut');
+    expect(calls).toEqual(['main-model', 'main-model', 'backup-model']);
+  });
+  it('does not retry client errors', async () => {
+    let n = 0;
+    const f = (async () => (n++, new Response('{}', { status: 400 }))) as unknown as typeof fetch;
+    await expect(async () => {
+      for await (const _ of streamTutor(req, { apiKey: 'k', model: 'm', fallbackModel: 'b', fetchImpl: f })) void _;
+    }).rejects.toMatchObject({ status: 400 });
+    expect(n).toBe(1);
+  });
+  it('hedges a slow first response with a parallel request and keeps the fastest', async () => {
+    const calls: string[] = [];
+    const aborted: string[] = [];
+    const f = (async (url: string, init: RequestInit) => {
+      const model = String(url).split('/models/')[1].split(':')[0];
+      calls.push(model);
+      const delay = model === 'slow-main' ? 400 : 10;
+      init.signal?.addEventListener('abort', () => aborted.push(model));
+      const body = new ReadableStream({
+        start(c) {
+          setTimeout(() => {
+            try {
+              c.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ candidates: [{ content: { parts: [{ text: model }] }, finishReason: 'STOP' }] })}\r\n\r\n`));
+              c.close();
+            } catch { /* bekor qilingan */ }
+          }, delay);
+        },
+      });
+      return new Response(body, { status: 200 });
+    }) as unknown as typeof fetch;
+    const t0 = Date.now();
+    let out = '';
+    for await (const t of streamTutor(req, { apiKey: 'k', model: 'slow-main', fallbackModel: 'fast-backup', hedgeMs: 50, fetchImpl: f })) out += t;
+    expect(out).toBe('fast-backup');
+    expect(Date.now() - t0).toBeLessThan(300);
+    expect(calls).toEqual(['slow-main', 'fast-backup']);
+    expect(aborted).toContain('slow-main');
+  });
+  it('ends a cut reply gracefully instead of mid-sentence', async () => {
+    const f = sse([{ candidates: [{ content: { parts: [{ text: 'Islom, tushkun' }] } }] }, { candidates: [{ finishReason: 'SAFETY' }] }]);
+    let out = '';
+    for await (const t of streamTutor(req, { apiKey: 'k', model: 'm', fetchImpl: f })) out += t;
+    expect(out).toMatch(/^Islom, tushkun… Kechirasiz/);
+  });
+});
+
 describe('parseRich (client)', () => {
   it('splits french, bold and text', () => {
     expect(parseRich('Ayting: [fr]Bonjour ![/fr] (bonjur) — **salom**.')).toEqual([

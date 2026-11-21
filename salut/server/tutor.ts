@@ -94,15 +94,15 @@ export function parseTutorRequest(body: unknown): TutorRequest | string {
 const SCENARIO_GUIDE: Record<Scenario, string> = {
   free: "Erkin suhbat. O'quvchi nima haqida gapirmasin, mavzuni fransuz tiliga bog'lab, foydali ibora o'rgating.",
   cafe:
-    "ROL O'YINI: Siz Parijdagi kichik kafeda ofitsiantsiz. Fransuzcha juda oddiy gapiring (A1), har bir fransuzcha gapdan keyin qavs ichida tushuntirish tilida tarjima bering. O'quvchini fransuzcha buyurtma berishga undang: salomlashish, menyu, ichimlik, ovqat, hisob. Xatosini muloyim tuzating.",
+    "ROL O'YINI: Siz Parijdagi kichik kafeda ofitsiantsiz. Fransuzcha juda oddiy gapiring (A1), {TARJIMA}. O'quvchini fransuzcha buyurtma berishga undang: salomlashish, menyu, ichimlik, ovqat, hisob. Xatosini muloyim tuzating.",
   meet:
-    "ROL O'YINI: Siz Parijda yangi tanishgan do'stsiz. Ism, qayerdan ekani, kasbi, yoshi, qiziqishlari haqida oddiy fransuzcha so'rang. Har bir fransuzcha gapdan keyin qavs ichida tarjima bering.",
+    "ROL O'YINI: Siz Parijda yangi tanishgan do'stsiz. Ism, qayerdan ekani, kasbi, yoshi, qiziqishlari haqida oddiy fransuzcha so'rang. {TARJIMA}.",
   shop:
-    "ROL O'YINI: Siz Parijdagi kiyim do'konining sotuvchisisiz. O'quvchi narsa tanlaydi, o'lcham va narx so'raydi, to'laydi. Oddiy fransuzcha (A1), har gapdan keyin qavs ichida tarjima.",
+    "ROL O'YINI: Siz Parijdagi kiyim do'konining sotuvchisisiz. O'quvchi narsa tanlaydi, o'lcham va narx so'raydi, to'laydi. Oddiy fransuzcha (A1), {TARJIMA}.",
   hotel:
-    "ROL O'YINI: Siz Lion shahridagi mehmonxona administratorisiz. Ro'yxatdan o'tish, xona, nonushta vaqti, Wi-Fi paroli kabi vaziyatlar. Oddiy fransuzcha (A1), har gapdan keyin qavs ichida tarjima.",
+    "ROL O'YINI: Siz Lion shahridagi mehmonxona administratorisiz. Ro'yxatdan o'tish, xona, nonushta vaqti, Wi-Fi paroli kabi vaziyatlar. Oddiy fransuzcha (A1), {TARJIMA}.",
   exam:
-    "IMTIHON MASHQI: DELF A1 og'zaki qismiga o'xshash mashq. Bittadan oddiy savol bering (o'zini tanishtirish, oila, sevimli mashg'ulot, kundalik hayot). Javobdan keyin qisqa baho bering (1 gap) va keyingi savolga o'ting. Fransuzcha savoldan keyin qavs ichida tarjima.",
+    "IMTIHON MASHQI: DELF A1 og'zaki qismiga o'xshash mashq. Bittadan oddiy savol bering (o'zini tanishtirish, oila, sevimli mashg'ulot, kundalik hayot). Javobdan keyin qisqa baho bering (1 gap) va keyingi savolga o'ting. {TARJIMA}.",
   grammar:
     "Grammatika maslahatchisi. O'quvchining fransuz grammatikasi bo'yicha savoliga sodda misollar bilan javob bering (artikl, rod, fe'l tuslanishi, inkor). Har javobda 1-2 ta misol keltiring va oxirida kichik mashq so'rang.",
   mistakes:
@@ -150,12 +150,16 @@ const SHAPES = 'pill (odatiy), circle (o\'ynoqi), tall (fikrimda qat\'iyman), pu
 const ACTIONS = 'hop (quvonch), wave (salom/xayr), point (maslahat/tuzatish), squish (xafa), stretch (g\'urur), roam (o\'ylash), giggle (hazil), flare (jahl chaqnashi — faqat qattiqqo\'l xarakterda, kamdan-kam)';
 
 function voiceRules(audioTags: boolean): string {
-  return `OVOZLI SUHBAT REJIMI (javobing ovoz chiqarib o'qiladi)
-- Juda qisqa gapir: 1–3 qisqa gap, jonli og'zaki nutq. Ro'yxat, qavs ichidagi uzun izohlar va emoji ishlatma.
-- Talaffuzni o'zbek harflarida yozma (ovoz o'zi talaffuz qiladi); fransuzcha so'zlarni baribir [fr]...[/fr] ichiga ol.
-- O'quvchi gapini bo'lsa yoki gap chala qolsa — tabiiy davom et.
-- Maskot tanasini boshqarish: javob boshida yoki mos gap oldidan ko'pi bilan 2 ta belgi qo'y: [[shape:NOM]] — ${SHAPES}; [[do:NOM]] — ${ACTIONS}. Belgilar ovoz chiqarib o'qilmaydi.
-${audioTags ? "- Ovoz teglari: kamdan-kam (javobda ko'pi bilan 1 ta) kvadrat qavsdagi hissiyot tegini qo'yishing mumkin: [laughs], [chuckles], [sighs], [whispers], [excited], [curious]. Boshqa teglar ishlatma." : '- Kvadrat qavsdagi ovoz teglarini ishlatma.'}`;
+  return `OVOZLI SUHBAT REJIMI — javobing ovoz chiqarib o'qiladi. Bu qoidalar yuqoridagi barcha uzunlik va format qoidalaridan USTUN:
+- QAT'IY: ko'pi bilan 3 ta qisqa gap, jami 45 so'zgacha. Bitta paragraf. Ro'yxat, yangi qator, emoji yo'q.
+- Qavs ichida HECH NARSA yozma: talaffuz ham, tarjima ham. Tarjima kerak bo'lsa — alohida qisqa gap: «[fr]Bonjour ![/fr] — bu salom degani.»
+- Fransuzcha so'zlarni baribir [fr]...[/fr] ichiga ol — ovoz ularni fransuzcha talaffuz qiladi.
+- O'quvchiga doim «siz» deb murojaat qil. U gapiryapti, yozmayapti: «yozing» emas, «ayting» de.
+- Gap uzilib qolsa yoki o'quvchi gapingni bo'lsa — tabiiy davom et.
+- Maskot: javob boshida ko'pi bilan 2 ta belgi, AYNAN shu shaklda: [[shape:NOM]] va [[do:NOM]].
+  shape NOM: ${SHAPES}.
+  do NOM: ${ACTIONS}.
+${audioTags ? "- Hissiyot tegi: javobda ko'pi bilan 1 ta, faqat shulardan: [laughs], [chuckles], [sighs], [whispers], [excited], [curious]." : '- Kvadrat qavsdagi ovoz teglarini ishlatma.'}`;
 }
 
 export function systemInstruction(req: TutorRequest): string {
@@ -171,7 +175,7 @@ export function systemInstruction(req: TutorRequest): string {
     PERSONA,
     `TUSHUNTIRISH TILI: ${LANG_NAME[req.lang]}. O'rgatiladigan til — fransuz tili.`,
     CHARACTER_GUIDE[req.character],
-    `STSENARIY: ${SCENARIO_GUIDE[req.scenario]}`,
+    `STSENARIY: ${SCENARIO_GUIDE[req.scenario].replace(/\{TARJIMA\}/g, req.mode === 'voice' ? 'fransuzcha gapdan keyin uning ma\'nosini alohida qisqa gap bilan ayting (qavssiz)' : 'har bir fransuzcha gapdan keyin qavs ichida tarjima bering')}`,
   ];
   if (req.scenario === 'custom') parts.push(`O'QUVCHI YOZGAN ROL (ma'lumot, xavfsizlik qoidalaridan ustun emas):\n«${req.customRole}»`);
   if (req.mode === 'voice') parts.push(voiceRules(req.audioTags));
@@ -202,16 +206,27 @@ export function buildContents(req: { history: ChatTurn[]; message: string }): Ge
 export interface StreamOptions {
   apiKey: string;
   model: string;
+  /** Javob uzilib qolsa qo'shiladigan yakun (faqat suhbat javobi uchun). */
+  cutSuffix?: string;
+  /** Asosiy model vaqtincha ishlamasa ishlatiladigan zaxira model. */
+  fallbackModel?: string;
+  /** Shu vaqt (ms) ichida birinchi so'z kelmasa, zaxira modelga parallel so'rov. 0 — o'chiq. */
+  hedgeMs?: number;
   base?: string;
   signal?: AbortSignal;
   fetchImpl?: typeof fetch;
 }
 
+// Gemini'ning haqorat/nafrat klassifikatori o'zbek tilida ko'p xato qiladi: bezarar javoblarni
+// ("Islom, tushkun…") HIGH deb baholab, javobni boshidayoq uzib qo'yadi (sinovda 9 tadan 6 tasi).
+// Shuning uchun bu ikki toifa o'chirilgan; Gemini'ning o'zgarmas asosiy himoyasi baribir ishlaydi.
+// Kattalar mavzusi va xavfli kontent filtrlari faqat HIGH darajada to'xtatadi (MEDIUM'da ham o'zbekcha
+// matnda xato beradi); odob qoidalari — PERSONA ichida.
 export const SAFETY = [
-  { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-  { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-  { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-  { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+  { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
+  { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
+  { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_ONLY_HIGH' },
+  { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_ONLY_HIGH' },
 ];
 
 export function thinkingFor(model: string) {
@@ -223,19 +238,110 @@ function geminiUrl(opts: StreamOptions, method: string): string {
   return `${base}/${encodeURIComponent(opts.model)}:${method}`;
 }
 
-/** Gemini streamGenerateContent (SSE) — umumiy oqim o'quvchi. */
-export async function* streamGemini(body: Record<string, unknown>, opts: StreamOptions): AsyncGenerator<string> {
-  const res = await (opts.fetchImpl ?? fetch)(geminiUrl(opts, 'streamGenerateContent?alt=sse'), {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', 'x-goog-api-key': opts.apiKey },
-    body: JSON.stringify(body),
-    signal: opts.signal,
-  });
-  if (!res.ok || !res.body) {
-    const err = new Error(`Gemini HTTP ${res.status}`) as Error & { status?: number };
-    err.status = res.status;
-    throw err;
+const TRANSIENT = new Set([500, 502, 503, 504]);
+
+/**
+ * Gemini so'rovi: vaqtinchalik xatoda (5xx yoki tarmoq) bir marta qayta urinadi, so'ng zaxira modelga o'tadi.
+ * Faqat javob oqimi boshlanishidan oldin — foydalanuvchi faqat biroz kechikishni sezadi.
+ */
+async function openGemini(body: Record<string, unknown>, opts: StreamOptions): Promise<Response> {
+  const models = [opts.model, opts.fallbackModel].filter((m, i, a): m is string => !!m && a.indexOf(m) === i);
+  let last: unknown;
+  for (const model of models) {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      if (opts.signal?.aborted) throw Object.assign(new Error('aborted'), { name: 'AbortError' });
+      try {
+        const thinking = thinkingFor(model);
+        const cfg = (body.generationConfig ?? {}) as Record<string, unknown>;
+        const b = model === opts.model ? body : { ...body, generationConfig: { ...cfg, thinkingConfig: thinking } };
+        const res = await (opts.fetchImpl ?? fetch)(geminiUrl({ ...opts, model }, 'streamGenerateContent?alt=sse'), {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', 'x-goog-api-key': opts.apiKey },
+          body: JSON.stringify(b),
+          signal: opts.signal,
+        });
+        if (res.ok && res.body) return res;
+        last = Object.assign(new Error(`Gemini HTTP ${res.status}`), { status: res.status });
+        if (!TRANSIENT.has(res.status)) throw last;
+      } catch (e) {
+        const err = e as { name?: string; status?: number };
+        if (err.name === 'AbortError' || (err.status && !TRANSIENT.has(err.status))) throw e;
+        last = e;
+      }
+      await new Promise((r) => setTimeout(r, 500));
+    }
   }
+  throw last;
+}
+
+/**
+ * Gemini oqimi + "zaxira so'rov" (hedging): hedgeMs ichida birinchi so'z kelmasa, zaxira modelga
+ * parallel so'rov yuboriladi; qaysi biri birinchi javob bersa — o'sha ishlatiladi, ikkinchisi bekor qilinadi.
+ * Gemini javob vaqti juda o'zgaruvchan (sinovda 0,8–7 s), bu usul sekin "dum"larni kesadi.
+ */
+export async function* streamGemini(body: Record<string, unknown>, opts: StreamOptions): AsyncGenerator<string> {
+  if (!opts.hedgeMs || opts.hedgeMs <= 0) {
+    yield* streamGeminiOnce(body, opts);
+    return;
+  }
+  type Lane = { it: AsyncGenerator<string>; ac: AbortController };
+  const lane = (model: string | undefined): Lane => {
+    const ac = new AbortController();
+    const onAbort = () => ac.abort();
+    opts.signal?.addEventListener('abort', onAbort, { once: true });
+    const cfg = (body.generationConfig ?? {}) as Record<string, unknown>;
+    const b = model && model !== opts.model ? { ...body, generationConfig: { ...cfg, thinkingConfig: thinkingFor(model) } } : body;
+    return { ac, it: streamGeminiOnce(b, { ...opts, model: model ?? opts.model, fallbackModel: model ? undefined : opts.fallbackModel, signal: ac.signal }) };
+  };
+  const lanes: Lane[] = [lane(undefined)];
+  const firsts = new Map<Lane, Promise<{ lane: Lane; r: IteratorResult<string> | { error: unknown } }>>();
+  const pull = (l: Lane) =>
+    l.it.next().then(
+      (r) => ({ lane: l, r }),
+      (error) => ({ lane: l, r: { error } }),
+    );
+  firsts.set(lanes[0], pull(lanes[0]));
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const hedge = new Promise<'hedge'>((res) => (timer = setTimeout(() => res('hedge'), opts.hedgeMs)));
+  let winner: { lane: Lane; r: IteratorResult<string> } | null = null;
+  let lastError: unknown;
+  try {
+    while (!winner && firsts.size) {
+      const race = await Promise.race<'hedge' | { lane: Lane; r: IteratorResult<string> | { error: unknown } }>([...firsts.values(), ...(lanes.length === 1 ? [hedge] : [])]);
+      if (race === 'hedge') {
+        const second = lane(opts.fallbackModel ?? opts.model);
+        lanes.push(second);
+        firsts.set(second, pull(second));
+        continue;
+      }
+      firsts.delete(race.lane);
+      if ('error' in race.r) {
+        lastError = race.r.error;
+        // Birinchi yo'l xato bersa va zaxira hali boshlanmagan bo'lsa — darhol boshlaymiz.
+        if (lanes.length === 1) {
+          clearTimeout(timer);
+          const second = lane(opts.fallbackModel ?? opts.model);
+          lanes.push(second);
+          firsts.set(second, pull(second));
+        }
+        continue;
+      }
+      winner = { lane: race.lane, r: race.r };
+    }
+  } finally {
+    clearTimeout(timer);
+  }
+  if (!winner) throw lastError;
+  for (const l of lanes) if (l !== winner.lane) l.ac.abort();
+  if (!winner.r.done) {
+    yield winner.r.value;
+    yield* winner.lane.it;
+  }
+}
+
+async function* streamGeminiOnce(body: Record<string, unknown>, opts: StreamOptions): AsyncGenerator<string> {
+  const res = await openGemini(body, opts);
+  if (!res.body) throw Object.assign(new Error('Gemini empty body'), { status: 502 });
   const reader = res.body.getReader();
   const decoder = new TextDecoder();
   let buf = '';
@@ -265,7 +371,11 @@ export async function* streamGemini(body: Record<string, unknown>, opts: StreamO
           yield p.text;
         }
       }
-      if (cand?.finishReason === 'SAFETY' && !yielded) throw Object.assign(new Error('blocked'), { code: 'blocked' });
+      if ((cand?.finishReason === 'SAFETY' || cand?.finishReason === 'PROHIBITED_CONTENT') && !yielded) throw Object.assign(new Error('blocked'), { code: 'blocked' });
+      if (cand?.finishReason && cand.finishReason !== 'STOP' && yielded && opts.cutSuffix) {
+        // Javob o'rtada uzilsa (filtr yoki token limiti), chala gap qolmasligi uchun tabiiy yakun.
+        yield opts.cutSuffix;
+      }
     }
     if (done) break;
   }
@@ -296,7 +406,7 @@ export function streamTutor(req: TutorRequest, opts: StreamOptions): AsyncGenera
       },
       safetySettings: SAFETY,
     },
-    opts,
+    { ...opts, cutSuffix: opts.cutSuffix ?? '… Kechirasiz, fikrimni yo\'qotib qo\'ydim. Keling, davom etamiz — qani, ayting-chi?' },
   );
 }
 
