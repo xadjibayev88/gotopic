@@ -54,26 +54,26 @@ export function Result({ reward, config, onDone }: { reward: Reward; config: Ses
           </div>
           <div className="result-cards">
             <div className="rcard" style={{ ['--c' as string]: '#F5B400' }}>
-              <div className="rcard-h">JAMI XP</div>
-              <div className="rcard-v">⚡ {xp}</div>
+              <div className="rcard-h">JAMI BALL</div>
+              <div className="rcard-v">⭐ {xp}</div>
             </div>
             <div className="rcard" style={{ ['--c' as string]: '#22C55E' }}>
               <div className="rcard-h">ANIQLIK</div>
               <div className="rcard-v">🎯 {reward.accuracy}%</div>
             </div>
-            <div className="rcard" style={{ ['--c' as string]: '#2F6BFF' }}>
-              <div className="rcard-h">OLMOS</div>
-              <div className="rcard-v">💎 +{reward.gems}</div>
+            <div className="rcard" style={{ ['--c' as string]: '#2B3A9B' }}>
+              <div className="rcard-h">TANGA</div>
+              <div className="rcard-v">🪙 +{reward.gems}</div>
             </div>
           </div>
           {(reward.bonus.length > 0 || reward.heartBack || reward.goalReachedNow) && (
             <ul className="bonus-list">
               {reward.bonus.map((b) => (
                 <li key={b.label}>
-                  ✨ {b.label} <b>+{b.xp} XP</b>
+                  ✨ {b.label} <b>+{b.xp} ball</b>
                 </li>
               ))}
-              {reward.heartBack && <li>❤️ Mashq uchun +1 yurak</li>}
+              {reward.heartBack && <li>☕ Mashq uchun +1 chashka kofe</li>}
               {reward.goalReachedNow && <li>🎯 Kunlik maqsad bajarildi!</li>}
             </ul>
           )}
@@ -82,9 +82,9 @@ export function Result({ reward, config, onDone }: { reward: Reward; config: Ses
 
       {step === 'streak' && (
         <div className="result-hero">
-          <div className="flame-big">🔥</div>
+          <div className="flame-big">☀️</div>
           <div className="streak-num">{state.streak}</div>
-          <h1>kunlik streak!</h1>
+          <h1>kunlik seriya!</h1>
           <WeekStrip />
           <p className="muted">{state.streak === 1 ? "Ajoyib boshlanish! Ertaga ham qaytib keling." : `Ketma-ket ${state.streak} kun o'qiyapsiz. To'xtamang!`}</p>
         </div>
@@ -132,7 +132,7 @@ export function WeekStrip() {
         return (
           <div key={d} className={`wd ${k === today ? 'today' : ''}`}>
             <span>{d}</span>
-            <div className={`wd-dot ${active ? 'on' : frozen ? 'frozen' : ''}`}>{active ? '✓' : frozen ? '❄' : ''}</div>
+            <div className={`wd-dot ${active ? 'on' : frozen ? 'frozen' : ''}`}>{active ? '☀' : frozen ? '⛱' : ''}</div>
           </div>
         );
       })}

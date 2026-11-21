@@ -7,7 +7,6 @@ import {
   buyHeartRefill,
   HEART_REFILL_COST,
   loseHeart,
-  MAX_HEARTS,
   wordRecall,
   type Reward,
   type SessionResult,
@@ -205,14 +204,14 @@ export function Session({ config, onExit }: { config: SessionConfig; onExit: () 
           <div className="progress-fill" style={{ width: `${Math.max(3, progress * 100)}%` }}>
             <div className="progress-shine" />
           </div>
-          {combo >= 3 && <span className="combo">🔥 {combo}x</span>}
+          {combo >= 3 && <span className="combo">⚡ {combo}x</span>}
         </div>
         {usesHearts ? (
           <div className="stat heart">
-            ❤️ <b>{state.hearts}</b>
+            ☕ <b>{state.hearts}</b>
           </div>
         ) : (
-          <div className="stat heart">❤️ ∞</div>
+          <div className="stat heart">☕ ∞</div>
         )}
       </header>
 
@@ -285,8 +284,8 @@ export function Session({ config, onExit }: { config: SessionConfig; onExit: () 
         <div className="modal-back">
           <div className="sheet">
             <div className="big-emoji">💔</div>
-            <h3>Yuraklar tugadi!</h3>
-            <p className="muted">Har 30 daqiqada bitta yurak tiklanadi. Yoki mashq qilib yurak ishlab oling.</p>
+            <h3>Kofe tugadi!</h3>
+            <p className="muted">Har 30 daqiqada bir chashka kofe tayyor bo'ladi. Yoki mashq qilib kofe ishlab oling.</p>
             <button
               type="button"
               className="btn btn-primary btn-lg"
@@ -300,7 +299,7 @@ export function Session({ config, onExit }: { config: SessionConfig; onExit: () 
                 else setPos(pos + 1);
               }}
             >
-              To'ldirish ({MAX_HEARTS} ❤️) — 💎 {HEART_REFILL_COST}
+              Termosni to'ldirish — 🪙 {HEART_REFILL_COST}
             </button>
             <button type="button" className="btn btn-text" onClick={onExit}>
               Chiqish

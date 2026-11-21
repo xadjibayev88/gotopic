@@ -7,17 +7,19 @@ import { Practice } from './screens/Practice';
 import { Leagues } from './screens/Leagues';
 import { Profile } from './screens/Profile';
 import { Shop } from './screens/Shop';
+import { Tutor } from './screens/Tutor';
 import { Onboarding } from './screens/Onboarding';
 import { Session, type SessionConfig } from './screens/Session';
 import { WeekStrip } from './screens/Result';
 import { Mascot } from './components/Mascot';
 
-type Tab = 'learn' | 'practice' | 'leagues' | 'profile' | 'shop';
+type Tab = 'learn' | 'tutor' | 'practice' | 'leagues' | 'profile' | 'shop';
 
 const TABS: { id: Tab; label: string; icon: string }[] = [
-  { id: 'learn', label: "O'rganish", icon: '🏠' },
+  { id: 'learn', label: "Metro", icon: '🚇' },
+  { id: 'tutor', label: 'Ustoz', icon: '💬' },
   { id: 'practice', label: 'Mashq', icon: '🏋️' },
-  { id: 'leagues', label: 'Liga', icon: '🏆' },
+  { id: 'leagues', label: 'Turnir', icon: '🗼' },
   { id: 'shop', label: "Do'kon", icon: '🛍️' },
   { id: 'profile', label: 'Profil', icon: '👤' },
 ];
@@ -57,7 +59,7 @@ export function App() {
   if (session) return <Session config={session} onExit={() => setSession(null)} />;
 
   return (
-    <div className="shell">
+    <div className={`shell ${tab === 'tutor' ? 'tutor-mode' : ''}`}>
       <nav className="sidebar">
         <div className="logo">
           <span className="logo-mark">🥐</span> Salut!
@@ -74,6 +76,7 @@ export function App() {
         <TopBar onShop={() => go('shop')} onProfile={() => go('profile')} />
         <div className="content">
           {tab === 'learn' && <Learn onStart={start} />}
+          {tab === 'tutor' && <Tutor />}
           {tab === 'practice' && <Practice onStart={start} />}
           {tab === 'leagues' && <Leagues />}
           {tab === 'profile' && <Profile />}
@@ -97,10 +100,10 @@ export function App() {
         <div className="modal-back" onClick={() => setBlocked(false)}>
           <div className="sheet" onClick={(e) => e.stopPropagation()}>
             <div className="big-emoji">💔</div>
-            <h3>Yuraklar tugadi</h3>
-            <p className="muted">Keyingi yurak {Math.ceil((msToNextHeart(state) ?? 0) / 60000)} daqiqada tiklanadi. Mashq qilib yurak ishlab oling yoki do'kondan to'ldiring.</p>
+            <h3>Kofe tugadi</h3>
+            <p className="muted">Keyingi chashka {Math.ceil((msToNextHeart(state) ?? 0) / 60000)} daqiqada tayyor bo'ladi. Mashq qilib kofe ishlab oling yoki do'kondan to'ldiring.</p>
             <button type="button" className="btn btn-primary btn-lg" onClick={() => { setBlocked(false); setSession({ kind: 'practice', mode: 'smart' }); }}>
-              Mashq qilish (+1 ❤️)
+              Mashq qilish (+1 ☕)
             </button>
             <button type="button" className="btn btn-text" onClick={() => { setBlocked(false); go('shop'); }}>
               Do'konga o'tish
@@ -120,14 +123,14 @@ function TopBar({ onShop, onProfile }: { onShop: () => void; onProfile: () => vo
       <button type="button" className="stat flag" title="Fransuz tili" onClick={onProfile}>
         🇫🇷
       </button>
-      <button type="button" className={`stat streak ${active ? 'on' : ''}`} title="Streak" onClick={onProfile}>
-        🔥 <b>{state.streak}</b>
+      <button type="button" className={`stat streak ${active ? 'on' : ''}`} title="Kunlik seriya" onClick={onProfile}>
+        ☀️ <b>{state.streak}</b>
       </button>
-      <button type="button" className="stat gems" title="Olmoslar" onClick={onShop}>
-        💎 <b>{state.gems}</b>
+      <button type="button" className="stat gems" title="Tangalar" onClick={onShop}>
+        🪙 <b>{state.gems}</b>
       </button>
-      <button type="button" className="stat heart" title="Yuraklar" onClick={onShop}>
-        ❤️ <b>{state.unlimitedHearts ? '∞' : state.hearts}</b>
+      <button type="button" className="stat heart" title="Kofe (xato qilsangiz kamayadi)" onClick={onShop}>
+        ☕ <b>{state.unlimitedHearts ? '∞' : state.hearts}</b>
       </button>
     </header>
   );
@@ -143,19 +146,19 @@ function SidePanels({ onGo }: { onGo: (t: Tab) => void }) {
       <TopBar onShop={() => onGo('shop')} onProfile={() => onGo('profile')} />
       <div className="panel" onClick={() => onGo('leagues')}>
         <div className="panel-h">
-          <b>{lg.name} ligasi</b>
+          <b>{lg.name} bosqichi</b>
           <span className="link">Ko'rish</span>
         </div>
         <div className="panel-row">
           <span className="panel-big">{lg.icon}</span>
-          <span className="muted">Bu hafta {state.league.weeklyXp} XP to'pladingiz</span>
+          <span className="muted">Bu hafta {state.league.weeklyXp} ball to'pladingiz</span>
         </div>
       </div>
       <div className="panel">
         <div className="panel-h">
           <b>Kunlik maqsad</b>
           <span className="muted">
-            {todayXp}/{state.dailyGoal} XP
+            {todayXp}/{state.dailyGoal} ball
           </span>
         </div>
         <div className="goal-row">
@@ -167,18 +170,18 @@ function SidePanels({ onGo }: { onGo: (t: Tab) => void }) {
       </div>
       <div className="panel">
         <div className="panel-h">
-          <b>Streak</b>
-          <span className="muted">🧊 {state.streakFreezes}</span>
+          <b>Kunlik seriya</b>
+          <span className="muted">⛱️ {state.streakFreezes}</span>
         </div>
         <WeekStrip />
       </div>
       {state.hearts < MAX_HEARTS && !state.unlimitedHearts && (
         <div className="panel">
           <div className="panel-h">
-            <b>Yuraklar</b>
+            <b>Kofe</b>
             <span className="muted">{Math.ceil((msToNextHeart(state) ?? 0) / 60000)} daq.</span>
           </div>
-          <div className="hearts-row">{Array.from({ length: MAX_HEARTS }, (_, i) => (i < state.hearts ? '❤️' : '🤍')).join(' ')}</div>
+          <div className="hearts-row">{Array.from({ length: MAX_HEARTS }, (_, i) => (i < state.hearts ? '☕' : '▫️')).join(' ')}</div>
         </div>
       )}
       <div className="panel tip">

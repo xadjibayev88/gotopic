@@ -39,6 +39,24 @@ export function speak(text: string, rate = 0.9): void {
   synth.speak(u);
 }
 
+/** Bir nechta fransuzcha iborani ketma-ket o'qiydi. */
+export function speakQueue(parts: string[], rate = 0.9): void {
+  if (!ttsSupported() || !parts.length) return;
+  const synth = window.speechSynthesis;
+  synth.cancel();
+  for (const p of parts) {
+    const u = new SpeechSynthesisUtterance(p);
+    u.lang = 'fr-FR';
+    if (frVoice) u.voice = frVoice;
+    u.rate = rate;
+    synth.speak(u);
+  }
+}
+
+export function stopSpeaking(): void {
+  if (ttsSupported()) window.speechSynthesis.cancel();
+}
+
 // ---------- Effektlar ----------
 
 let ctx: AudioContext | null = null;

@@ -10,7 +10,7 @@ const GOALS = [
   { xp: 50, label: 'Shiddatli', time: '20+ daqiqa / kun' },
 ];
 
-const REASONS = ['✈️ Sayohat', '🎓 O\'qish', '💼 Ish', '🎬 Madaniyat', '🧠 Miya mashqi', '❤️ Shunchaki qiziq'];
+const REASONS = ['✈️ Sayohat', '🎓 O\'qish', '💼 Ish', '🎬 Madaniyat', '🧠 Miya mashqi', '💡 Shunchaki qiziq'];
 
 export function Onboarding() {
   const { update } = useStore();

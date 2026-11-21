@@ -31,19 +31,19 @@ export function Profile() {
       <h2 className="section-title">Statistika</h2>
       <div className="stats-grid">
         <div className="scard">
-          <span>🔥</span>
+          <span>☀️</span>
           <b>{state.streak}</b>
-          <small>Kunlik streak</small>
+          <small>Kunlik seriya</small>
         </div>
         <div className="scard">
-          <span>⚡</span>
+          <span>⭐</span>
           <b>{state.xp}</b>
-          <small>Jami XP</small>
+          <small>Jami ball</small>
         </div>
         <div className="scard">
           <span>{LEAGUES[state.league.tier].icon}</span>
           <b>{LEAGUES[state.league.tier].name}</b>
-          <small>Joriy liga</small>
+          <small>Turnir bosqichi</small>
         </div>
         <div className="scard">
           <span>📚</span>
@@ -53,7 +53,7 @@ export function Profile() {
         <div className="scard">
           <span>🏅</span>
           <b>{state.longestStreak}</b>
-          <small>Eng uzun streak</small>
+          <small>Eng uzun seriya</small>
         </div>
         <div className="scard">
           <span>💯</span>
@@ -64,12 +64,12 @@ export function Profile() {
 
       <h2 className="section-title">Shu hafta</h2>
       <WeekStrip />
-      <div className="xp-chart" aria-label="So'nggi 14 kunlik XP">
+      <div className="xp-chart" aria-label="So'nggi 14 kunlik ball">
         <div className="xp-bars">
           {days.map((d) => {
             const v = state.xpByDay[d] ?? 0;
             return (
-              <div key={d} className="xp-col" title={`${d}: ${v} XP`}>
+              <div key={d} className="xp-col" title={`${d}: ${v} ball`}>
                 <div className={`xp-bar ${v >= state.dailyGoal ? 'goal' : ''}`} style={{ height: `${(v / max) * 100}%` }} />
               </div>
             );
@@ -148,7 +148,7 @@ export function Profile() {
           <div className="sheet" onClick={(e) => e.stopPropagation()}>
             <div className="big-emoji">⚠️</div>
             <h3>Hamma progress o'chiriladi</h3>
-            <p className="muted">XP, streak, so'zlar va yutuqlar qaytarib bo'lmaydigan tarzda o'chadi.</p>
+            <p className="muted">Ball, seriya, so'zlar va yutuqlar qaytarib bo'lmaydigan tarzda o'chadi.</p>
             <button type="button" className="btn btn-danger btn-lg" onClick={reset}>
               Ha, o'chirish
             </button>

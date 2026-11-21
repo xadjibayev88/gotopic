@@ -36,11 +36,11 @@ export function Leagues() {
           </div>
         ))}
       </div>
-      <h1 className="page-title center">{LEAGUES[lg.tier].name} ligasi</h1>
+      <h1 className="page-title center">{LEAGUES[lg.tier].name} bosqichi</h1>
       <p className="muted center">
-        Eng yaxshi {PROMOTE} kishi keyingi ligaga o'tadi · {timeLeft(lg.weekId)} qoldi
+        Eng yaxshi {PROMOTE} kishi keyingi shaharga yo'l oladi · {timeLeft(lg.weekId)} qoldi
       </p>
-      {lg.weeklyXp === 0 && <div className="league-hint">Bir dars tugatib, reytingga qo'shiling!</div>}
+      {lg.weeklyXp === 0 && <div className="league-hint">Bir dars tugatib, turnirga qo'shiling!</div>}
       <ol className="board">
         {rows.map((r, i) => {
           const rank = i + 1;
@@ -52,7 +52,7 @@ export function Leagues() {
               <span className={`brank r${rank}`}>{rank <= 3 ? ['🥇', '🥈', '🥉'][rank - 1] : rank}</span>
               <span className="bavatar">{r.avatar}</span>
               <span className="bname">{r.isMe ? `${r.name} (siz)` : r.name}</span>
-              <span className="bxp">{r.xp} XP</span>
+              <span className="bxp">{r.xp} ball</span>
             </li>
           );
         })}
@@ -64,10 +64,10 @@ export function Leagues() {
             <h3>O'tgan hafta: {res.rank}-o'rin</h3>
             <p className="muted">
               {res.toTier > res.fromTier
-                ? `Tabriklaymiz! Siz ${LEAGUES[res.toTier].name} ligasiga ko'tarildingiz.`
+                ? `Tabriklaymiz! Siz ${LEAGUES[res.toTier].name} bosqichiga ko'tarildingiz. Chemodanni yig'ing!`
                 : res.toTier < res.fromTier
-                  ? `Siz ${LEAGUES[res.toTier].name} ligasiga tushdingiz. Bu hafta qaytib chiqing!`
-                  : `${LEAGUES[res.toTier].name} ligasida qoldingiz.`}
+                  ? `Siz ${LEAGUES[res.toTier].name} bosqichiga qaytdingiz. Bu hafta qaytib chiqing!`
+                  : `${LEAGUES[res.toTier].name} bosqichida qoldingiz.`}
             </p>
             <button
               type="button"

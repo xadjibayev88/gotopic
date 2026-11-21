@@ -1,94 +1,106 @@
 import { useEffect, useRef, useState } from 'react';
 import { COURSE, type Unit } from '../data/course';
-import { buildPath, isLessonUnlocked, nodeState, openChest, chestReward, type PathNode } from '../engine/game';
+import { buildPath, chestReward, isLessonUnlocked, nodeState, openChest, type PathNode } from '../engine/game';
 import { playSfx, speak } from '../engine/audio';
 import { useStore } from '../state/store';
 import { Mascot } from '../components/Mascot';
 import type { SessionConfig } from './Session';
 
-const OFFSETS = [0, 44, 70, 44, 0, -44, -70, -44];
-
+// Darslar yo'li — Parij metrosi xaritasi uslubida: bo'lim = liniya, dars = bekat.
 export function Learn({ onStart }: { onStart: (c: SessionConfig) => void }) {
   const { state } = useStore();
   const [guide, setGuide] = useState<Unit | null>(null);
-  const [popover, setPopover] = useState<string | null>(null);
-  const activeRef = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState<string | null>(null);
+  const activeRef = useRef<HTMLLIElement>(null);
 
   useEffect(() => {
     activeRef.current?.scrollIntoView({ block: 'center', behavior: 'instant' as ScrollBehavior });
   }, []);
 
   return (
-    <div className="learn" onClick={() => setPopover(null)}>
-      {COURSE.map((u, ui) => (
-        <section key={u.id} className="unit" style={{ ['--unit' as string]: u.color }}>
-          <div className={`unit-head ${isLessonUnlocked(state, u.lessons[0].id) ? '' : 'locked'}`}>
-            <div>
-              <div className="unit-kicker">{ui + 1}-BO'LIM</div>
-              <h2>{u.title}</h2>
-              <p>{u.description}</p>
-            </div>
-            <button
-              type="button"
-              className="guide-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                setGuide(u);
-              }}
-            >
-              📘 <span>Qo'llanma</span>
-            </button>
-          </div>
-          <div className="path">
-            {buildPath(ui).map((node, ni) => (
-              <PathItem
-                key={node.id}
-                node={node}
-                offset={OFFSETS[ni % OFFSETS.length]}
-                open={popover === node.id}
-                onToggle={() => setPopover(popover === node.id ? null : node.id)}
-                onStart={onStart}
-                activeRef={activeRef}
-              />
-            ))}
-          </div>
-        </section>
-      ))}
+    <div className="learn">
+      {COURSE.map((u, ui) => {
+        const locked = !isLessonUnlocked(state, u.lessons[0].id);
+        const done = u.lessons.filter((l) => state.lessonsDone[l.id]).length;
+        return (
+          <section key={u.id} className={`line ${locked ? 'locked' : ''}`} style={{ ['--unit' as string]: u.color }}>
+            <header className="line-head">
+              <span className="line-badge">{ui + 1}</span>
+              <div className="line-text">
+                <small>
+                  LINIYA {ui + 1} · {done}/{u.lessons.length} bekat
+                </small>
+                <h2>{u.title}</h2>
+                <p>{u.description}</p>
+              </div>
+              <button type="button" className="guide-btn" onClick={() => setGuide(u)} aria-label="Qo'llanma">
+                📘
+              </button>
+            </header>
+            <ol className="stations">
+              {buildPath(ui).map((node) => (
+                <Station
+                  key={node.id}
+                  node={node}
+                  expanded={open === node.id}
+                  onToggle={() => setOpen(open === node.id ? null : node.id)}
+                  onStart={onStart}
+                  activeRef={activeRef}
+                />
+              ))}
+            </ol>
+          </section>
+        );
+      })}
       <div className="course-end">
         <Mascot mood="sleep" size={110} />
-        <p className="muted">Yangi bo'limlar tez orada qo'shiladi. À bientôt !</p>
+        <p className="muted">Yangi liniyalar qurilmoqda. À bientôt !</p>
       </div>
       {guide && <GuideModal unit={guide} onClose={() => setGuide(null)} />}
     </div>
   );
 }
 
-function PathItem({
+function Station({
   node,
-  offset,
-  open,
+  expanded,
   onToggle,
   onStart,
   activeRef,
 }: {
   node: PathNode;
-  offset: number;
-  open: boolean;
+  expanded: boolean;
   onToggle: () => void;
   onStart: (c: SessionConfig) => void;
-  activeRef: React.RefObject<HTMLDivElement>;
+  activeRef: React.RefObject<HTMLLIElement>;
 }) {
   const { state, update } = useStore();
   const st = nodeState(state, node);
   const unit = COURSE[node.unitIndex];
   const [opened, setOpened] = useState<number | null>(null);
-
-  const icon =
-    node.type === 'chest' ? (st === 'done' ? '📭' : '🎁') : node.type === 'review' ? '🏆' : st === 'done' ? '✓' : st === 'locked' ? '🔒' : '★';
   const times = node.type === 'lesson' ? state.lessonsDone[node.id] ?? 0 : 0;
+  const isNext = st === 'active' && node.type === 'lesson';
 
-  const onClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const title = node.type === 'lesson' ? node.title : node.type === 'chest' ? "Sovg'a bekati" : 'Terminal: yakuniy takrorlash';
+  const sub =
+    node.type === 'lesson'
+      ? st === 'done'
+        ? `O'tilgan${times > 1 ? ` · ${times} marta` : ''}`
+        : st === 'active'
+          ? 'Keyingi bekat'
+          : `${node.lessonIndex + 1}-dars`
+      : node.type === 'chest'
+        ? st === 'done'
+          ? 'Ochilgan'
+          : `${chestReward(node.id)} tagacha tanga`
+        : st === 'locked'
+          ? "Barcha bekatlardan o'ting"
+          : st === 'done'
+            ? 'Bajarilgan'
+            : 'Ochiq · +15 ball';
+  const icon = node.type === 'chest' ? (st === 'done' ? '📭' : '🎁') : node.type === 'review' ? '🏁' : st === 'done' ? '✓' : st === 'locked' ? '' : '▶';
+
+  const click = () => {
     if (node.type === 'chest' && st === 'active') {
       const r = openChest(state, node.id);
       update(() => r.state);
@@ -100,76 +112,63 @@ function PathItem({
   };
 
   return (
-    <div className={`node-wrap ${open || opened !== null ? 'open' : ''}`} style={{ transform: `translateX(${offset}px)` }} ref={st === 'active' && node.type === 'lesson' ? activeRef : undefined}>
-      {st === 'active' && node.type === 'lesson' && <div className="start-tag">BOSHLASH</div>}
-      <button type="button" className={`node node-${node.type} ${st}`} onClick={onClick} aria-label={node.type === 'lesson' ? node.title : node.type}>
-        {st === 'active' && node.type === 'lesson' && <span className="node-ring" />}
-        <span className="node-icon">{icon}</span>
+    <li className={`station ${st} st-${node.type} ${isNext ? 'next' : ''}`} ref={isNext ? activeRef : undefined}>
+      <button type="button" className="st-row" onClick={click} aria-expanded={expanded}>
+        <span className="st-dot">{icon}</span>
+        <span className="st-label">
+          <b>{title}</b>
+          <small>{sub}</small>
+        </span>
+        {isNext && <span className="st-next">Shu yerdan</span>}
       </button>
-      {times > 1 && <div className="node-level">×{times}</div>}
+
       {opened !== null && (
-        <div className="popover" onClick={(e) => e.stopPropagation()}>
-          <b>Sandiq ochildi!</b>
-          <p>💎 +{opened} olmos</p>
-          <button type="button" className="btn btn-white" onClick={() => setOpened(null)}>
-            Zo'r!
+        <div className="st-card">
+          <p>
+            🎁 Sovg'a ochildi: <b>+{opened} tanga</b>
+          </p>
+          <button type="button" className="btn btn-primary" onClick={() => setOpened(null)}>
+            Merci !
           </button>
         </div>
       )}
-      {open && (
-        <div className="popover" onClick={(e) => e.stopPropagation()} style={{ ['--unit' as string]: st === 'locked' ? '#9CA3AF' : unit.color }}>
-          {node.type === 'lesson' && (
+
+      {expanded && node.type === 'lesson' && (
+        <div className="st-card">
+          {st === 'locked' ? (
+            <p className="muted">Bu bekatga yetish uchun oldingi darslarni tugating.</p>
+          ) : (
             <>
-              <b>{node.title}</b>
-              <p>
-                {st === 'locked'
-                  ? 'Ochish uchun oldingi darslarni tugating'
-                  : st === 'done'
-                    ? `${times} marta o'tilgan · har safar qiyinroq`
-                    : `${node.lessonIndex + 1}-dars / ${unit.lessons.length}`}
-              </p>
-              {st !== 'locked' && (
-                <>
-                  <div className="pop-words">
-                    {unit.lessons[node.lessonIndex].words.slice(0, 4).map((w) => (
-                      <span
-                        key={w.fr}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          speak(w.fr);
-                        }}
-                      >
-                        {w.emoji} {w.fr}
-                      </span>
-                    ))}
-                  </div>
-                  <button type="button" className="btn btn-white" onClick={() => onStart({ kind: 'lesson', lessonId: node.id })}>
-                    {st === 'done' ? 'Takrorlash +10 XP' : 'Boshlash +10 XP'}
+              <div className="pop-words">
+                {unit.lessons[node.lessonIndex].words.map((w) => (
+                  <button key={w.fr} type="button" onClick={() => speak(w.fr, state.settings.ttsRate)}>
+                    {w.emoji} {w.fr}
                   </button>
-                </>
-              )}
-            </>
-          )}
-          {node.type === 'review' && (
-            <>
-              <b>{unit.title}: yakuniy takrorlash</b>
-              <p>{st === 'locked' ? "Avval bo'limdagi barcha darslarni tugating" : "Bo'limdagi hamma narsani mustahkamlang"}</p>
-              {st !== 'locked' && (
-                <button type="button" className="btn btn-white" onClick={() => onStart({ kind: 'review', unitIndex: node.unitIndex })}>
-                  Boshlash +15 XP
-                </button>
-              )}
-            </>
-          )}
-          {node.type === 'chest' && (
-            <>
-              <b>Sandiq</b>
-              <p>{st === 'done' ? 'Allaqachon ochilgan' : `Ichida ${chestReward(node.id)} tagacha olmos bor. Oldingi darslarni tugating.`}</p>
+                ))}
+              </div>
+              <button type="button" className="btn btn-primary btn-lg" onClick={() => onStart({ kind: 'lesson', lessonId: node.id })}>
+                {st === 'done' ? 'Takrorlash · +10 ball' : 'Darsni boshlash · +10 ball'}
+              </button>
             </>
           )}
         </div>
       )}
-    </div>
+      {expanded && node.type === 'review' && (
+        <div className="st-card">
+          <p className="muted">{st === 'locked' ? 'Avval liniyadagi barcha darslarni tugating.' : "Bo'limdagi hamma so'z va gaplarni mustahkamlang."}</p>
+          {st !== 'locked' && (
+            <button type="button" className="btn btn-primary btn-lg" onClick={() => onStart({ kind: 'review', unitIndex: node.unitIndex })}>
+              Takrorlashni boshlash · +15 ball
+            </button>
+          )}
+        </div>
+      )}
+      {expanded && node.type === 'chest' && st !== 'active' && (
+        <div className="st-card">
+          <p className="muted">{st === 'done' ? "Bu sovg'a allaqachon ochilgan." : "Sovg'ani ochish uchun oldingi bekatlardan o'ting."}</p>
+        </div>
+      )}
+    </li>
   );
 }
 

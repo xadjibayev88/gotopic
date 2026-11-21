@@ -42,6 +42,8 @@ export interface GameState {
   streakFreezes: number;
   frozenDays: string[];
   xpByDay: Record<string, number>;
+  chatXpByDay: Record<string, number>;
+  chatMessages: number;
   lessonsDone: Record<string, number>;
   lessonsCompleted: number;
   perfectLessons: number;
@@ -51,7 +53,7 @@ export interface GameState {
   mistakes: Record<string, number>;
   league: LeagueState;
   achievements: Record<string, number>;
-  settings: { sound: boolean; ttsRate: number; listening: boolean };
+  settings: { sound: boolean; ttsRate: number; listening: boolean; tutorVoice: boolean };
 }
 
 export function initialState(now = Date.now()): GameState {
@@ -72,6 +74,8 @@ export function initialState(now = Date.now()): GameState {
     streakFreezes: 0,
     frozenDays: [],
     xpByDay: {},
+    chatXpByDay: {},
+    chatMessages: 0,
     lessonsDone: {},
     lessonsCompleted: 0,
     perfectLessons: 0,
@@ -81,7 +85,7 @@ export function initialState(now = Date.now()): GameState {
     mistakes: {},
     league: { tier: 0, weekId: weekId(new Date(now)), weeklyXp: 0 },
     achievements: {},
-    settings: { sound: true, ttsRate: 0.9, listening: true },
+    settings: { sound: true, ttsRate: 0.9, listening: true, tutorVoice: true },
   };
 }
 
@@ -142,17 +146,18 @@ export function streakActiveToday(s: GameState, now = new Date()): boolean {
 
 // ---------- Liga ----------
 
+// Turnir bosqichlari — Fransiya shaharlari bo'ylab sayohat (Ruandan Parijgacha).
 export const LEAGUES = [
-  { name: 'Bronza', color: '#C27C47', icon: '🥉' },
-  { name: 'Kumush', color: '#9CA3AF', icon: '🥈' },
-  { name: 'Oltin', color: '#F5B400', icon: '🥇' },
-  { name: 'Sapfir', color: '#2563EB', icon: '💠' },
-  { name: 'Yoqut', color: '#DC2626', icon: '♦️' },
-  { name: 'Zumrad', color: '#059669', icon: '💚' },
-  { name: 'Ametist', color: '#7C3AED', icon: '🔮' },
-  { name: 'Marvarid', color: '#EC4899', icon: '🦪' },
-  { name: 'Obsidian', color: '#1F2937', icon: '🖤' },
-  { name: 'Olmos', color: '#06B6D4', icon: '💎' },
+  { name: 'Ruan', color: '#A16207', icon: '⛪' },
+  { name: 'Lill', color: '#6B7280', icon: '🧇' },
+  { name: 'Nant', color: '#0E7490', icon: '🐘' },
+  { name: 'Strasburg', color: '#B45309', icon: '🥨' },
+  { name: 'Bordo', color: '#9F1239', icon: '🍇' },
+  { name: 'Tuluza', color: '#DB2777', icon: '🌸' },
+  { name: 'Marsel', color: '#0369A1', icon: '⚓' },
+  { name: 'Lion', color: '#B91C1C', icon: '🦁' },
+  { name: 'Nitsa', color: '#0891B2', icon: '🏖️' },
+  { name: 'Parij', color: '#1E2A78', icon: '🗼' },
 ];
 
 export const LEAGUE_SIZE = 30;
@@ -329,6 +334,32 @@ export function applySession(s: GameState, r: SessionResult, now = new Date()): 
   };
 }
 
+// ---------- AI ustoz bilan suhbat ----------
+
+export const CHAT_XP = 2;
+export const CHAT_XP_DAILY_CAP = 20;
+
+/** Ustozga yuborilgan har bir xabar uchun XP (kuniga cheklangan); streak va ligaga ham hisoblanadi. */
+export function applyChatTurn(s: GameState, now = new Date()): { state: GameState; xp: number } {
+  const today = dayKey(now);
+  const used = s.chatXpByDay[today] ?? 0;
+  const xp = Math.max(0, Math.min(CHAT_XP, CHAT_XP_DAILY_CAP - used));
+  let next: GameState = { ...s, chatMessages: s.chatMessages + 1 };
+  if (xp > 0) {
+    next = touchStreak(rolloverLeague(next, now), now);
+    next = {
+      ...next,
+      xp: next.xp + xp,
+      xpByDay: { ...next.xpByDay, [today]: (next.xpByDay[today] ?? 0) + xp },
+      chatXpByDay: { ...next.chatXpByDay, [today]: used + xp },
+      league: { ...next.league, weeklyXp: next.league.weeklyXp + xp },
+    };
+  }
+  const unlocked = evaluateAchievements(next, now.getTime());
+  if (unlocked.length) next = { ...next, achievements: { ...next.achievements, ...Object.fromEntries(unlocked.map((a) => [a, now.getTime()])) } };
+  return { state: next, xp };
+}
+
 // ---------- Yutuqlar ----------
 
 export interface Achievement {
@@ -344,17 +375,19 @@ const learnedWords = (s: GameState) => Object.keys(s.words).length;
 
 export const ACHIEVEMENTS: Achievement[] = [
   { id: 'first', title: 'Ilk qadam', desc: 'Birinchi darsni tugating', icon: '🚀', goal: 1, progress: (s) => s.lessonsCompleted },
-  { id: 'streak3', title: 'Olov yoqildi', desc: '3 kunlik streak', icon: '🔥', goal: 3, progress: (s) => s.longestStreak },
-  { id: 'streak7', title: 'Bir hafta', desc: '7 kunlik streak', icon: '📆', goal: 7, progress: (s) => s.longestStreak },
-  { id: 'streak30', title: 'Temir iroda', desc: '30 kunlik streak', icon: '🏔️', goal: 30, progress: (s) => s.longestStreak },
-  { id: 'xp100', title: 'Bilimdon', desc: '100 XP to\'plang', icon: '⭐', goal: 100, progress: (s) => s.xp },
-  { id: 'xp500', title: 'Olim', desc: '500 XP to\'plang', icon: '🌟', goal: 500, progress: (s) => s.xp },
-  { id: 'xp2000', title: 'Professor', desc: '2000 XP to\'plang', icon: '🎓', goal: 2000, progress: (s) => s.xp },
+  { id: 'streak3', title: 'Quyosh chiqdi', desc: '3 kunlik seriya', icon: '☀️', goal: 3, progress: (s) => s.longestStreak },
+  { id: 'streak7', title: 'Bir hafta', desc: '7 kunlik seriya', icon: '📆', goal: 7, progress: (s) => s.longestStreak },
+  { id: 'streak30', title: 'Temir iroda', desc: '30 kunlik seriya', icon: '🏔️', goal: 30, progress: (s) => s.longestStreak },
+  { id: 'xp100', title: 'Bilimdon', desc: '100 ball to\'plang', icon: '⭐', goal: 100, progress: (s) => s.xp },
+  { id: 'xp500', title: 'Olim', desc: '500 ball to\'plang', icon: '🌟', goal: 500, progress: (s) => s.xp },
+  { id: 'xp2000', title: 'Professor', desc: '2000 ball to\'plang', icon: '🎓', goal: 2000, progress: (s) => s.xp },
   { id: 'perfect5', title: 'Mukammal', desc: '5 ta xatosiz dars', icon: '💯', goal: 5, progress: (s) => s.perfectLessons },
   { id: 'words50', title: "So'z ustasi", desc: "50 ta so'z o'rganing", icon: '📚', goal: 50, progress: learnedWords },
   { id: 'words100', title: "Lug'at", desc: "100 ta so'z o'rganing", icon: '📖', goal: 100, progress: learnedWords },
   { id: 'unit1', title: 'Bonjour !', desc: "1-bo'limni tugating", icon: '🇫🇷', goal: 1, progress: (s) => (unitComplete(s, 0) ? 1 : 0) },
   { id: 'course', title: 'Parijga tayyor', desc: 'Butun kursni tugating', icon: '🗼', goal: ALL_LESSONS.length, progress: (s) => ALL_LESSONS.filter((l) => s.lessonsDone[l.id]).length },
+  { id: 'chat10', title: 'Suhbatdosh', desc: 'Krua bilan 10 ta xabar almashing', icon: '🗨️', goal: 10, progress: (s) => s.chatMessages },
+  { id: 'chat100', title: 'Gapdon', desc: 'Krua bilan 100 ta xabar', icon: '🎙️', goal: 100, progress: (s) => s.chatMessages },
   { id: 'practice10', title: 'Takror — ilm onasi', desc: '10 marta mashq qiling', icon: '🏋️', goal: 10, progress: (s) => s.practiceDone },
 ];
 

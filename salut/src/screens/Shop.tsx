@@ -21,16 +21,16 @@ export function Shop() {
     <div className="page">
       <h1 className="page-title">Do'kon</h1>
       <div className="gem-balance">
-        💎 <b>{state.gems}</b> olmos
+        🪙 <b>{state.gems}</b> tanga
       </div>
 
-      <h2 className="section-title">Yuraklar</h2>
+      <h2 className="section-title">Kofe</h2>
       <div className="shop-item">
-        <div className="shop-icon">❤️</div>
+        <div className="shop-icon">☕</div>
         <div className="shop-body">
-          <b>Yuraklarni to'ldirish</b>
+          <b>Kofe termosini to'ldirish</b>
           <small>
-            {state.hearts}/{MAX_HEARTS} yurak
+            {state.hearts}/{MAX_HEARTS} chashka
             {next !== null && ` · keyingisi ${Math.ceil(next / 60000)} daqiqada`}
           </small>
         </div>
@@ -38,16 +38,16 @@ export function Shop() {
           type="button"
           className="btn btn-gem"
           disabled={state.hearts >= MAX_HEARTS || state.gems < HEART_REFILL_COST}
-          onClick={() => buy(buyHeartRefill, "Yuraklar to'ldirildi!")}
+          onClick={() => buy(buyHeartRefill, "Termos to'ldi! Bon appétit !")}
         >
-          💎 {HEART_REFILL_COST}
+          🪙 {HEART_REFILL_COST}
         </button>
       </div>
       <div className="shop-item">
-        <div className="shop-icon">♾️</div>
+        <div className="shop-icon">🫖</div>
         <div className="shop-body">
-          <b>Cheksiz yuraklar</b>
-          <small>Xato qilsangiz ham yurak kamaymaydi (o'quv rejimi)</small>
+          <b>Cheksiz kofe</b>
+          <small>Xato qilsangiz ham kofe kamaymaydi (o'quv rejimi)</small>
         </div>
         <label className="switch">
           <input type="checkbox" checked={state.unlimitedHearts} onChange={(e) => update((s) => ({ ...s, unlimitedHearts: e.target.checked }))} />
@@ -55,25 +55,25 @@ export function Shop() {
         </label>
       </div>
 
-      <h2 className="section-title">Streak</h2>
+      <h2 className="section-title">Kunlik seriya</h2>
       <div className="shop-item">
-        <div className="shop-icon">🧊</div>
+        <div className="shop-icon">⛱️</div>
         <div className="shop-body">
-          <b>Streak muzlatgich</b>
+          <b>Seriya soyaboni</b>
           <small>
-            Bir kun dars qilmasangiz ham streak saqlanadi · {state.streakFreezes}/{MAX_FREEZES} jihozlangan
+            Bir kun dars qilmasangiz ham seriya saqlanadi · {state.streakFreezes}/{MAX_FREEZES} jihozlangan
           </small>
         </div>
         <button
           type="button"
           className="btn btn-gem"
           disabled={state.streakFreezes >= MAX_FREEZES || state.gems < FREEZE_COST}
-          onClick={() => buy(buyFreeze, 'Muzlatgich jihozlandi!')}
+          onClick={() => buy(buyFreeze, 'Soyabon tayyor!')}
         >
-          💎 {FREEZE_COST}
+          🪙 {FREEZE_COST}
         </button>
       </div>
-      <p className="muted small">Olmoslarni darslar, sandiqlar va liga g'alabalari orqali ishlang.</p>
+      <p className="muted small">Tangalarni darslar, sovg'alar va turnir g'alabalari orqali ishlang.</p>
       {toast && <div className="toast">{toast}</div>}
     </div>
   );

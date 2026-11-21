@@ -25,10 +25,10 @@ export function Practice({ onStart }: { onStart: (c: SessionConfig) => void }) {
         </div>
       )}
       <div className="practice-grid">
-        <button type="button" className="pcard" style={{ ['--c' as string]: '#2F6BFF' }} disabled={disabled} onClick={() => onStart({ kind: 'practice', mode: 'smart' })}>
+        <button type="button" className="pcard" style={{ ['--c' as string]: '#2B3A9B' }} disabled={disabled} onClick={() => onStart({ kind: 'practice', mode: 'smart' })}>
           <span className="pcard-icon">🧠</span>
           <b>Aqlli takrorlash</b>
-          <small>Unutilayotgan so'zlarni mustahkamlang · +1 ❤️</small>
+          <small>Unutilayotgan so'zlarni mustahkamlang · +1 ☕</small>
         </button>
         <button type="button" className="pcard" style={{ ['--c' as string]: '#E5484D' }} disabled={disabled || mistakes === 0} onClick={() => onStart({ kind: 'practice', mode: 'mistakes' })}>
           <span className="pcard-icon">🩹</span>

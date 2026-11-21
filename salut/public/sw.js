@@ -1,5 +1,5 @@
 // Oddiy offline kesh: birinchi tarmoq, xato bo'lsa kesh (navigatsiya), statik fayllar uchun kesh-birinchi.
-const CACHE = 'salut-v1';
+const CACHE = 'salut-v2';
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(['./', './index.html', './manifest.webmanifest', './icon.svg'])));
   self.skipWaiting();
