@@ -163,7 +163,7 @@ const routes: Record<string, (req: IncomingMessage, res: ServerResponse) => Prom
       ai: !!env.GEMINI_API_KEY,
       stt: !!env.GEMINI_API_KEY,
       tts: env.ELEVENLABS_API_KEY && VOICES.length ? 'elevenlabs' : 'browser',
-      audioTags: !!(env.ELEVENLABS_API_KEY && VOICES.length && /v3/.test(TTS_MODEL)),
+      audioTags: !!(env.ELEVENLABS_API_KEY && VOICES.length && /v[34]/.test(TTS_MODEL)),
       voices: env.ELEVENLABS_API_KEY ? VOICES.map((v) => ({ id: v.id, name: v.name })) : [],
       sessionMinutes: SESSION_MIN,
       cooldownMinutes: COOLDOWN_MIN,
