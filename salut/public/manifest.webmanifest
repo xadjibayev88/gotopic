@@ -1,0 +1,15 @@
+{
+  "name": "Salut! — Fransuz tili o'zbekcha",
+  "short_name": "Salut!",
+  "description": "Fransuz tilini o'zbek tilida o'rganing",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#2F6BFF",
+  "lang": "uz",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
