@@ -94,7 +94,7 @@ export class TutorError extends Error {
 
 /** /api/tutor ga so'rov yuboradi va matn bo'laklarini onDelta orqali uzatadi. */
 export async function askTutor(
-  payload: { scenario: Scenario; message: string; history: { role: 'user' | 'tutor'; text: string }[]; context: ReturnType<typeof learnerContext> },
+  payload: { scenario: Scenario; message: string; history: { role: 'user' | 'tutor'; text: string }[]; context: ReturnType<typeof learnerContext>; character?: string; lang?: string },
   onDelta: (text: string) => void,
   signal?: AbortSignal,
 ): Promise<void> {

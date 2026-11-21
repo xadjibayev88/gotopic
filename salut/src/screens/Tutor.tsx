@@ -4,6 +4,8 @@ import { playSfx, speak, speakQueue, stopSpeaking, ttsSupported } from '../engin
 import { askTutor, frenchParts, learnerContext, parseRich, SCENARIOS, TutorError, type ChatMessage, type Scenario } from '../engine/tutor';
 import { useStore } from '../state/store';
 import { Mascot } from '../components/Mascot';
+import { VoiceHub } from './voice/VoiceHub';
+import { loadPrefs } from '../engine/voice/prefs';
 
 const CHAT_KEY = 'salut.chat.v1';
 type Chats = Partial<Record<Scenario, ChatMessage[]>>;
@@ -59,7 +61,7 @@ export function RichText({ text, streaming = false }: { text: string; streaming?
   );
 }
 
-export function Tutor() {
+function TextChat() {
   const { state, update } = useStore();
   const [scenario, setScenario] = useState<Scenario>('free');
   const [chats, setChats] = useState<Chats>(loadChats);
@@ -110,7 +112,8 @@ export function Tutor() {
     abortRef.current = ac;
     let acc = '';
     try {
-      await askTutor({ scenario, message: text, history, context: learnerContext(state) }, (d) => {
+      const vp = loadPrefs();
+      await askTutor({ scenario, message: text, history, context: learnerContext(state), character: vp.character, lang: vp.lang }, (d) => {
         acc += d;
         setStreamText(acc);
       }, ac.signal);
@@ -289,3 +292,36 @@ export function Tutor() {
   );
 }
 
+
+const MODE_KEY = 'salut.tutor.mode';
+
+export function Tutor() {
+  const [mode, setMode] = useState<'voice' | 'text'>(() => {
+    try {
+      return localStorage.getItem(MODE_KEY) === 'text' ? 'text' : 'voice';
+    } catch {
+      return 'voice';
+    }
+  });
+  const pick = (m: 'voice' | 'text') => {
+    setMode(m);
+    try {
+      localStorage.setItem(MODE_KEY, m);
+    } catch {
+      /* e'tiborsiz */
+    }
+  };
+  return (
+    <div className="tutor-wrap">
+      <div className="seg tutor-mode-toggle" role="tablist">
+        <button type="button" role="tab" aria-selected={mode === 'voice'} className={mode === 'voice' ? 'on' : ''} onClick={() => pick('voice')}>
+          🎙️ Ovozli
+        </button>
+        <button type="button" role="tab" aria-selected={mode === 'text'} className={mode === 'text' ? 'on' : ''} onClick={() => pick('text')}>
+          💬 Matn
+        </button>
+      </div>
+      {mode === 'voice' ? <VoiceHub /> : <TextChat />}
+    </div>
+  );
+}

@@ -40,7 +40,8 @@ function generate(cfg: SessionConfig, state: ReturnType<typeof useStore>['state'
   // Amaliyot: faqat o'tilgan darslar materialidan.
   const done = ALL_LESSONS.filter((l) => state.lessonsDone[l.id]);
   const lessons = done.length ? done : ALL_LESSONS.slice(0, 1);
-  const vocab = lessons.flatMap((l) => l.words);
+  const custom = state.customWords.map((w) => ({ fr: w.fr, uz: w.uz, emoji: '📝' }));
+  const vocab = [...lessons.flatMap((l) => l.words), ...custom];
   const sents = lessons.flatMap((l) => l.sentences);
   const now = Date.now();
   if (cfg.mode === 'mistakes') {

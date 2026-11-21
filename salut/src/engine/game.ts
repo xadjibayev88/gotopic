@@ -44,6 +44,8 @@ export interface GameState {
   xpByDay: Record<string, number>;
   chatXpByDay: Record<string, number>;
   chatMessages: number;
+  /** AI ustoz suhbatidan lug'atga qo'shilgan so'zlar. */
+  customWords: { fr: string; uz: string; addedAt: number }[];
   lessonsDone: Record<string, number>;
   lessonsCompleted: number;
   perfectLessons: number;
@@ -76,6 +78,7 @@ export function initialState(now = Date.now()): GameState {
     xpByDay: {},
     chatXpByDay: {},
     chatMessages: 0,
+    customWords: [],
     lessonsDone: {},
     lessonsCompleted: 0,
     perfectLessons: 0,

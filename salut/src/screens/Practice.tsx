@@ -7,7 +7,10 @@ import type { SessionConfig } from './Session';
 
 export function Practice({ onStart }: { onStart: (c: SessionConfig) => void }) {
   const { state } = useStore();
-  const learned = ALL_LESSONS.filter((l) => state.lessonsDone[l.id]).flatMap((l) => l.words);
+  const learned = [
+    ...ALL_LESSONS.filter((l) => state.lessonsDone[l.id]).flatMap((l) => l.words),
+    ...state.customWords.map((w) => ({ fr: w.fr, uz: w.uz, emoji: '📝' as string | undefined })),
+  ];
   const mistakes = Object.keys(state.mistakes).length;
   const now = Date.now();
   const rows = learned

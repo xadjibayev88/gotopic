@@ -23,8 +23,8 @@ describe('parseTutorRequest', () => {
   it('accepts a valid request and clamps fields', () => {
     const r = parseTutorRequest({ ...base, message: 'x'.repeat(5000), history: Array.from({ length: 40 }, (_, i) => ({ role: i % 2 ? 'tutor' : 'user', text: 'a' })) });
     if (typeof r === 'string') throw new Error(r);
-    expect(r.message.length).toBe(800);
-    expect(r.history.length).toBe(14);
+    expect(r.message.length).toBe(1200);
+    expect(r.history.length).toBe(20);
   });
   it('rejects bad input', () => {
     expect(typeof parseTutorRequest(null)).toBe('string');
