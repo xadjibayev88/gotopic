@@ -1,0 +1,64 @@
+plugins { id 'com.android.application' }
+
+def buildVersionCode = (project.findProperty('verCode') ?: '1').toString().toInteger()
+def buildVersionName = (project.findProperty('versionName') ?: '1.0.0').toString()
+def startUrl = (project.findProperty('startUrl') ?: 'https://salut.example.uz/').toString()
+def admobAppId = (project.findProperty('admobAppId') ?: '').toString()
+if (admobAppId.isEmpty()) admobAppId = 'ca-app-pub-3940256099942544~3347511713' // Google sinov ID'si
+def releaseSigningValues = [
+    System.getenv('RELEASE_KEYSTORE_FILE'),
+    System.getenv('RELEASE_STORE_PASSWORD'),
+    System.getenv('RELEASE_KEY_ALIAS'),
+    System.getenv('RELEASE_KEY_PASSWORD')
+]
+def hasReleaseSigning = releaseSigningValues.every { value -> value != null && !value.isEmpty() }
+
+android {
+    namespace 'uz.salut.app'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'uz.salut.app'
+        minSdk 24
+        targetSdk 35
+        versionCode buildVersionCode
+        versionName buildVersionName
+        manifestPlaceholders = [admobAppId: admobAppId]
+        buildConfigField 'String', 'START_URL', "\"${startUrl}\""
+    }
+
+    buildFeatures { buildConfig true }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    signingConfigs {
+        if (hasReleaseSigning) {
+            release {
+                storeFile file(System.getenv('RELEASE_KEYSTORE_FILE'))
+                storePassword System.getenv('RELEASE_STORE_PASSWORD')
+                keyAlias System.getenv('RELEASE_KEY_ALIAS')
+                keyPassword System.getenv('RELEASE_KEY_PASSWORD')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            if (hasReleaseSigning) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation 'com.google.android.gms:play-services-ads:23.6.0'
+    // Google bilan bir bosishda kirish (telefondagi hisob) — Credential Manager
+    implementation 'androidx.credentials:credentials:1.3.0'
+    implementation 'androidx.credentials:credentials-play-services-auth:1.3.0'
+    implementation 'com.google.android.libraries.identity.googleid:googleid:1.1.1'
+}

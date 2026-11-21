@@ -1,1 +1,5 @@
 *.tsbuildinfo
+data/
+android/.gradle/
+android/app/build/
+android/local.properties

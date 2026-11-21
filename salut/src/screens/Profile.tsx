@@ -3,6 +3,7 @@ import { ACHIEVEMENTS, LEAGUES } from '../engine/game';
 import { addDays, dayKey } from '../engine/time';
 import { useStore } from '../state/store';
 import { WeekStrip } from './Result';
+import { AccountCard } from '../components/AccountCard';
 
 export function Profile() {
   const { state, update, reset } = useStore();
@@ -20,6 +21,7 @@ export function Profile() {
 
   return (
     <div className="page">
+      <AccountCard />
       <div className="profile-head">
         <div className="avatar-big">🥐</div>
         <div>
@@ -110,6 +112,21 @@ export function Profile() {
 
       <h2 className="section-title">Sozlamalar</h2>
       <div className="settings">
+        <label className="setting">
+          <span>⚡ Yengil rejim (sekin telefonlar uchun)</span>
+          <input
+            type="checkbox"
+            defaultChecked={document.documentElement.classList.contains('lite')}
+            onChange={(e) => {
+              document.documentElement.classList.toggle('lite', e.target.checked);
+              try {
+                localStorage.setItem('salut.lite', e.target.checked ? '1' : '0');
+              } catch {
+                /* e'tiborsiz */
+              }
+            }}
+          />
+        </label>
         <label className="setting">
           <span>🔈 Ovoz effektlari</span>
           <input type="checkbox" checked={state.settings.sound} onChange={(e) => update((s) => ({ ...s, settings: { ...s.settings, sound: e.target.checked } }))} />

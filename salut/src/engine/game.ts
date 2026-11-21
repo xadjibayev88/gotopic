@@ -46,6 +46,14 @@ export interface GameState {
   chatMessages: number;
   /** AI ustoz suhbatidan lug'atga qo'shilgan so'zlar. */
   customWords: { fr: string; uz: string; addedAt: number }[];
+  /** Kunlik vazifalar uchun bugungi hisoblagichlar. */
+  daily: DailyCounters;
+  /** Ikki barobar ball tugaydigan vaqt (ms). */
+  xpBoostUntil: number;
+  /** Uzilgan seriya — 2 kun ichida tiklash mumkin. */
+  lostStreak: { value: number; day: string } | null;
+  /** Super: bepul soyabon oxirgi marta berilgan oy (YYYY-MM). */
+  superFreezeMonth: string | null;
   lessonsDone: Record<string, number>;
   lessonsCompleted: number;
   perfectLessons: number;
@@ -79,6 +87,10 @@ export function initialState(now = Date.now()): GameState {
     chatXpByDay: {},
     chatMessages: 0,
     customWords: [],
+    daily: emptyDaily(dayKey(new Date(now))),
+    xpBoostUntil: 0,
+    lostStreak: null,
+    superFreezeMonth: null,
     lessonsDone: {},
     lessonsCompleted: 0,
     perfectLessons: 0,
@@ -132,7 +144,7 @@ export function reconcileStreak(s: GameState, now = new Date()): GameState {
       lastActiveDay: addDays(today, -1),
     };
   }
-  return { ...s, streak: 0 };
+  return { ...s, streak: 0, lostStreak: s.streak >= 2 ? { value: s.streak, day: today } : s.lostStreak };
 }
 
 function touchStreak(s: GameState, now: Date): GameState {
@@ -290,7 +302,9 @@ export function computeReward(r: SessionResult): Omit<Reward, 'streakExtended' |
 }
 
 export function applySession(s: GameState, r: SessionResult, now = new Date()): { state: GameState; reward: Reward } {
-  const base = computeReward(r);
+  const base0 = computeReward(r);
+  const boosted = s.xpBoostUntil > now.getTime();
+  const base = boosted ? { ...base0, xp: base0.xp * 2, bonus: [...base0.bonus, { label: 'Ikki barobar ball ⚡', xp: base0.xp }] } : base0;
   const today = dayKey(now);
   const ts = now.getTime();
   let next: GameState = rolloverLeague(s, now);
@@ -323,6 +337,13 @@ export function applySession(s: GameState, r: SessionResult, now = new Date()): 
     practiceDone: next.practiceDone + (r.kind !== 'lesson' ? 1 : 0),
     league: { ...next.league, weeklyXp: next.league.weeklyXp + base.xp },
   };
+  next = bumpDaily(next, now, {
+    xp: base.xp,
+    lessons: r.kind === 'lesson' ? 1 : 0,
+    perfect: base.perfect ? 1 : 0,
+    practice: r.kind !== 'lesson' ? 1 : 0,
+    combo: r.bestCombo,
+  });
   const unlocked = evaluateAchievements(next, ts);
   next = { ...next, achievements: { ...next.achievements, ...Object.fromEntries(unlocked.map((a) => [a, ts])) } };
   return {
@@ -346,7 +367,7 @@ export const CHAT_XP_DAILY_CAP = 20;
 export function applyChatTurn(s: GameState, now = new Date()): { state: GameState; xp: number } {
   const today = dayKey(now);
   const used = s.chatXpByDay[today] ?? 0;
-  const xp = Math.max(0, Math.min(CHAT_XP, CHAT_XP_DAILY_CAP - used));
+  const xp = Math.max(0, Math.min(CHAT_XP, CHAT_XP_DAILY_CAP - used)) * (s.xpBoostUntil > now.getTime() ? 2 : 1);
   let next: GameState = { ...s, chatMessages: s.chatMessages + 1 };
   if (xp > 0) {
     next = touchStreak(rolloverLeague(next, now), now);
@@ -358,6 +379,7 @@ export function applyChatTurn(s: GameState, now = new Date()): { state: GameStat
       league: { ...next.league, weeklyXp: next.league.weeklyXp + xp },
     };
   }
+  next = bumpDaily(next, now, { chat: 1, xp });
   const unlocked = evaluateAchievements(next, now.getTime());
   if (unlocked.length) next = { ...next, achievements: { ...next.achievements, ...Object.fromEntries(unlocked.map((a) => [a, now.getTime()])) } };
   return { state: next, xp };
@@ -472,4 +494,142 @@ export function buyFreeze(s: GameState): GameState | null {
 /** Ilova ochilganda / har daqiqada chaqiriladi. */
 export function tick(s: GameState, now = new Date()): GameState {
   return rolloverLeague(reconcileStreak(regenHearts(s, now.getTime()), now), now);
+}
+
+// ---------- Kunlik vazifalar ----------
+
+export interface DailyCounters {
+  day: string;
+  xp: number;
+  lessons: number;
+  perfect: number;
+  practice: number;
+  chat: number;
+  combo: number;
+  claimed: string[];
+}
+
+export function emptyDaily(day: string): DailyCounters {
+  return { day, xp: 0, lessons: 0, perfect: 0, practice: 0, chat: 0, combo: 0, claimed: [] };
+}
+
+export interface Quest {
+  id: string;
+  title: string;
+  icon: string;
+  goal: number;
+  reward: number;
+  value: (d: DailyCounters) => number;
+}
+
+interface QuestDef {
+  id: string;
+  title: string;
+  icon: string;
+  value: (d: DailyCounters) => number;
+  goals: number[];
+}
+
+const QUEST_POOL: QuestDef[] = [
+  { id: 'xp', title: "{n} ball to'plang", icon: '⭐', value: (d) => d.xp, goals: [20, 30, 40] },
+  { id: 'lessons', title: '{n} ta dars tugating', icon: '🚇', value: (d) => d.lessons, goals: [1, 2, 3] },
+  { id: 'perfect', title: "{n} ta darsni xatosiz o'ting", icon: '💯', value: (d) => d.perfect, goals: [1, 2] },
+  { id: 'chat', title: 'Krua bilan {n} ta xabar almashing', icon: '💬', value: (d) => d.chat, goals: [3, 5] },
+  { id: 'combo', title: "Ketma-ket {n} ta to'g'ri javob", icon: '⚡', value: (d) => d.combo, goals: [8, 12] },
+  { id: 'practice', title: '{n} marta mashq qiling', icon: '🏋️', value: (d) => d.practice, goals: [1, 2] },
+];
+
+/** Bugungi 3 ta vazifa (sana bo'yicha bir xil tanlanadi; birinchisi doim ball). */
+export function dailyQuests(day: string, dailyGoal = 20): Quest[] {
+  const r = rng(hashString(`quests:${day}`));
+  const [xpQ, ...others] = QUEST_POOL;
+  // Fisher–Yates (seed bilan) — sort(() => random) noto'g'ri taqsimot beradi.
+  const pool = others.slice();
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(r() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  const rest = pool.slice(0, 2);
+  return [xpQ, ...rest].map((q, i) => {
+    const goal = q.id === 'xp' ? Math.max(dailyGoal, q.goals[0]) : q.goals[Math.floor(r() * q.goals.length)];
+    return { id: q.id, icon: q.icon, value: q.value, goal, title: q.title.replace('{n}', String(goal)), reward: 10 + i * 5 };
+  });
+}
+
+export const QUESTS_BONUS = 30;
+
+function bumpDaily(s: GameState, now: Date, add: Partial<Omit<DailyCounters, 'day' | 'claimed'>>): GameState {
+  const day = dayKey(now);
+  const d = s.daily && s.daily.day === day ? s.daily : emptyDaily(day);
+  return {
+    ...s,
+    daily: {
+      ...d,
+      xp: d.xp + (add.xp ?? 0),
+      lessons: d.lessons + (add.lessons ?? 0),
+      perfect: d.perfect + (add.perfect ?? 0),
+      practice: d.practice + (add.practice ?? 0),
+      chat: d.chat + (add.chat ?? 0),
+      combo: Math.max(d.combo, add.combo ?? 0),
+    },
+  };
+}
+
+export function todayDaily(s: GameState, now = new Date()): DailyCounters {
+  const day = dayKey(now);
+  return s.daily && s.daily.day === day ? s.daily : emptyDaily(day);
+}
+
+/** Bajarilgan vazifa sovg'asini olish (yoki uchalasi uchun bonus: id = 'all'). */
+export function claimQuest(s: GameState, id: string, now = new Date()): { state: GameState; gems: number } {
+  const d = todayDaily(s, now);
+  if (d.claimed.includes(id)) return { state: s, gems: 0 };
+  const quests = dailyQuests(d.day, s.dailyGoal);
+  let gems = 0;
+  if (id === 'all') {
+    if (!quests.every((q) => d.claimed.includes(q.id))) return { state: s, gems: 0 };
+    gems = QUESTS_BONUS;
+  } else {
+    const q = quests.find((x) => x.id === id);
+    if (!q || q.value(d) < q.goal) return { state: s, gems: 0 };
+    gems = q.reward;
+  }
+  return { state: { ...s, gems: s.gems + gems, daily: { ...d, claimed: [...d.claimed, id] } }, gems };
+}
+
+// ---------- Ikki barobar ball va seriyani tiklash ----------
+
+export const XP_BOOST_COST = 100;
+export const XP_BOOST_MINUTES = 15;
+export const STREAK_REPAIR_COST = 400;
+
+export function buyXpBoost(s: GameState, now = Date.now()): GameState | null {
+  if (s.gems < XP_BOOST_COST) return null;
+  const from = Math.max(now, s.xpBoostUntil);
+  return { ...s, gems: s.gems - XP_BOOST_COST, xpBoostUntil: from + XP_BOOST_MINUTES * 60_000 };
+}
+
+/** Uzilgan seriyani tiklash mumkinmi (uzilgan kundan 2 kun ichida). */
+export function canRepairStreak(s: GameState, now = new Date()): boolean {
+  return !!s.lostStreak && daysBetween(s.lostStreak.day, dayKey(now)) <= 2;
+}
+
+export function repairStreak(s: GameState, free: boolean, now = new Date()): GameState | null {
+  if (!canRepairStreak(s, now) || (!free && s.gems < STREAK_REPAIR_COST)) return null;
+  const value = s.lostStreak!.value + s.streak;
+  return {
+    ...s,
+    gems: free ? s.gems : s.gems - STREAK_REPAIR_COST,
+    streak: value,
+    longestStreak: Math.max(s.longestStreak, value),
+    lastActiveDay: s.lastActiveDay === dayKey(now) ? s.lastActiveDay : addDays(dayKey(now), -1),
+    lostStreak: null,
+  };
+}
+
+/** Super obunachilariga har oy bitta bepul seriya soyaboni (maksimal soni oshmaydi). */
+export function grantSuperFreeze(s: GameState, now = new Date()): GameState {
+  const month = dayKey(now).slice(0, 7);
+  if (s.superFreezeMonth === month) return s;
+  return { ...s, superFreezeMonth: month, streakFreezes: Math.min(MAX_FREEZES, s.streakFreezes + 1) };
 }

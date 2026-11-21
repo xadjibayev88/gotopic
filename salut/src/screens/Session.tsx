@@ -14,6 +14,7 @@ import {
 import { playSfx, speak, ttsSupported, vibrate } from '../engine/audio';
 import { sample, shuffle } from '../engine/random';
 import { useStore } from '../state/store';
+import { useAccount } from '../state/account';
 import { BuildView, ChooseView, MatchView, PickView, TypeView } from '../components/exercises';
 import { Mascot } from '../components/Mascot';
 import { Result } from './Result';
@@ -76,8 +77,9 @@ function weakestSentences(sents: Sentence[], vocab: Word[], state: ReturnType<ty
   }
 }
 
-export function Session({ config, onExit }: { config: SessionConfig; onExit: () => void }) {
+export function Session({ config, onExit }: { config: SessionConfig; onExit: (completed?: boolean) => void }) {
   const { state, update } = useStore();
+  const { premium } = useAccount();
   const initial = useMemo(() => generate(config, state), []); // eslint-disable-line react-hooks/exhaustive-deps
   const [queue, setQueue] = useState<Exercise[]>(initial);
   const [pos, setPos] = useState(0);
@@ -93,7 +95,7 @@ export function Session({ config, onExit }: { config: SessionConfig; onExit: () 
 
   const [total, setTotal] = useState(initial.length);
   const ex = queue[pos];
-  const usesHearts = config.kind !== 'practice' && !state.unlimitedHearts;
+  const usesHearts = config.kind !== 'practice' && !state.unlimitedHearts && !premium;
   const accent = config.kind === 'lesson' ? findLesson(config.lessonId)!.unit.color : config.kind === 'review' ? COURSE[config.unitIndex].color : '#8B5CF6';
 
   const finish = useCallback(() => {
@@ -179,7 +181,7 @@ export function Session({ config, onExit }: { config: SessionConfig; onExit: () 
     return () => window.removeEventListener('keydown', h);
   }, [evaluation, next, check, showQuit, outOfHearts, finished]);
 
-  if (finished) return <Result reward={finished} config={config} onDone={onExit} />;
+  if (finished) return <Result reward={finished} config={config} onDone={() => onExit(true)} />;
   if (!ex) return null;
 
   const progress = Math.min(1, solved / total);
@@ -274,7 +276,7 @@ export function Session({ config, onExit }: { config: SessionConfig; onExit: () 
             <button type="button" className="btn btn-primary btn-lg" onClick={() => setShowQuit(false)}>
               Davom etaman
             </button>
-            <button type="button" className="btn btn-text danger" onClick={onExit}>
+            <button type="button" className="btn btn-text danger" onClick={() => onExit()}>
               Darsni tugatish
             </button>
           </div>
@@ -302,7 +304,7 @@ export function Session({ config, onExit }: { config: SessionConfig; onExit: () 
             >
               Termosni to'ldirish — 🪙 {HEART_REFILL_COST}
             </button>
-            <button type="button" className="btn btn-text" onClick={onExit}>
+            <button type="button" className="btn btn-text" onClick={() => onExit()}>
               Chiqish
             </button>
           </div>

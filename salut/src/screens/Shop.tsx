@@ -1,10 +1,14 @@
 import { useState } from 'react';
-import { buyFreeze, buyHeartRefill, FREEZE_COST, HEART_REFILL_COST, MAX_FREEZES, MAX_HEARTS, msToNextHeart } from '../engine/game';
+import { buyXpBoost, XP_BOOST_COST, XP_BOOST_MINUTES, buyFreeze, buyHeartRefill, FREEZE_COST, HEART_REFILL_COST, MAX_FREEZES, MAX_HEARTS, msToNextHeart } from '../engine/game';
 import { playSfx } from '../engine/audio';
 import { useStore } from '../state/store';
+import { useAccount } from '../state/account';
+import { SuperPage } from './Super';
+import { RewardedButton } from '../components/RewardedButton';
 
 export function Shop() {
   const { state, update } = useStore();
+  const { premium } = useAccount();
   const [toast, setToast] = useState<string | null>(null);
   const next = msToNextHeart(state);
 
@@ -20,6 +24,7 @@ export function Shop() {
   return (
     <div className="page">
       <h1 className="page-title">Do'kon</h1>
+      <SuperPage />
       <div className="gem-balance">
         🪙 <b>{state.gems}</b> tanga
       </div>
@@ -43,16 +48,22 @@ export function Shop() {
           🪙 {HEART_REFILL_COST}
         </button>
       </div>
+      {!premium && <RewardedButton />}
+
+      <h2 className="section-title">Kuchaytirgichlar</h2>
       <div className="shop-item">
-        <div className="shop-icon">🫖</div>
+        <div className="shop-icon">⚡</div>
         <div className="shop-body">
-          <b>Cheksiz kofe</b>
-          <small>Xato qilsangiz ham kofe kamaymaydi (o'quv rejimi)</small>
+          <b>Ikki barobar ball</b>
+          <small>
+            {state.xpBoostUntil > Date.now()
+              ? `Faol — ${Math.ceil((state.xpBoostUntil - Date.now()) / 60000)} daqiqa qoldi`
+              : `${XP_BOOST_MINUTES} daqiqa davomida har bir dars va suhbat uchun 2x ball`}
+          </small>
         </div>
-        <label className="switch">
-          <input type="checkbox" checked={state.unlimitedHearts} onChange={(e) => update((s) => ({ ...s, unlimitedHearts: e.target.checked }))} />
-          <span />
-        </label>
+        <button type="button" className="btn btn-gem" disabled={state.gems < XP_BOOST_COST} onClick={() => buy((s) => buyXpBoost(s), '2x ball yoqildi! ⚡')}>
+          🪙 {XP_BOOST_COST}
+        </button>
       </div>
 
       <h2 className="section-title">Kunlik seriya</h2>

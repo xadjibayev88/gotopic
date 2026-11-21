@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { LEAGUES, MAX_HEARTS, msToNextHeart, streakActiveToday } from './engine/game';
+import { grantSuperFreeze, LEAGUES, MAX_HEARTS, msToNextHeart, streakActiveToday } from './engine/game';
 import { dayKey } from './engine/time';
 import { useStore } from './state/store';
+import { useAccount } from './state/account';
 import { Learn } from './screens/Learn';
 import { Practice } from './screens/Practice';
 import { Leagues } from './screens/Leagues';
@@ -12,6 +13,9 @@ import { Onboarding } from './screens/Onboarding';
 import { Session, type SessionConfig } from './screens/Session';
 import { WeekStrip } from './screens/Result';
 import { Mascot } from './components/Mascot';
+import { RewardedButton } from './components/RewardedButton';
+import { QuestsCard } from './components/Quests';
+import { initAds, loadAdsense, maybeInterstitial, setImmersive } from './engine/ads';
 
 type Tab = 'learn' | 'tutor' | 'practice' | 'leagues' | 'profile' | 'shop';
 
@@ -25,12 +29,13 @@ const TABS: { id: Tab; label: string; icon: string }[] = [
 ];
 
 function readTab(): Tab {
-  const h = location.hash.replace('#/', '') as Tab;
+  const h = location.hash.replace('#/', '').split('?')[0] as Tab;
   return TABS.some((t) => t.id === h) ? h : 'learn';
 }
 
 export function App() {
   const { state } = useStore();
+  const { premium } = useAccount();
   const [tab, setTab] = useState<Tab>(readTab);
   const [session, setSession] = useState<SessionConfig | null>(null);
   const [blocked, setBlocked] = useState(false);
@@ -41,6 +46,17 @@ export function App() {
     return () => window.removeEventListener('hashchange', on);
   }, []);
 
+  // Reklama: obuna holatiga qarab yoqiladi/o'chiriladi; dars paytida banner yashiriladi.
+  useEffect(() => {
+    void initAds(premium);
+    if (!premium) loadAdsense();
+  }, [premium]);
+  useEffect(() => setImmersive(!!session), [session]);
+  const { update } = useStore();
+  useEffect(() => {
+    if (premium && state.onboarded) update((s) => grantSuperFreeze(s));
+  }, [premium, state.onboarded, update]);
+
   const go = (t: Tab) => {
     location.hash = `#/${t}`;
     setTab(t);
@@ -48,7 +64,7 @@ export function App() {
   };
 
   const start = (c: SessionConfig) => {
-    if (c.kind !== 'practice' && state.hearts <= 0 && !state.unlimitedHearts) {
+    if (c.kind !== 'practice' && state.hearts <= 0 && !state.unlimitedHearts && !premium) {
       setBlocked(true);
       return;
     }
@@ -56,7 +72,16 @@ export function App() {
   };
 
   if (!state.onboarded) return <Onboarding />;
-  if (session) return <Session config={session} onExit={() => setSession(null)} />;
+  if (session)
+    return (
+      <Session
+        config={session}
+        onExit={(completed?: boolean) => {
+          setSession(null);
+          if (completed) void maybeInterstitial();
+        }}
+      />
+    );
 
   return (
     <div className={`shell ${tab === 'tutor' ? 'tutor-mode' : ''}`}>
@@ -102,6 +127,7 @@ export function App() {
             <div className="big-emoji">💔</div>
             <h3>Kofe tugadi</h3>
             <p className="muted">Keyingi chashka {Math.ceil((msToNextHeart(state) ?? 0) / 60000)} daqiqada tayyor bo'ladi. Mashq qilib kofe ishlab oling yoki do'kondan to'ldiring.</p>
+            <RewardedButton compact onGranted={() => setBlocked(false)} />
             <button type="button" className="btn btn-primary btn-lg" onClick={() => { setBlocked(false); setSession({ kind: 'practice', mode: 'smart' }); }}>
               Mashq qilish (+1 ☕)
             </button>
@@ -117,12 +143,18 @@ export function App() {
 
 function TopBar({ onShop, onProfile }: { onShop: () => void; onProfile: () => void }) {
   const { state } = useStore();
+  const { premium } = useAccount();
   const active = streakActiveToday(state);
   return (
     <header className="topbar">
       <button type="button" className="stat flag" title="Fransuz tili" onClick={onProfile}>
         🇫🇷
       </button>
+      {state.xpBoostUntil > Date.now() && (
+        <span className="stat boost" title="Ikki barobar ball faol">
+          ⚡ <b>2x</b>
+        </span>
+      )}
       <button type="button" className={`stat streak ${active ? 'on' : ''}`} title="Kunlik seriya" onClick={onProfile}>
         ☀️ <b>{state.streak}</b>
       </button>
@@ -130,7 +162,7 @@ function TopBar({ onShop, onProfile }: { onShop: () => void; onProfile: () => vo
         🪙 <b>{state.gems}</b>
       </button>
       <button type="button" className="stat heart" title="Kofe (xato qilsangiz kamayadi)" onClick={onShop}>
-        ☕ <b>{state.unlimitedHearts ? '∞' : state.hearts}</b>
+        ☕ <b>{state.unlimitedHearts || premium ? '∞' : state.hearts}</b>
       </button>
     </header>
   );
@@ -184,6 +216,9 @@ function SidePanels({ onGo }: { onGo: (t: Tab) => void }) {
           <div className="hearts-row">{Array.from({ length: MAX_HEARTS }, (_, i) => (i < state.hearts ? '☕' : '▫️')).join(' ')}</div>
         </div>
       )}
+      <div className="panel quests-panel">
+        <QuestsCard />
+      </div>
       <div className="panel tip">
         <Mascot mood="happy" size={64} />
         <p>

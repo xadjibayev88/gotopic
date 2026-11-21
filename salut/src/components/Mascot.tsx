@@ -50,8 +50,8 @@ export function Mascot({ mood = 'happy', size = 120, className = '' }: { mood?: 
       <path d="M130 48 C124 70 126 120 134 148" stroke="#D98B30" strokeWidth="4" fill="none" strokeLinecap="round" />
       <path d="M84 42 C88 50 92 54 100 54 C108 54 112 50 116 42" stroke="#FCD9A0" strokeWidth="5" fill="none" strokeLinecap="round" />
       {/* Beret */}
-      <path d="M66 50 C66 26 134 22 138 44 C126 52 80 56 66 50 Z" fill="#2B3A9B" stroke="#1B2470" strokeWidth="4" strokeLinejoin="round" />
-      <circle cx="104" cy="22" r="5" fill="#1B2470" />
+      <path d="M66 50 C66 26 134 22 138 44 C126 52 80 56 66 50 Z" fill="#818CF8" stroke="#4F46E5" strokeWidth="4" strokeLinejoin="round" />
+      <circle cx="104" cy="22" r="5" fill="#4F46E5" />
       {eyes}
       <ellipse cx="66" cy="112" rx="8" ry="5" fill="#F28B82" opacity=".6" />
       <ellipse cx="132" cy="112" rx="8" ry="5" fill="#F28B82" opacity=".6" />
@@ -63,7 +63,7 @@ export function Mascot({ mood = 'happy', size = 120, className = '' }: { mood?: 
         </g>
       )}
       {mood === 'sleep' && (
-        <text x="150" y="40" fontSize="26" fontWeight="800" fill="#2B3A9B" fontFamily="Onest, sans-serif">
+        <text x="150" y="40" fontSize="26" fontWeight="800" fill="#A5B4FC" fontFamily="Onest, sans-serif">
           z<tspan dy="-10" fontSize="20">z</tspan>
         </text>
       )}

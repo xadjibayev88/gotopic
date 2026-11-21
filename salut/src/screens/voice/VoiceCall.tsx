@@ -4,6 +4,7 @@ import { VoiceCall as Controller, type CallOptions, type Snapshot } from '../../
 import { displayText } from '../../engine/voice/markers';
 import { KruaLive, type LiveState } from '../../components/KruaLive';
 import { RichText } from '../Tutor';
+import { setImmersive } from '../../engine/ads';
 
 const fmt = (ms: number) => {
   const s = Math.max(0, Math.floor(ms / 1000));
@@ -63,12 +64,14 @@ export function VoiceCallScreen({
   const ch = CHARACTERS.find((c) => c.id === options.character)!;
 
   useEffect(() => {
+    setImmersive(true);
     ctrl.onUpdate = setS;
     ctrl.onUserTurn = onUserTurn;
     void ctrl.start();
     if (fullscreen) void rootRef.current?.requestFullscreen?.().catch(() => undefined);
     return () => {
       ctrl.dispose();
+      setImmersive(false);
       if (document.fullscreenElement) void document.exitFullscreen().catch(() => undefined);
     };
   }, [ctrl]); // eslint-disable-line react-hooks/exhaustive-deps

@@ -194,3 +194,74 @@ describe('game', () => {
     expect(buyHeartRefill({ ...s, gems: 10 })).toBeNull();
   });
 });
+
+import { buyXpBoost, canRepairStreak, claimQuest, dailyQuests, repairStreak, todayDaily, STREAK_REPAIR_COST } from './game';
+
+describe('daily quests, boost and streak repair', () => {
+  it('picks 3 stable quests per day, xp first', () => {
+    const a = dailyQuests('2026-11-22', 30);
+    expect(a).toHaveLength(3);
+    expect(a[0].id).toBe('xp');
+    expect(a[0].goal).toBeGreaterThanOrEqual(30);
+    expect(dailyQuests('2026-11-22', 30).map((q) => q.id)).toEqual(a.map((q) => q.id));
+    expect(new Set(a.map((q) => q.id)).size).toBe(3);
+  });
+
+  it('tracks progress and pays each quest once, plus the all-done bonus', () => {
+    const day = new Date(2026, 10, 22, 12);
+    let s = initialState(day.getTime());
+    for (const id of ['u1l1', 'u1l2', 'u1l3']) s = applySession(s, lessonResult(id), day).state;
+    const d = todayDaily(s, day);
+    expect(d.lessons).toBe(3);
+    expect(d.xp).toBeGreaterThan(0);
+    const quests = dailyQuests(d.day, s.dailyGoal);
+    const before = s.gems;
+    const xpQ = claimQuest(s, 'xp', day);
+    expect(xpQ.gems).toBe(quests[0].reward);
+    expect(claimQuest(xpQ.state, 'xp', day).gems).toBe(0);
+    expect(claimQuest(xpQ.state, 'all', day).gems).toBe(0); // hali hammasi bajarilmagan
+    expect(xpQ.state.gems).toBe(before + quests[0].reward);
+  });
+
+  it('doubles XP while a boost is active', () => {
+    const day = new Date(2026, 10, 22, 12);
+    const s = { ...initialState(day.getTime()), gems: 500 };
+    const boosted = buyXpBoost(s, day.getTime())!;
+    expect(boosted.gems).toBe(400);
+    const normal = applySession(s, lessonResult('u1l1'), day).reward.xp;
+    const doubled = applySession(boosted, lessonResult('u1l1'), day).reward.xp;
+    expect(doubled).toBe(normal * 2);
+    expect(buyXpBoost({ ...s, gems: 10 })).toBeNull();
+  });
+
+  it('repairs a lost streak within 2 days', () => {
+    let s = initialState();
+    s = applySession(s, lessonResult('u1l1'), new Date(2026, 10, 1, 10)).state;
+    s = applySession(s, lessonResult('u1l2'), new Date(2026, 10, 2, 10)).state;
+    s = applySession(s, lessonResult('u1l3'), new Date(2026, 10, 3, 10)).state;
+    s = reconcileStreak(s, new Date(2026, 10, 6, 9));
+    expect(s.streak).toBe(0);
+    expect(s.lostStreak?.value).toBe(3);
+    expect(canRepairStreak(s, new Date(2026, 10, 7))).toBe(true);
+    expect(canRepairStreak(s, new Date(2026, 10, 10))).toBe(false);
+    const paid = repairStreak({ ...s, gems: 1000 }, false, new Date(2026, 10, 6, 10))!;
+    expect(paid.streak).toBe(3);
+    expect(paid.gems).toBe(1000 - STREAK_REPAIR_COST);
+    expect(applySession(paid, lessonResult('u1l4'), new Date(2026, 10, 6, 11)).state.streak).toBe(4);
+    expect(repairStreak({ ...s, gems: 0 }, false, new Date(2026, 10, 6))).toBeNull();
+    expect(repairStreak({ ...s, gems: 0 }, true, new Date(2026, 10, 6))?.streak).toBe(3); // Super — bepul
+  });
+});
+
+import { grantSuperFreeze, MAX_FREEZES } from './game';
+describe('super monthly freeze', () => {
+  it('grants one freeze per month, capped', () => {
+    const s = initialState();
+    const a = grantSuperFreeze(s, new Date(2026, 10, 5));
+    expect(a.streakFreezes).toBe(1);
+    expect(grantSuperFreeze(a, new Date(2026, 10, 28)).streakFreezes).toBe(1);
+    const b = grantSuperFreeze(a, new Date(2026, 11, 1));
+    expect(b.streakFreezes).toBe(2);
+    expect(grantSuperFreeze(b, new Date(2027, 0, 1)).streakFreezes).toBe(MAX_FREEZES);
+  });
+});

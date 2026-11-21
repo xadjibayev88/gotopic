@@ -11,7 +11,7 @@ function load(): GameState {
       const parsed = JSON.parse(raw) as Partial<GameState>;
       if (parsed.version === 1) {
         const base = initialState();
-        return { ...base, ...parsed, settings: { ...base.settings, ...parsed.settings }, league: { ...base.league, ...parsed.league } } as GameState;
+        return { ...base, ...parsed, unlimitedHearts: false, settings: { ...base.settings, ...parsed.settings }, league: { ...base.league, ...parsed.league } } as GameState;
       }
     }
   } catch {

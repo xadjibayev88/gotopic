@@ -161,8 +161,8 @@ export function KruaLive({
             )}
             {/* Beret — Kruaning o'ziga xos belgisi, har qanday shaklda */}
             <g transform={body ? `translate(${body.face[0] - 100} ${Math.max(-14, body.face[1] - 150)})` : undefined}>
-              <path d="M70 46C70 24 132 20 136 40C124 48 82 52 70 46Z" fill="#2B3A9B" stroke="#1B2470" strokeWidth="4" strokeLinejoin="round" />
-              <circle cx="104" cy="20" r="5" fill="#1B2470" />
+              <path d="M70 46C70 24 132 20 136 40C124 48 82 52 70 46Z" fill="#818CF8" stroke="#4F46E5" strokeWidth="4" strokeLinejoin="round" />
+              <circle cx="104" cy="20" r="5" fill="#4F46E5" />
             </g>
             <Face x={body ? body.face[0] : 100} y={body ? body.face[1] : 100} s={body?.scale ?? 1} shape={shape} state={state} level={level} />
             {flare && (

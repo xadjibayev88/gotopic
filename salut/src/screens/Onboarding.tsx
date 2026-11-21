@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useStore } from '../state/store';
 import { Mascot } from '../components/Mascot';
 import { speak } from '../engine/audio';
+import { AuthScreen } from './Auth';
+import { useAccount } from '../state/account';
 
 const GOALS = [
   { xp: 10, label: 'Yengil', time: '5 daqiqa / kun' },
@@ -19,7 +21,31 @@ export function Onboarding() {
   const [reason, setReason] = useState<string | null>(null);
   const [name, setName] = useState('');
 
-  const finish = () => update((s) => ({ ...s, onboarded: true, dailyGoal: goal, name: name.trim() }));
+  const { me } = useAccount();
+  const [auth, setAuth] = useState<null | 'login' | 'register'>(null);
+  const finish = () => update((s) => ({ ...s, onboarded: true, dailyGoal: goal, name: name.trim() || me.user?.name || s.name }));
+
+  if (auth) {
+    return (
+      <div className="onboard">
+        <div className="onboard-top">
+          <button type="button" className="icon-btn" onClick={() => setAuth(null)} aria-label="Orqaga">
+            ←
+          </button>
+        </div>
+        <AuthScreen
+          initial={auth}
+          onDone={() => {
+            // Serverdagi progress yuklansa, ilova o'zi asosiy ekranga o'tadi; yangi hisob bo'lsa — onboarding davom etadi.
+            setAuth(null);
+            if (step === 3) finish();
+            else if (step === 0) setStep(1);
+          }}
+          onSkip={step === 3 ? finish : undefined}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="onboard">
@@ -39,9 +65,14 @@ export function Onboarding() {
           <Mascot mood="cheer" size={200} className="bounce-in" />
           <h1 className="brand">Salut!</h1>
           <p className="lead">Fransuz tilini o'zbek tilida — bepul, qiziqarli va samarali.</p>
-          <button type="button" className="btn btn-success btn-lg" onClick={() => { speak('Salut ! Bienvenue !'); setStep(1); }}>
+          <button type="button" className="btn btn-primary btn-lg" onClick={() => { speak('Salut ! Bienvenue !'); setStep(1); }}>
             Boshlash
           </button>
+          {!me.user && (
+            <button type="button" className="btn btn-ghost btn-lg" onClick={() => setAuth('login')}>
+              Menda hisob bor
+            </button>
+          )}
         </div>
       )}
 
@@ -90,9 +121,9 @@ export function Onboarding() {
             <Mascot mood="cheer" size={90} />
             <div className="bubble">Ismingiz nima? «Je m'appelle ...»</div>
           </div>
-          <input className="text-input" autoFocus value={name} maxLength={24} placeholder="Ismingiz" onChange={(e) => setName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && name.trim() && finish()} />
-          <button type="button" className="btn btn-success btn-lg" disabled={!name.trim()} onClick={finish}>
-            Birinchi darsni boshlash
+          <input className="text-input" autoFocus value={name} maxLength={24} placeholder="Ismingiz" onChange={(e) => setName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && name.trim() && (me.user ? finish() : setAuth('register'))} />
+          <button type="button" className="btn btn-primary btn-lg" disabled={!name.trim()} onClick={() => (me.user ? finish() : setAuth('register'))}>
+            Davom etish
           </button>
         </div>
       )}

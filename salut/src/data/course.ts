@@ -37,7 +37,7 @@ export const COURSE: Unit[] = [
     id: 'u1',
     title: 'Salomlashish',
     description: "Salom bering, o'zingizni tanishtiring",
-    color: '#2B3A9B',
+    color: '#818CF8',
     guide: [
       {
         title: 'Bonjour va Salut',

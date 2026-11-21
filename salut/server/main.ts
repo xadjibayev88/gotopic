@@ -6,6 +6,8 @@ import { extname, join, normalize, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Readable } from 'node:stream';
 import { friendlyError, generateJson, parseTutorRequest, streamTutor } from './tutor.ts';
+import { clearCookie, createSessionToken, currentUserId, deleteUser, getProgress, getUser, login, putProgress, register, sessionCookie, upsertGoogleUser, verifyGoogleIdToken } from './accounts.ts';
+import { activePlan, click, createOrder, orderStatus, payme, paymeAuthError, paymeAuthorized, paymeInternalError, plansPayload } from './billing.ts';
 import { cleanFeedback, elevenLabsTts, feedbackBody, parseFeedbackRequest, parseSttRequest, parseVoices, sttBody, ttsText } from './voice.ts';
 
 const ROOT = resolve(fileURLToPath(new URL('.', import.meta.url)), '..', 'dist');
@@ -44,6 +46,8 @@ const BUCKETS: Record<string, Bucket> = {
   stt: { perMinute: num('STT_PER_MINUTE', 20), perDay: num('STT_PER_DAY', 400) },
   tts: { perMinute: num('TTS_PER_MINUTE', 60), perDay: num('TTS_PER_DAY', 1200) },
   feedback: { perMinute: 4, perDay: num('FEEDBACK_PER_DAY', 40) },
+  auth: { perMinute: 10, perDay: 200 },
+  billing: { perMinute: 10, perDay: 100 },
 };
 const TTS_CHARS_PER_DAY = num('TTS_CHARS_PER_DAY', 12000);
 const hits = new Map<string, number[]>();
@@ -160,19 +164,165 @@ const HEDGE_MS = env.GEMINI_HEDGE_MS !== undefined ? Number(env.GEMINI_HEDGE_MS)
 const gem = (signal: AbortSignal) => ({ apiKey: env.GEMINI_API_KEY!, model: MODEL, fallbackModel: FALLBACK_MODEL || undefined, hedgeMs: HEDGE_MS, base: env.GEMINI_API_BASE, signal });
 
 // ---------- Yo'nalishlar ----------
+const googleClientIds = () => (env.GOOGLE_CLIENT_ID ?? '').split(',').map((v) => v.trim()).filter(Boolean);
+const isSecure = (req: IncomingMessage) =>
+  (TRUST_PROXY && String(req.headers['x-forwarded-proto'] ?? '').startsWith('https')) || (env.PUBLIC_ORIGIN ?? '').startsWith('https://');
+const publicOrigin = (req: IncomingMessage) => env.PUBLIC_ORIGIN || `${isSecure(req) ? 'https' : 'http'}://${req.headers.host ?? 'localhost'}`;
+
+type AuthOut = { ok: true; user: NonNullable<ReturnType<typeof getUser>> } | { ok: false; status: number; message: string };
+async function authRoute(req: IncomingMessage, res: ServerResponse, fn: (b: Record<string, unknown>) => AuthOut | Promise<AuthOut>) {
+  if (!originOk(req)) return json(res, 403, { message: 'Ruxsat etilmagan manba' });
+  const limited = take('auth', clientIp(req));
+  if (limited) return json(res, 429, { message: limited });
+  let body: Record<string, unknown>;
+  try {
+    body = (await readBody(req, 16 * 1024)) as Record<string, unknown>;
+  } catch {
+    return json(res, 400, { message: "So'rov noto'g'ri" });
+  }
+  const r = await fn(body ?? {});
+  if (!r.ok) return json(res, r.status, { message: r.message });
+  const token = createSessionToken(r.user.id);
+  res.setHeader('set-cookie', sessionCookie(token, isSecure(req)));
+  const sub = activePlan(r.user.id);
+  // token — Android ilova uchun (cookie bilan birga Authorization: Bearer ham qabul qilinadi).
+  json(res, 200, { user: r.user, plan: sub.plan, expiresAt: sub.expiresAt, token });
+}
+
+async function clickRoute(req: IncomingMessage, res: ServerResponse, action: 0 | 1) {
+  let raw = '';
+  for await (const c of req) {
+    raw += c;
+    if (raw.length > 16 * 1024) return json(res, 413, { error: -8, error_note: 'Too large' });
+  }
+  const body = Object.fromEntries(new URLSearchParams(raw)) as Record<string, string>;
+  try {
+    json(res, 200, click(body, action));
+  } catch (e) {
+    console.error('click', e);
+    json(res, 200, { error: -7, error_note: 'Failed to update order' });
+  }
+}
+
 const routes: Record<string, (req: IncomingMessage, res: ServerResponse) => Promise<void> | void> = {
   'GET /api/health': (_q, res) => json(res, 200, { ok: true, ai: !!env.GEMINI_API_KEY, model: MODEL }),
 
-  'GET /api/voice/config': (_q, res) =>
+  'GET /api/voice/config': (req, res) => {
+    const premium = activePlan(currentUserId(req)).plan !== 'free';
     json(res, 200, {
       ai: !!env.GEMINI_API_KEY,
       stt: !!env.GEMINI_API_KEY,
       tts: env.ELEVENLABS_API_KEY && VOICES.length ? 'elevenlabs' : 'browser',
       audioTags: !!(env.ELEVENLABS_API_KEY && VOICES.length && /v[34]/.test(TTS_MODEL)),
       voices: env.ELEVENLABS_API_KEY ? VOICES.map((v) => ({ id: v.id, name: v.name })) : [],
-      sessionMinutes: SESSION_MIN,
-      cooldownMinutes: COOLDOWN_MIN,
+      // Super obunachilari: uzunroq sessiya, dam olish talab qilinmaydi.
+      sessionMinutes: premium ? Math.max(SESSION_MIN, num('VOICE_SESSION_MINUTES_SUPER', 30)) : SESSION_MIN,
+      cooldownMinutes: premium ? 0 : COOLDOWN_MIN,
+      premium,
+    });
+  },
+
+  // ---------- Hisob ----------
+  'GET /api/me': (req, res) => {
+    const uid = currentUserId(req);
+    const user = uid ? getUser(uid) : null;
+    const sub = activePlan(user?.id ?? null);
+    json(res, 200, { user, plan: sub.plan, expiresAt: sub.expiresAt, googleClientId: googleClientIds()[0] ?? null, billing: plansPayload() });
+  },
+
+  'POST /api/auth/register': (req, res) =>
+    authRoute(req, res, (b) => register(b.email, b.password, b.name)),
+
+  'POST /api/auth/login': (req, res) => authRoute(req, res, (b) => login(b.email, b.password)),
+
+  'POST /api/auth/google': (req, res) =>
+    authRoute(req, res, async (b) => {
+      const ids = googleClientIds();
+      if (!ids.length) return { ok: false, status: 503, message: 'Google bilan kirish sozlanmagan' } as const;
+      try {
+        const p = await verifyGoogleIdToken(String(b.credential ?? ''), ids);
+        return { ok: true, user: upsertGoogleUser(p.sub, p.email, p.name, p.picture) } as const;
+      } catch {
+        return { ok: false, status: 401, message: "Google tokeni tasdiqlanmadi — qayta urinib ko'ring" } as const;
+      }
     }),
+
+  'POST /api/auth/logout': (req, res) => {
+    res.setHeader('set-cookie', clearCookie(isSecure(req)));
+    json(res, 200, { ok: true });
+  },
+
+  'DELETE /api/account': (req, res) => {
+    if (!originOk(req)) return json(res, 403, { message: 'Ruxsat etilmagan manba' });
+    const uid = currentUserId(req);
+    if (!uid) return json(res, 401, { message: 'Kirilmagan' });
+    deleteUser(uid);
+    res.setHeader('set-cookie', clearCookie(isSecure(req)));
+    json(res, 200, { ok: true });
+  },
+
+  'GET /api/progress': (req, res) => {
+    const uid = currentUserId(req);
+    if (!uid) return json(res, 401, { message: 'Kirilmagan' });
+    json(res, 200, getProgress(uid) ?? { state: null, updatedAt: 0 });
+  },
+
+  'PUT /api/progress': async (req, res) => {
+    const uid = currentUserId(req);
+    if (!uid) return json(res, 401, { message: 'Kirilmagan' });
+    if (!originOk(req)) return json(res, 403, { message: 'Ruxsat etilmagan manba' });
+    let body: { state?: unknown; updatedAt?: unknown };
+    try {
+      body = (await readBody(req, 512 * 1024)) as typeof body;
+    } catch {
+      return json(res, 413, { message: 'Progress juda katta' });
+    }
+    const r = putProgress(uid, body.state, body.updatedAt);
+    json(res, r.ok ? 200 : r.status, r);
+  },
+
+  // ---------- Obuna va to'lovlar ----------
+  'POST /api/billing/order': async (req, res) => {
+    const uid = currentUserId(req);
+    if (!uid) return json(res, 401, { message: "Obuna uchun avval hisobga kiring" });
+    if (!originOk(req)) return json(res, 403, { message: 'Ruxsat etilmagan manba' });
+    const limited = take('billing', clientIp(req));
+    if (limited) return json(res, 429, { message: limited });
+    const b = (await readBody(req).catch(() => ({}))) as { plan?: unknown; provider?: unknown };
+    const r = createOrder(uid, b.plan, b.provider, publicOrigin(req));
+    if ('error' in r) return json(res, (r as { status: number }).status, { message: r.error });
+    json(res, 200, r);
+  },
+
+  'GET /api/billing/order': (req, res) => {
+    const uid = currentUserId(req);
+    if (!uid) return json(res, 401, { message: 'Kirilmagan' });
+    const id = Number(new URL(req.url ?? '/', 'http://x').searchParams.get('id'));
+    const status = Number.isSafeInteger(id) ? orderStatus(uid, id) : null;
+    if (!status) return json(res, 404, { message: 'Buyurtma topilmadi' });
+    const sub = activePlan(uid);
+    json(res, 200, { status, plan: sub.plan, expiresAt: sub.expiresAt });
+  },
+
+  // Payme va Click webhook'lari: o'z imzosi bilan himoyalangan (cookie/origin talab qilinmaydi).
+  'POST /api/billing/payme': async (req, res) => {
+    let body: { id?: unknown; method?: unknown; params?: Record<string, unknown> } = {};
+    try {
+      body = (await readBody(req, 32 * 1024)) as typeof body;
+    } catch {
+      /* bo'sh */
+    }
+    const id = body.id ?? null;
+    if (!paymeAuthorized(req.headers.authorization)) return json(res, 200, { id, error: paymeAuthError() });
+    try {
+      json(res, 200, { id, ...payme(String(body.method ?? ''), body.params ?? {}) });
+    } catch (e) {
+      console.error('payme', e);
+      json(res, 200, { id, error: paymeInternalError() });
+    }
+  },
+  'POST /api/billing/click/prepare': (req, res) => clickRoute(req, res, 0),
+  'POST /api/billing/click/complete': (req, res) => clickRoute(req, res, 1),
 
   'POST /api/tutor': (req, res) =>
     guarded(req, res, { bucket: 'tutor', needKey: env.GEMINI_API_KEY, keyName: 'GEMINI_API_KEY', parse: parseTutorRequest }, async (data, signal) => {

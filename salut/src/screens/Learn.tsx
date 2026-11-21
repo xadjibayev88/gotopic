@@ -4,6 +4,8 @@ import { buildPath, chestReward, isLessonUnlocked, nodeState, openChest, type Pa
 import { playSfx, speak } from '../engine/audio';
 import { useStore } from '../state/store';
 import { Mascot } from '../components/Mascot';
+import { AdSlot } from '../components/AdSlot';
+import { QuestsCard, StreakRepair } from '../components/Quests';
 import type { SessionConfig } from './Session';
 
 // Darslar yo'li — Parij metrosi xaritasi uslubida: bo'lim = liniya, dars = bekat.
@@ -19,6 +21,10 @@ export function Learn({ onStart }: { onStart: (c: SessionConfig) => void }) {
 
   return (
     <div className="learn">
+      <StreakRepair />
+      <div className="learn-quests">
+        <QuestsCard compact />
+      </div>
       {COURSE.map((u, ui) => {
         const locked = !isLessonUnlocked(state, u.lessons[0].id);
         const done = u.lessons.filter((l) => state.lessonsDone[l.id]).length;
@@ -52,6 +58,7 @@ export function Learn({ onStart }: { onStart: (c: SessionConfig) => void }) {
           </section>
         );
       })}
+      <AdSlot />
       <div className="course-end">
         <Mascot mood="sleep" size={110} />
         <p className="muted">Yangi liniyalar qurilmoqda. À bientôt !</p>
