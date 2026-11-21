@@ -55,6 +55,8 @@ export function VoiceCallScreen({
   const [pressed, setPressed] = useState(false);
   const [showTranscript, setShowTranscript] = useState(false);
   const [confirmSwitch, setConfirmSwitch] = useState(false);
+  const voices = options.config.voices;
+  const [voiceIdx, setVoiceIdx] = useState(() => Math.max(0, voices.findIndex((v) => v.id === options.voiceId)));
   const rootRef = useRef<HTMLDivElement>(null);
   const endedRef = useRef(false);
   const ptt = options.inputMode === 'ptt';
@@ -203,7 +205,7 @@ export function VoiceCallScreen({
           <div className="call-subs">
             {tutorLine && (
               <p className="sub-tutor">
-                <RichText text={s.live ? s.live : lastTutor?.text ?? ''} streaming={!!s.live} />
+                <RichText text={s.live ? s.live : displayText(lastTutor?.text ?? '')} streaming={!!s.live} />
               </p>
             )}
             {userLine && <p className="sub-user">{userLine}</p>}
@@ -233,6 +235,20 @@ export function VoiceCallScreen({
               🎤 {s.micLang.startsWith('fr') ? 'Français' : s.micLang.startsWith('ru') ? 'Русский' : s.micLang.startsWith('en') ? 'English' : "O'zbekcha"}
             </button>
           )}
+          {voices.length > 1 && (
+            <button
+              type="button"
+              className="mic-lang-pill"
+              title="Ovozni almashtirish"
+              onClick={() => {
+                const i = (voiceIdx + 1) % voices.length;
+                setVoiceIdx(i);
+                ctrl.setVoice(voices[i].id);
+              }}
+            >
+              🔁 {voices[voiceIdx]?.name}
+            </button>
+          )}
           <button type="button" className="btn btn-danger" onClick={() => ctrl.end('user')}>
             Tugatish
           </button>
@@ -251,7 +267,7 @@ export function VoiceCallScreen({
             <div className="transcript-body">
               {s.turns.length === 0 && <p className="muted">Suhbat matni shu yerda paydo bo'ladi.</p>}
               {s.turns.map((t) => (
-                <div key={t.id} className={`tline ${t.role}`}>
+                <div key={t.id} className={`tline tl-${t.role}`}>
                   <b>{t.role === 'user' ? 'Siz' : 'Krua'}</b>
                   <span>{t.role === 'tutor' ? <RichText text={displayText(t.text)} /> : t.text}</span>
                 </div>

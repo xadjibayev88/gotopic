@@ -27,6 +27,10 @@ export class Mic {
   private raf = 0;
   private data = new Float32Array(1024);
   private noise = 0.006;
+  private mins: number[] = [];
+  private winSum = 0;
+  private winN = 0;
+  private winStart = 0;
   private speaking = false;
   private aboveSince = 0;
   private belowSince = 0;
@@ -60,6 +64,7 @@ export class Mic {
     this.data = new Float32Array(this.analyser.fftSize);
     src.connect(this.analyser);
     const started = performance.now();
+    this.winStart = started;
     const loop = () => {
       this.raf = requestAnimationFrame(loop);
       if (!this.analyser) return;
@@ -68,8 +73,19 @@ export class Mic {
       for (let i = 0; i < this.data.length; i++) sum += this.data[i] * this.data[i];
       const rms = Math.sqrt(sum / this.data.length);
       const now = performance.now();
-      // Shovqin darajasini sekin moslashtiramiz (faqat jim paytda).
-      if (!this.speaking) this.noise = now - started < 600 ? Math.max(0.002, (this.noise + rms) / 2) : this.noise * 0.995 + Math.min(rms, this.noise * 2) * 0.005;
+      // Shovqin darajasi = so'nggi ~2 soniyadagi eng past 100 ms'lik daraja (so'zlar orasidagi pauzalar).
+      // O'quvchi boshidanoq gapirsa yoki fonda shovqin bo'lsa ham to'g'ri moslashadi.
+      this.winSum += rms;
+      this.winN++;
+      if (now - this.winStart >= 100) {
+        this.mins.push(this.winSum / this.winN);
+        if (this.mins.length > 20) this.mins.shift();
+        this.winSum = 0;
+        this.winN = 0;
+        this.winStart = now;
+        const floor = Math.max(0.002, Math.min(...this.mins));
+        this.noise = now - started < 600 ? floor : this.noise * 0.8 + floor * 0.2;
+      }
       this.level = Math.min(1, rms / Math.max(0.02, this.noise * 8));
       this.onLevel?.(this.level);
       if (!this.vadEnabled) return;

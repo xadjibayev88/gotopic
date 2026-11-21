@@ -200,3 +200,81 @@ export class CloudStt implements Stt {
     this.rec = null;
   }
 }
+
+/**
+ * Gibrid aniqlash: brauzer STT (tez) + parallel yozib olish (zaxira).
+ * Brauzer bo'sh natija qaytarsa yoki xato bersa, lekin o'quvchi gapirgan bo'lsa (spokeHint),
+ * o'sha yozuv AI'ga yuboriladi va keyingi replikalar to'g'ridan-to'g'ri AI bilan aniqlanadi.
+ * Natijada hech bir replika yo'qolmaydi, ishlaydigan brauzerda esa kechikish qo'shilmaydi.
+ */
+export class HybridStt implements Stt {
+  private web = new WebSpeechStt();
+  private cloud: CloudStt;
+  private broken = false;
+  private settled = false;
+  onPartial?: (text: string) => void;
+  onFinal?: (text: string) => void;
+  onError?: (e: SttError, message?: string) => void;
+  /** Tashqaridan: shu replika davomida nutq eshitildimi (mikrofon darajasi bo'yicha). */
+  spokeHint: () => boolean = () => false;
+  onDegrade?: () => void;
+
+  constructor(stream: () => MediaStream | null) {
+    this.cloud = new CloudStt(stream);
+    this.web.onPartial = (t) => this.onPartial?.(t);
+    this.web.onFinal = (t) => {
+      if (this.settled) return;
+      if (t.trim() || !this.spokeHint()) {
+        this.settled = true;
+        this.cloud.abort();
+        this.onFinal?.(t);
+      } else this.fallback();
+    };
+    this.web.onError = (e, m) => {
+      if (this.settled) return;
+      if (e === 'too-long') return this.onError?.(e, m);
+      this.fallback();
+    };
+    this.cloud.onPartial = () => undefined;
+    this.cloud.onFinal = (t) => {
+      if (this.settled) return;
+      this.settled = true;
+      this.onFinal?.(t);
+    };
+    this.cloud.onError = (e, m) => {
+      if (this.settled) return;
+      this.settled = true;
+      this.onError?.(e, m);
+    };
+  }
+
+  get kind(): 'browser' | 'cloud' {
+    return this.broken ? 'cloud' : 'browser';
+  }
+
+  private fallback() {
+    if (!this.broken) {
+      this.broken = true;
+      this.onDegrade?.();
+    }
+    this.onPartial?.('');
+    this.cloud.stop(); // yozuv AI'ga yuboriladi
+  }
+
+  start(lang: string) {
+    this.settled = false;
+    this.cloud.start(lang);
+    if (!this.broken) this.web.start(lang);
+  }
+
+  stop() {
+    if (this.broken) this.cloud.stop();
+    else this.web.stop();
+  }
+
+  abort() {
+    this.settled = true;
+    this.web.abort();
+    this.cloud.abort();
+  }
+}

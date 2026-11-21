@@ -5,7 +5,7 @@
 import { ROLES, type CharacterId, type ExplainLang, type RoleId } from '../../data/characters';
 import { displayText, extractCues, SentenceSplitter, talkStats, type Action, type Shape } from './markers';
 import { Mic, type MicError } from './mic';
-import { browserSttSupported, cloudSttSupported, CloudStt, WebSpeechStt, type Stt, type SttError } from './stt';
+import { browserSttSupported, cloudSttSupported, CloudStt, HybridStt, WebSpeechStt, type Stt, type SttError } from './stt';
 import { TtsQueue } from './tts';
 import type { InputMode, SessionRecord, SttEngine } from './prefs';
 
@@ -83,6 +83,7 @@ export class VoiceCall {
   private tts: TtsQueue;
   private ac: AbortController | null = null;
   private turnStart = 0;
+  private turnPeak = 0;
   private speakingMs = 0;
   private startedAt = 0;
   private timer = 0;
@@ -171,7 +172,10 @@ export class VoiceCall {
     this.setupStt(this.o.stt);
     if (!this.stt) return this.set({ error: 'stt', phase: 'ended', endReason: 'error' });
     this.mic.onLevel = (l) => {
-      if (this.snap.phase === 'user') this.level(l);
+      if (this.snap.phase === 'user') {
+        this.turnPeak = Math.max(this.turnPeak, l);
+        this.level(l);
+      }
     };
     this.mic.onSpeechStart = () => this.onVadStart();
     this.mic.onSpeechEnd = () => this.onVadEnd();
@@ -197,7 +201,14 @@ export class VoiceCall {
       this.stt = null;
       return;
     }
-    const stt: Stt = kind === 'browser' ? new WebSpeechStt() : new CloudStt(() => this.mic.stream);
+    let stt: Stt;
+    if (kind === 'browser' && canCloud && pref === 'auto') {
+      const h = new HybridStt(() => this.mic.stream);
+      // Nutq bo'lgan: mikrofon darajasi ko'tarilgan yoki tugma 1,2 s dan ko'p bosib turilgan.
+      h.spokeHint = () => this.turnPeak > 0.35 || Date.now() - this.turnStart > 1200;
+      h.onDegrade = () => this.set({ sttKind: 'cloud' });
+      stt = h;
+    } else stt = kind === 'browser' ? new WebSpeechStt() : new CloudStt(() => this.mic.stream);
     stt.onPartial = (t) => this.set({ partial: t === '…' ? '' : t });
     stt.onFinal = (t) => void this.onFinal(t);
     stt.onError = (e, m) => this.onSttError(e, m);
@@ -247,6 +258,7 @@ export class VoiceCall {
     this.tts.stop();
     this.ac?.abort();
     this.turnStart = Date.now();
+    this.turnPeak = 0;
     this.set({ phase: 'user', partial: '', live: '', level: 0, notice: null });
     this.stt?.start(this.snap.micLang);
     clearTimeout(this.turnTimer);
@@ -281,9 +293,15 @@ export class VoiceCall {
 
   private onSttError(e: SttError, message?: string) {
     if (this.snap.phase === 'ended') return;
-    if (e === 'network' && this.stt?.kind === 'browser' && this.o.config.stt && cloudSttSupported()) {
-      // Brauzer nutq xizmati ishlamasa — AI aniqlashga o'tamiz.
+    if (e !== 'too-long' && this.stt instanceof WebSpeechStt && this.o.config.stt && cloudSttSupported()) {
+      // Brauzer nutq xizmati ishlamasa (tarmoq, ruxsat, xizmat yo'q) — AI aniqlashga o'tamiz.
+      // Mikrofon allaqachon ochiq, shuning uchun o'quvchi gapirayotgan replika yo'qolmaydi:
+      // yozish shu zahoti AI dvigatelida davom etadi.
       this.setupStt('cloud');
+      if (this.snap.phase === 'user') {
+        this.stt?.start(this.snap.micLang);
+        return;
+      }
       this.notice('sttFailed', "Brauzer nutqni aniqlay olmadi — AI aniqlashga o'tdik. Qayta gapiring.");
       return this.toReady();
     }

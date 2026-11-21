@@ -178,7 +178,7 @@ function TextChat() {
   const lastIsError = messages[messages.length - 1]?.error;
 
   return (
-    <div className="tutor">
+    <div className="tutor-chat">
       <div className="tutor-head">
         <Mascot mood={busy ? 'think' : 'happy'} size={52} />
         <div className="tutor-title">

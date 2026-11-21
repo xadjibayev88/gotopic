@@ -13,6 +13,13 @@ Nomi, maskoti (Krua — beretli kruasan), dizayni va kurs mazmuni original.
 - **Krua ustoz (AI):** o'zbekcha ravon va hazil bilan gaplashadigan fransuz tili ustozi (Gemini).
   O'quvchining o'tgan darslari, biladigan so'zlari va xatolarini biladi; 5 stsenariy (erkin suhbat, Parij kafesi,
   tanishuv, grammatika, xatolar tahlili); fransuzcha iboralar bosilganda talaffuz qilinadi; mikrofon (uz/fr); oqimli javob.
+- **Krua AI — jonli ovozli suhbat:** Kruani (yoki Space) bosib turib gapirish yoki qo'lsiz rejim (ovoz faolligini
+  aniqlash, Krua gapirayotganda gapini bo'lish). Javob gap-gap bo'lib ovozlanadi (birinchi gap tayyor bo'lishi bilan),
+  keyingi gap ovozi oldindan yuklanadi. Krua 15 xil shaklga kiradi va 8 xil imo-ishora qiladi (javobdagi belgilar
+  bo'yicha). 4 xarakter (Klassik, Professor — rozilik bilan, Mehribon, Hazilkash), 8 tayyor rol + o'z rolingiz,
+  tushuntirish tili (uz/ru/en), ovoz tanlash, subtitrlar, suhbat matni, sessiya taymeri va "Krua dam olyapti" tanaffusi,
+  oxirgi 10 ta replika xotirasi. Suhbatdan keyin tahlil: so'z/gap/gapirish vaqti/turli so'zlar, shaxsiy rekordlar,
+  kuchli va zaif tomonlar, yangi so'zlarni takrorlash tizimiga qo'shish.
 - **O'yin elementlari:** ball, kunlik maqsad, quyosh seriyasi (soyabon bilan), kofe ☕ (xato qilinsa kamayadi,
   30 daqiqada bitta chashka tayyorlanadi), tangalar 🪙, sovg'a bekatlari, Fransiya shaharlari bo'ylab haftalik turnir
   (Ruandan Parijgacha), 15 ta yutuq.
@@ -49,14 +56,25 @@ Ishlab chiqishda: bir terminalda `GEMINI_API_KEY=... npm run server`, ikkinchisi
 | `TUTOR_CONCURRENCY` | `8` | Bir vaqtdagi AI so'rovlar |
 | `TRUST_PROXY` | — | `1` — reverse proxy ortida `X-Forwarded-For` ga ishonish |
 | `ALLOWED_ORIGINS` | — | Boshqa domendan so'rovga ruxsat (vergul bilan) |
+| `ELEVENLABS_API_KEY` | — | Tabiiy ovoz (o'zbekcha ham). Bo'lmasa — qurilmadagi brauzer ovozi |
+| `ELEVENLABS_VOICES` | — | `Nomi:voiceId` ro'yxati, masalan `Krua:abc123,Professor:def456` |
+| `ELEVENLABS_MODEL_ID` | `eleven_v3` | v3 — hissiyot teglari ([laughs]) bilan; o'zbek tili qo'llab-quvvatlanishini tekshiring |
+| `VOICE_SESSION_MINUTES` / `VOICE_COOLDOWN_MINUTES` | `10` / `20` | Sessiya uzunligi va undan keyingi tanaffus |
+| `TTS_CHARS_PER_DAY` | `12000` | Bitta IP uchun kunlik ovoz belgilari |
+| `STT_PER_MINUTE` / `TTS_PER_MINUTE` / `FEEDBACK_PER_DAY` | `20` / `60` / `40` | Ovoz yo'nalishlari limitlari |
+
+Nutqni aniqlash: brauzerning o'zi (Chrome/Edge/Safari) ishlatiladi. Brauzer ishlamasa yoki jim qolsa, o'sha replika
+yozuvi avtomatik ravishda Gemini orqali aniqlanadi (`/api/stt`), shuning uchun hech bir gap yo'qolmaydi.
 
 ## Tuzilma
 
 ```
 server/tutor.ts         Krua personasi, prompt, kiruvchi ma'lumot tekshiruvi, Gemini SSE oqimi
+server/voice.ts         STT (Gemini audio), TTS (ElevenLabs proksi), suhbat tahlili
 server/main.ts          HTTP server: statik fayllar + /api/tutor (limitlar, xatolarni tushunarli qilish)
 src/data/course.ts      kurs mazmuni (so'zlar, gaplar, qo'llanmalar)
 src/engine/             sof mantiq: mashq generatori, tekshiruv, o'yin qoidalari, SRS, ovoz
+src/engine/voice/       ovozli suhbat: mikrofon+VAD, STT, TTS navbati, belgilar, boshqaruvchi (call.ts)
 src/state/store.tsx     global holat + saqlash
 src/screens/            ekranlar (O'rganish, Dars, Natija, Mashq, Liga, Do'kon, Profil, Onboarding)
 src/components/         mashq komponentlari, maskot, konfetti
