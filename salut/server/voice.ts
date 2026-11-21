@@ -185,14 +185,19 @@ export function ttsText(raw: unknown): string | null {
 export async function elevenLabsTts(
   text: string,
   voiceId: string,
-  opts: { apiKey: string; model: string; signal?: AbortSignal; fetchImpl?: typeof fetch; base?: string },
+  opts: { apiKey: string; model: string; languageCode?: string; signal?: AbortSignal; fetchImpl?: typeof fetch; base?: string },
 ): Promise<Response> {
   const base = (opts.base || 'https://api.elevenlabs.io').replace(/\/$/, '');
   const url = `${base}/v1/text-to-speech/${encodeURIComponent(voiceId)}/stream?output_format=mp3_44100_64`;
   const res = await (opts.fetchImpl ?? fetch)(url, {
     method: 'POST',
     headers: { 'content-type': 'application/json', 'xi-api-key': opts.apiKey, accept: 'audio/mpeg' },
-    body: JSON.stringify({ text, model_id: opts.model, voice_settings: { stability: 0.45, similarity_boost: 0.8, style: 0.35 } }),
+    body: JSON.stringify({
+      text,
+      model_id: opts.model,
+      ...(opts.languageCode ? { language_code: opts.languageCode } : {}),
+      voice_settings: { stability: 0.45, similarity_boost: 0.8, style: 0.35 },
+    }),
     signal: opts.signal,
   });
   if (!res.ok || !res.body) {

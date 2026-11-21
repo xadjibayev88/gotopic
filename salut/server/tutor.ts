@@ -304,6 +304,7 @@ export function friendlyError(e: unknown): { status: number; code: string; messa
   const err = e as { name?: string; code?: string; status?: number };
   if (err.name === 'AbortError' || err.name === 'TimeoutError') return { status: 504, code: 'timeout', message: "Krua o'ylanib qoldi... Javob kechikdi, qayta urinib ko'ring." };
   if (err.code === 'blocked') return { status: 422, code: 'blocked', message: 'Bu mavzuda gaplasha olmayman. Keling, fransuz tiliga qaytamiz!' };
+  if (err.status === 402) return { status: 503, code: 'tts_plan', message: "Ovoz xizmati tarifi bu ovozga ruxsat bermaydi — Krua brauzer ovozida davom etadi." };
   if (err.status === 429) return { status: 429, code: 'rate_limited', message: "Krua hozir juda band — bir daqiqadan keyin urinib ko'ring." };
   if (err.status && [400, 401, 403, 404].includes(err.status)) return { status: 503, code: 'config', message: 'AI ustoz serveri sozlanmagan. Darslar ishlayveradi.' };
   return { status: 503, code: 'upstream', message: "AI ustozga ulanib bo'lmadi. Internetni tekshirib, qayta urinib ko'ring." };

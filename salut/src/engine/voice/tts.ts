@@ -135,14 +135,16 @@ export class TtsQueue {
       return;
     }
     this.playing = true;
-    this.onSentence?.(item.raw);
     try {
       if (this.engine === 'elevenlabs' && item.audio) {
         const blob = await item.audio;
         if (this.stopped) return;
+        // Maskot shakli va "gapirmoqda" holati ovoz aynan boshlanganda o'zgaradi.
+        this.onSentence?.(item.raw);
         if (blob) await this.playBlob(blob);
         else await this.speakBrowser(item.raw); // ovoz xizmati ishlamasa — brauzer ovozi bilan davom etamiz
       } else {
+        this.onSentence?.(item.raw);
         await this.speakBrowser(item.raw);
       }
     } catch {

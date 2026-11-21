@@ -15,7 +15,9 @@ const PORT = num('PORT', 8787);
 const MODEL = env.GEMINI_MODEL || 'gemini-3.1-flash-lite';
 const TRUST_PROXY = env.TRUST_PROXY === '1';
 const VOICES = parseVoices(env.ELEVENLABS_VOICES);
-const TTS_MODEL = env.ELEVENLABS_MODEL_ID || 'eleven_v3';
+// eleven_v4: o'zbek tilini qo'llaydi (eleven_v3 — yo'q) va [laughs] kabi hissiyot teglarini tushunadi.
+const TTS_MODEL = env.ELEVENLABS_MODEL_ID || 'eleven_v4';
+const TTS_LANG = env.ELEVENLABS_LANGUAGE_CODE || '';
 const SESSION_MIN = num('VOICE_SESSION_MINUTES', 10);
 const COOLDOWN_MIN = num('VOICE_COOLDOWN_MINUTES', 20);
 
@@ -216,7 +218,7 @@ const routes: Record<string, (req: IncomingMessage, res: ServerResponse) => Prom
       async (data, signal) => {
         const limited = take('tts', `${clientIp(req)}`, data.text.length, TTS_CHARS_PER_DAY);
         if (limited) return json(res, 429, { code: 'tts_quota', message: 'Bugungi ovoz limiti tugadi — Krua matn bilan davom etadi.' });
-        const upstream = await elevenLabsTts(data.text, data.voice, { apiKey: env.ELEVENLABS_API_KEY!, model: TTS_MODEL, signal, base: env.ELEVENLABS_API_BASE });
+        const upstream = await elevenLabsTts(data.text, data.voice, { apiKey: env.ELEVENLABS_API_KEY!, model: TTS_MODEL, languageCode: TTS_LANG, signal, base: env.ELEVENLABS_API_BASE });
         res.writeHead(200, { 'content-type': 'audio/mpeg', 'cache-control': 'no-store' });
         await new Promise<void>((ok, fail) => {
           const s = Readable.fromWeb(upstream.body as never);
