@@ -97,11 +97,17 @@ export class WebSpeechStt implements Stt {
   }
 
   stop() {
+    const rec = this.rec;
     try {
-      this.rec?.stop();
+      rec?.stop();
     } catch {
       /* allaqachon to'xtagan */
     }
+    // Ba'zi brauzerlar (va headless) stop()dan keyin onend yubormaydi — navbat osilib qolmasin.
+    window.setTimeout(() => {
+      if (this.rec !== rec || this.cancelled || this.delivered) return;
+      rec?.onend?.();
+    }, 1500);
   }
 
   abort() {
