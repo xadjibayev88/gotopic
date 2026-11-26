@@ -121,8 +121,19 @@ export function PickView({ ex, locked, onAnswer }: ViewProps<'pick'>) {
       <div className="pick-grid">
         {ex.options.map((w, i) => (
           <button key={w.fr} type="button" className={`pick-card ${sel === w.fr ? 'selected' : ''}`} onClick={() => choose(w)} disabled={locked}>
-            <span className="pick-emoji">{w.emoji ?? '🔤'}</span>
-            <span className="pick-fr">{w.fr}</span>
+            {w.emoji ? (
+              <>
+                <span className="pick-emoji">{w.emoji}</span>
+                <span className="pick-fr">{w.fr}</span>
+              </>
+            ) : (
+              // Emoji yo'q (Hangul harflari, mavhum so'zlar) — koreyscha yozuvning o'zi katta ko'rsatiladi.
+              <span className="pick-hangul" lang="ko">
+                {w.fr}
+              </span>
+            )}
+            {/* O'qilishi javobni oshkor qilsa (Hangul harflari) — ko'rsatilmaydi. */}
+            {w.ro && !ex.word.uz.toLowerCase().includes(w.ro.toLowerCase()) && <span className="pick-ro">{w.ro}</span>}
             <span className="kbd">{i + 1}</span>
           </button>
         ))}
@@ -249,7 +260,8 @@ export function ChooseView({ ex, locked, onAnswer }: ViewProps<'choose'>) {
 
 // ---------- 4. Yozib tarjima qilish ----------
 
-const ACCENTS = ['é', 'è', 'ê', 'à', 'â', 'ç', 'ô', 'î', 'û', 'ù', 'ë', 'ï', 'œ'];
+// Koreyscha yozishda eng ko'p kerak bo'ladigan qo'shimchalar (telefonda tez qo'shish uchun).
+const ACCENTS = ['은', '는', '이', '가', '을', '를', '에', '에서', '요', '예요', '이에요', '습니다', '고', '의'];
 
 export function TypeView({ ex, locked, onAnswer }: ViewProps<'type'>) {
   const [text, setText] = useState('');

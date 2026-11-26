@@ -3382,6 +3382,8 @@ html:not([data-theme='light']) .save-mark.on { color: #C9B8FF; }
 .who-1 .tp-who { background: #FF6B9A; }
 .tp-uz { margin: 0; font-size: 14px; line-height: 1.5; color: var(--muted); }
 .tp-uz-btn { padding: 4px 0; width: auto; align-self: flex-start; }
+.pick-hangul { font-size: 38px; font-weight: 800; line-height: 1.1; color: var(--text); padding: 8px 0 2px; }
+.pick-ro { font-size: 11.5px; font-weight: 600; color: var(--muted); letter-spacing: .02em; }
 /* Vivi semantic cues: small movements on the existing cat parts only. */
 .vivi-cue-motion .vivi-cue-head { transform-origin: 100px 92px; transition: transform .22s ease; }
 .vivi-cue-state-listening .vivi-cue-head { animation: vivi-cue-listening 2.4s ease-in-out infinite; }
