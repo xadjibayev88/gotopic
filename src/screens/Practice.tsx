@@ -108,6 +108,14 @@ export function Practice({ onStart }: { onStart: (c: SessionConfig) => void }) {
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
         </span>
       </button>
+      <a className="pr-dict" href="#/dict">
+        <span className="pr-dict-ico" aria-hidden="true">한</span>
+        <span className="pr-main-text">
+          <b>Lug'at · 30 000 so'z</b>
+          <small>Istalgan koreyscha so'zni toping, tinglang va saqlang</small>
+        </span>
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
+      </a>
       <div className="pr-grid">
         <button type="button" className="pr-tile" style={{ ['--c' as string]: '#FF6B9A', ['--c2' as string]: '#FFD23F' }} disabled={disabled || mistakes === 0} onClick={() => onStart({ kind: 'practice', mode: 'mistakes' })}>
           <span className="pr-tile-icon"><Ic name="target" size={30} /></span>

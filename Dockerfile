@@ -1,4 +1,4 @@
-# Salut! — Railway / istalgan Docker hosting uchun.
+# Go Topic — Railway / istalgan Docker hosting uchun.
 FROM node:22-slim AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
@@ -14,6 +14,7 @@ COPY --from=build /app/dist ./dist
 COPY --from=build /app/server ./server
 COPY --from=build /app/src/engine/voice/stt-result.ts ./src/engine/voice/stt-result.ts
 COPY --from=build /app/src/shared ./src/shared
+COPY --from=build /app/content ./content
 RUN mkdir -p /data
 EXPOSE 8787
 CMD ["node", "server/main.ts"]

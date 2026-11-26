@@ -3301,6 +3301,41 @@ html:not([data-theme='light']) .save-mark.on { color: #C9B8FF; }
 .ob-level.selected .ob-bars i.on { background: linear-gradient(180deg, #FFD23F, #FF6B9A); }
 .ob-note { margin: 0; display: flex; gap: 8px; align-items: flex-start; padding: 10px 12px; border-radius: 14px; font-size: 13px; line-height: 1.4; background: color-mix(in srgb, #FFD23F 14%, transparent); border: 1px solid color-mix(in srgb, #FFD23F 40%, transparent); animation: pop .3s; text-align: left; }
 @media (prefers-reduced-motion: reduce) { .ob-feature { animation: none; } }
+/* ===== Lug'at (30 000 so'z) ===== */
+.pr-dict { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 22px; text-decoration: none; color: var(--text); background: var(--surface); border: 1px solid var(--glass-edge); box-shadow: var(--shadow-1); }
+.pr-dict:active { transform: scale(.98); }
+.pr-dict-ico { flex: none; width: 52px; height: 52px; border-radius: 17px; display: grid; place-items: center; font-size: 28px; font-weight: 800; color: #fff; background: linear-gradient(135deg, #CD2E3A, #9B5CFF 55%, #0047A0); box-shadow: 0 8px 18px -8px #9B5CFF; }
+.pr-dict small { color: var(--muted); }
+.dict { display: flex; flex-direction: column; gap: 12px; padding-bottom: 30px; }
+.dict-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.dict-head p { margin: 2px 0 0; }
+.dict-badge { flex: none; width: 54px; height: 54px; border-radius: 18px; display: grid; place-items: center; font-size: 30px; font-weight: 800; color: #fff; background: linear-gradient(135deg, #CD2E3A, #9B5CFF 55%, #0047A0); box-shadow: 0 10px 22px -10px #9B5CFF; }
+.dict-search { position: sticky; top: 70px; z-index: 5; display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 14px; border-radius: 18px; background: var(--surface-solid); border: 1.5px solid var(--glass-edge); box-shadow: var(--shadow-1); color: var(--muted); }
+.dict-search:focus-within { border-color: #B49CFF; color: #9B5CFF; }
+.dict-search input { flex: 1; min-width: 0; border: none; outline: none; background: none; color: var(--text); font: 600 16px var(--font); }
+.dict-clear { border: none; background: color-mix(in srgb, var(--text) 8%, transparent); color: var(--text); width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; }
+.dict-clear .ic [fill^='url'] { fill: none; }
+.dict-pos { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 2px 16px; }
+.dict-pos::-webkit-scrollbar { display: none; }
+.dict-pos button { flex: none; padding: 7px 13px; border-radius: 99px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-weight: 700; font-size: 13px; }
+.dict-pos button.on { color: #fff; border-color: transparent; background: linear-gradient(120deg, #7FE3FF, #B49CFF 50%, #FF8FD0); }
+.dict-count { margin: 0; font-size: 13px; }
+.dict-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.dict-item { position: relative; border-radius: 18px; background: var(--surface); border: 1px solid var(--glass-edge); box-shadow: var(--shadow-1); content-visibility: auto; contain-intrinsic-size: auto 64px; }
+.dict-main { width: 100%; display: grid; grid-template-columns: auto auto 1fr; align-items: baseline; gap: 4px 10px; padding: 12px 54px 12px 14px; border: none; background: none; color: var(--text); text-align: left; }
+.dict-word { font-size: 21px; font-weight: 800; letter-spacing: .01em; }
+.dict-pos-chip { font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 99px; color: #9B5CFF; background: color-mix(in srgb, #9B5CFF 12%, transparent); }
+.dict-uz { grid-column: 1 / -1; font-size: 14px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dict-item.open .dict-uz { display: none; }
+.dict-actions { position: absolute; right: 8px; top: 8px; }
+.dict-speak { width: 40px; height: 40px; border-radius: 14px; border: none; display: grid; place-items: center; color: #9B5CFF; background: color-mix(in srgb, #9B5CFF 10%, transparent); }
+.dict-more { padding: 0 14px 12px; display: flex; flex-direction: column; gap: 6px; animation: pop .25s; }
+.dict-more p { margin: 0; font-size: 14px; line-height: 1.45; }
+.dict-ai { margin-left: 6px; font-size: 10.5px; font-weight: 800; padding: 1px 6px; border-radius: 99px; color: #B45309; background: color-mix(in srgb, #FFD23F 25%, transparent); vertical-align: 1px; }
+.dict-more-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 4px; }
+.dict-src { font-size: 13px; font-weight: 700; color: #9B5CFF; text-decoration: none; }
+.dict-more-btn { margin-top: 4px; }
+.dict-license { font-size: 11.5px; text-align: center; margin: 8px 0 0; }
 /* Vivi semantic cues: small movements on the existing cat parts only. */
 .vivi-cue-motion .vivi-cue-head { transform-origin: 100px 92px; transition: transform .22s ease; }
 .vivi-cue-state-listening .vivi-cue-head { animation: vivi-cue-listening 2.4s ease-in-out infinite; }

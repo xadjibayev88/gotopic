@@ -23,6 +23,7 @@ import { createAiKeyAlerter } from './ai-alerts.ts';
 import { createLiveTokenRoute, mintGeminiLiveToken } from './live-route.ts';
 import { liveInstruction, parseTutorRequest } from './tutor.ts';
 import { registerClientLogRoute, type RouteTable } from './client-log.ts';
+import { loadDictionary, searchDictionary } from './dictionary.ts';
 
 const ROOT = resolve(fileURLToPath(new URL('.', import.meta.url)), '..', 'dist');
 const env = process.env;
@@ -300,6 +301,14 @@ const routeHandlers: RouteTable = Object.freeze(registerClientLogRoute({
     const r = adBonus.get(k);
     adBonus.set(k, { day, claims: (r && r.day === day ? r.claims : 0) + 1 });
     json(res, 200, { ok: true, minutes: REWARD_VIVI_MIN, left: bonusClaimsLeft(req) });
+  },
+
+  // ---------- Lug'at: 30 000 koreyscha so'z (hammaga ochiq, sahifalangan) ----------
+  'GET /api/dict': (req, res) => {
+    const u = new URL(req.url ?? '/', 'http://x');
+    const r = searchDictionary(loadDictionary(), u.searchParams.get('q') ?? '', Number(u.searchParams.get('page') ?? 1), (u.searchParams.get('pos') ?? '').slice(0, 12));
+    res.setHeader('cache-control', 'public, max-age=300');
+    json(res, 200, r);
   },
 
   // ---------- Ijtimoiy isbot (faqat haqiqiy ma'lumot) ----------
