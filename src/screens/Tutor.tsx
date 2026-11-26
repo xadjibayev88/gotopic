@@ -437,7 +437,7 @@ function ViviPaywall() {
   return (
     <div className="vpay">
       <div className="vpay-preview" aria-hidden="true">
-        <div className="vpay-msg in">Bonjour ! Comment tu t'appelles ?</div>
+        <div className="vpay-msg in">안녕하세요! 이름이 뭐예요?</div>
         <div className="vpay-msg out">저는 알리예요 😊</div>
         <div className="vpay-msg in">반가워요, 알리 씨! 어디에서 왔어요?</div>
         <div className="vpay-wave">

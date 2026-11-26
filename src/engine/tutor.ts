@@ -1,3 +1,4 @@
+import { ROLES } from '../data/characters';
 import { normalizeMarkers } from './voice/markers';
 // Hori ustoz — mijoz tomoni: kontekst yig'ish, oqimli so'rov, javobni bo'laklash.
 import { ALL_LESSONS } from '../data/course';
@@ -26,47 +27,12 @@ export interface ScenarioInfo {
   suggestions: string[];
 }
 
-export const SCENARIOS: ScenarioInfo[] = [
-  {
-    id: 'free',
-    title: 'Erkin suhbat',
-    icon: '💬',
-    greet: (n) =>
-      `${n ? `${n}, ` : ''}[fr]Salut ![/fr] (salyu) Men Hori — seullik yo'lbarscha va sizning koreys tili ustozingizman. Xohlagan narsangizni so'rang: so'z, grammatika, Seul... Faqat qornimni silamang, darsni unutib qo'yaman 😸 Bugun nimadan boshlaymiz?`,
-    suggestions: ['Koreyslar qanday salomlashadi?', 'Menga 3 ta foydali ibora o\'rgat', 'Koreyscha bir hazil aytib ber'],
-  },
-  {
-    id: 'cafe',
-    title: 'Seul kafesi',
-    icon: '☕',
-    greet: () =>
-      `[fr]Bonjour ! Bienvenue au café ![/fr] (Salom! Kafega xush kelibsiz!) Men bugun ofitsiantman. Buyurtmani koreyscha bering — qo'rqmang, men faqat narxni baland aytaman, xatoni emas. [fr]Qu'est-ce que vous voulez ?[/fr] (Nima xohlaysiz?)`,
-    suggestions: ['Bonjour ! Un café, s\'il vous plaît.', 'Le menu, s\'il vous plaît.', 'Qanday javob beraman?'],
-  },
-  {
-    id: 'meet',
-    title: 'Tanishuv',
-    icon: '🤝',
-    greet: () =>
-      `[fr]Salut ! Je m'appelle Hori. Et toi ?[/fr] (Salom! Mening ismim Hori. Seningchi?) Tasavvur qiling, Seuldagi parkda tanishdik. Koreyscha javob berishga harakat qiling — bilmasangiz o'zbekcha yozing, birga tuzamiz.`,
-    suggestions: ["Je m'appelle Ali.", 'Je suis ouzbek.', 'Qanday tanishtiraman o\'zimni?'],
-  },
-  {
-    id: 'grammar',
-    title: 'Grammatika',
-    icon: '📐',
-    greet: () =>
-      `Grammatika — koreys tilining eng nozik qismi, xuddi kalava ipidek chigal, lekin birga yechamiz 🧶 Savolingizni bering: artikllar, rod, fe'llar, inkor — hammasini oddiy misollar bilan tushuntiraman.`,
-    suggestions: ['un va une ning farqi nima?', "être fe'lini tushuntir", 'Inkor gap qanday tuziladi?'],
-  },
-  {
-    id: 'mistakes',
-    title: 'Xatolarim',
-    icon: '🩹',
-    greet: () => `Darslardagi xatolaringizni ko'rib chiqamiz. Xato — bu o'rganishning eng mazali qismi. Tayyormisiz?`,
-    suggestions: ['Ha, xatolarimni tushuntir', 'Eng ko\'p qaysi xatoni qilyapman?'],
-  },
-];
+/** Matnli chat ssenariylari — ovozli rejim rollari bilan bir xil matn (koreyscha salomlashuv va takliflar). */
+const SCENARIO_IDS = ['free', 'cafe', 'meet', 'grammar', 'mistakes'] as const;
+export const SCENARIOS: ScenarioInfo[] = SCENARIO_IDS.map((id) => {
+  const r = ROLES.find((x) => x.id === id)!;
+  return { id, title: r.title, icon: r.icon, greet: r.greet, suggestions: r.suggestions };
+});
 
 export function learnerContext(s: GameState) {
   const lessons = ALL_LESSONS.filter((l) => s.lessonsDone[l.id]);

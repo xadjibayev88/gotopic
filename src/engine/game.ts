@@ -417,7 +417,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: 'perfect5', title: 'Mukammal', desc: '5 ta xatosiz dars', icon: '💯', goal: 5, progress: (s) => s.perfectLessons },
   { id: 'words50', title: "So'z ustasi", desc: "50 ta so'z o'rganing", icon: '📚', goal: 50, progress: learnedWords },
   { id: 'words100', title: "Lug'at", desc: "100 ta so'z o'rganing", icon: '📖', goal: 100, progress: learnedWords },
-  { id: 'unit1', title: 'Bonjour !', desc: "1-bo'limni tugating", icon: '🇰🇷', goal: 1, progress: (s) => (unitComplete(s, 0) ? 1 : 0) },
+  { id: 'unit1', title: '안녕하세요!', desc: "1-bo'limni tugating", icon: '🇰🇷', goal: 1, progress: (s) => (unitComplete(s, 0) ? 1 : 0) },
   { id: 'course', title: 'Seulga tayyor', desc: 'Butun kursni tugating', icon: '🗼', goal: ALL_LESSONS.length, progress: (s) => ALL_LESSONS.filter((l) => s.lessonsDone[l.id]).length },
   { id: 'chat10', title: 'Suhbatdosh', desc: 'Hori bilan 10 ta xabar almashing', icon: '🗨️', goal: 10, progress: (s) => s.chatMessages },
   { id: 'chat100', title: 'Gapdon', desc: 'Hori bilan 100 ta xabar', icon: '🎙️', goal: 100, progress: (s) => s.chatMessages },

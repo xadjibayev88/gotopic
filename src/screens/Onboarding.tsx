@@ -20,7 +20,7 @@ const FEATURES: { icon: IconName; title: string; text: string; c1: string; c2: s
 /** Daraja so'rovi: A1 dan yuqorisi tanlansa — tanishtiruvdan keyin o'sha darajaga qisqa test (o'tsa — oldingi darslar ochiladi). */
 const LEVELS: { id: string; title: string; sub: string; bars: number; jump: Cefr | null }[] = [
   { id: 'zero', title: 'Umuman bilmayman', sub: "Noldan boshlayman", bars: 0, jump: null },
-  { id: 'words', title: "Bir necha so'z bilaman", sub: 'Bonjour, merci, au revoir…', bars: 1, jump: null },
+  { id: 'words', title: "Bir necha so'z bilaman", sub: '안녕하세요, 감사합니다, 네…', bars: 1, jump: null },
   { id: 'basic', title: 'Oddiy gaplar tuzaman', sub: "O'zim haqimda gapira olaman — TOPIK 2", bars: 2, jump: 'A2' },
   { id: 'talk', title: 'Suhbatlasha olaman', sub: 'Kundalik mavzularda — TOPIK 3', bars: 3, jump: 'B1' },
   { id: 'fluent', title: 'Erkin gapiraman', sub: 'Murakkab mavzular — TOPIK 4', bars: 4, jump: 'B2' },

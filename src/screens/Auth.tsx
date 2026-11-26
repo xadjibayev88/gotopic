@@ -212,7 +212,7 @@ export function AuthScreen({ initial = 'register', onDone, onSkip, title }: { in
           <KruaLive cue={cue} size={118} />
         </div>
         <div className="authx-hello">
-          <h2>{login ? 'Yana salom!' : 'Salut, do\'stim!'}</h2>
+          <h2>{login ? 'Yana salom!' : '안녕, do\'stim!'}</h2>
           <p>{login ? "Hisobingiz yo'qmi? Bir daqiqada yarating." : 'Hisobingiz bormi? Kirib, progressni davom ettiring.'}</p>
           <button type="button" className="authx-ghost" onClick={switchMode} disabled={switching || busy}>
             {login ? 'Profil yaratish' : 'Kirish'}
