@@ -1,41 +1,42 @@
-# Go Topic 2 — koreys tili va AI ustoz
+# Go Topic — Koreys tili o'zbekcha
 
-Mavjud hangeul-maktabi o‘quv kontenti saqlangan. Yangi glassy-gradient dizayn sayt, PWA va Android TWA’da bir xil ishlaydi. Preview porti 3000.
+Koreys tilini o'zbek tilida so'zlashuvchilar uchun o'rgatadigan, o'yin elementlari bor PWA ilova (React + Vite + Node).
+Maskot — **Hori**, oq Amur yo'lbarschasi (호랑이 — Koreyaning ramzi). Ilova Voilà! (fransuz tili) platformasining 1:1
+nusxasi asosida qurilgan va eski Go Topic'ning barcha o'quv boyliklari ko'chirilgan.
 
-## Arxitektura
+## Imkoniyatlar
 
-`public/` — brauzer interfeysi va offline kontent; `base.css` oldingi funksional bazani, `premium.css` yangi dizaynni beradi. `runtime-client.js` autentifikatsiya, SSE va bounded PCM player; `tutor-controller.js` mavjud mashq/router kodini server bilan bog‘laydi.
+- **Kurs (Hangul → TOPIK 6):** 35 bo'lim, 88 dars, 470 so'z, 264 koreyscha gap (Hangul + romanizatsiya + o'zbekcha),
+  har bo'limda qo'llanma kartalari. Darajalar interfeysda TOPIK 1–6 (ichki kod A1–C2). Darajadan sakrash testi.
+  Manba: `legacy/public/catalog.json` + `scripts/korean-course-data.py` → `python3 scripts/build-korean-course.py`.
+- **Lug'at — 30 000 so'z:** Wiktionary/Kaikki.org (CC BY-SA 4.0), o'zbekcha AI izohlar bilan; serverda qidiruv
+  (Hangul, o'zbekcha, inglizcha), turkum filtri, sahifalash, eng ko'p ishlatiladigan so'zlar birinchi (`GET /api/dict`).
+- **TOPIK mashqlari:** 96 grammatika savoli (10 kategoriya, izohlar bilan), o'qish va tinglash matnlari savollari bilan.
+- **Darslar xaritasi:** pastdan tepaga ilon izi yo'l, yulduzlar, Sirli qutilar, hozirgi darsga «pastga» tugmasi.
+- **Hori AI ustoz (Super):** matnli va ovozli suhbat, Gemini Live, xarakterlar, Seul kafesi / Myeongdong do'koni /
+  TOPIK gapirish mashqi kabi rollar; Hangul imlosi, kelishiklar va hurmat shakllarini tekshiradi.
+- **O'yin elementlari:** XP, seriya, baliqcha «jonlar», tangalar, haftalik 20 kishilik turnir (Kurtak → Afsona), do'kon.
+- **To'lov:** Super obuna (Payme, Click, karta/Visa chek orqali), Telegram bot.
+- **12 interfeys tili**, kunduzgi/tungi rejim, PIN qulf, liquid glass dizayn, yengil rejim.
 
-`server/` — Express API, Manus OAuth, MySQL progress va o‘quv catalogi, lease va quota himoyasi. `server/tts/` — Gemini SSE, ElevenLabs WebSocket, Google TTS adapterlari va offline testlar. `android/` — shu saytni Chrome orqali ochadigan TWA; native dizayn alohida takrorlanmaydi.
+## Tuzilma
 
-Production frontend CDNdan, `/api/*` containerdan xizmat oladi. Darslar va statik sahifalar AI yuklamasidan ajratilgan. API kalitlari faqat himoyalangan environmentda; Git, HTML, localStorage yoki APK ichida yo‘q.
+- `src/` — ilova; `server/` — Node server (SQLite, AI, to'lov, bot); `content/dictionary/` — lug'at ma'lumotlari.
+- `legacy/` — eski Go Topic ilovasi (vanilla JS + Express + MySQL + Android TWA) **o'zgarishsiz** saqlangan.
 
 ## Ishga tushirish
 
 ```sh
-corepack enable
-corepack prepare pnpm@11.25.0 --activate
-pnpm install --frozen-lockfile
-pnpm migrate
-node scripts/export-catalog.mjs
-pnpm exec tsx server/catalog-seed.ts
-pnpm dev
+npm ci
+npm run dev        # ishlab chiqish
+npm run build && node server/main.ts   # production
+npx vitest run     # testlar
 ```
 
-Build: `pnpm build`, production: `pnpm start`, offline testlar: `pnpm test`. Yangi database uchun migratsiya va catalog seed bir marta, production publishdan oldin bajariladi. Bu taskdagi boshqariladigan databasega additive migratsiya va seed bajarilgan. Mavjud owner content seed tomonidan overwrite qilinmaydi.
+Sozlamalar `.env.example` da (Gemini kaliti, Telegram bot tokeni, to'lov kartalari, admin ID). Kalitlar Git'ga
+qo'yilmaydi — faqat hosting (Railway) environment'ida.
 
-## Yuklama va provider budgeti
+## Tarjimalar
 
-Boshlang‘ich sig‘im Gemini 8 active turn, ElevenLabs 2 active turn, har user 1 active turn. MySQL lease’lari restart va bir nechta instance orasida umumiy. Kutish 8 soniya va har resurs uchun 64 queued request bilan cheklangan. API limitlari per-user kunlik/minutlik; voice uchun umumiy va per-user oylik belgi rezervi bor. Timeout, abort va frontend backpressure ishlaydi.
-
-Joriy ElevenLabs Free hisobining 10 000 belgi/oy limiti 500–1000 kishining muntazam tabiiy ovozini ta’minlamaydi. Per-user default voice budgeti 1000 belgi/oy. Tabiiy ovoz band yoki limit tugasa, matnli AI va brauzerning koreyscha ovozi fallback bo‘ladi; browser voice mavjud bo‘lmasa javob matn ko‘rinishida qoladi. Yuqori voice concurrency uchun tarif va production load-test talab qilinadi. Hech qanday pullik tarif avtomatik sotib olinmagan.
-
-`pnpm loadtest` faqat local HTML endpointida 1000 so‘rov/50 parallel HTTP so‘rovni tekshiradi; bu 1000 parallel ovozli user testi emas. Admin metrics faqat `ADMIN_OPEN_IDS` allowlist uchun; latency/circuit telemetry process-local, fleet-wide monitoring emas. Durable quota/lease hisoblari MySQLda.
-
-## Production va Android
-
-`PUBLIC_ORIGIN` haqiqiy publish originiga qo‘yiladi; `ALLOWED_ORIGINS` faqat zarur qo‘shimcha frontendlar uchun. Public-origin headerlarni ichki hostdan yasamang. Session cookie HTTPS uchun SameSite=None; Secure.
-
-App yangi originiga publish bo‘lgandan keyin Android DEFAULT_URL va versiya moslanadi, APK qayta yig‘iladi. Yangi 2.0.1 debug APK https://gotopik-a749akip.manus.space/ URLiga yo‘naltirilgan, lekin signed production release deb hisoblanmaydi. Yangilanish uchun oldingi production keystore zarur. [Android qo‘llanmasi](docs/android-release.md) va [provider tekshiruvlari](docs/provider-notes.md) tafsilotlarni beradi.
-
-Barcha asosiy kontent ro‘yxati 31 mavzu, 90 grammatika yozuvi va 2888 dictionary yozuvidan iborat. Catalog MySQLga saqlangan va public cached JSON fallback ham mavjud.
+Interfeys matnlari `src/i18n/locales/*.json` da. Yangi matnlar:
+`node scripts/i18n-extract.mjs && node scripts/i18n-translate.mjs` (Gemini kaliti kerak).
