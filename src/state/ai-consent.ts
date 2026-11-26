@@ -66,7 +66,7 @@ export const AI_SCOPE_OPTIONS: readonly {
     scope: 'text_tutor',
     provider: 'google-agent-platform',
     label: 'Hori bilan matnli koreys tili mashqi',
-    detail: 'Yozgan xabaringiz va kerakli A1–C2 mashq konteksti yuboriladi.',
+    detail: 'Yozgan xabaringiz va kerakli TOPIK 1–6 mashq konteksti yuboriladi.',
     providerLabel: 'Google Cloud Agent Platform (Gemini)',
   },
   {

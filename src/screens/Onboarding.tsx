@@ -11,7 +11,7 @@ import { levelLabel, type Cefr } from '../data/course';
 
 /** Ilova haqida qisqa tanishtiruv kartalari. */
 const FEATURES: { icon: IconName; title: string; text: string; c1: string; c2: string }[] = [
-  { icon: 'compass', title: 'Darslar xaritasi', text: "A1 dan C2 gacha 50 ta liniya — o'yin kabi, pastdan tepaga. Yulduz yig'ing!", c1: '#7FE3FF', c2: '#B49CFF' },
+  { icon: 'compass', title: 'Darslar xaritasi', text: "Hangul alifbosidan TOPIK 6 gacha 35 ta bo'lim — o'yin kabi, pastdan tepaga. Yulduz yig'ing!", c1: '#7FE3FF', c2: '#B49CFF' },
   { icon: 'chat', title: 'Hori AI — jonli ustoz', text: "Ovozli va matnli suhbat, xatolar tahlili. Gemini Live bilan real vaqtda (Super).", c1: '#B49CFF', c2: '#FF8FD0' },
   { icon: 'trophy', title: 'Turnir va seriya', text: "Har hafta 20 kishilik guruh: Kurtak ligasidan Afsonagacha ko'tariling.", c1: '#FFD23F', c2: '#FF6B9A' },
   { icon: 'gift', title: 'Sirli qutilar va baliqchalar', text: "Bekatlardagi qutilarda sovg'alar. Baliqchalar — Horining «joni», xato qilsangiz kamayadi.", c1: '#FF8FD0', c2: '#9B5CFF' },

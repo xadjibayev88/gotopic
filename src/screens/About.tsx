@@ -52,7 +52,7 @@ export function About() {
       <section className="about-card">
         <h2>Biz haqimizda</h2>
         <p>
-          Go Topic — koreys tilini o'zbek tilida o'rgatadigan birinchi ilova. A1 dan C2 gacha 50 ta bo'lim, mingdan ortiq so'z va gaplar, tinglash, diktant va
+          Go Topic — koreys tilini o'zbek tilida o'rgatadigan birinchi ilova. Hangul alifbosidan TOPIK 6 gacha 35 ta bo'lim, 30 000 so'zlik lug'at, TOPIK grammatika, o'qish va tinglash mashqlari, tinglash, diktant va
           tarjima mashqlari. Eng asosiysi — AI ustoz <b>Hori</b>: u siz bilan jonli ovozda gaplashadi, xatolaringizni tuzatadi, hazil qiladi va o'tgan
           suhbatlaringizni eslab qoladi.
         </p>

@@ -617,7 +617,7 @@ export function liveInstruction(req: TutorRequest): string {
   };
   return [
     'JONLI OVOZLI SUHBAT (hozir production\'da o\'chiq):',
-    `Go Topicda koreys tili A1–C2 darajasida o'rgatiladi. ${LANG_NAME[req.lang]} tabiiy va ixcham izoh ber.`,
+    `Go Topicda koreys tili TOPIK 1–6 darajasida o'rgatiladi. ${LANG_NAME[req.lang]} tabiiy va ixcham izoh ber.`,
     tutorBehaviorContract(req.lang),
     CHARACTER_GUIDE[req.character],
     `SCENARIO: ${SCENARIO_GUIDE[req.scenario]}`,

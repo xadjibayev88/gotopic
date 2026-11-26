@@ -103,13 +103,16 @@ function welcomeText(name: string): string {
     "🗺 <b>1. O'yin tariqasidagi darslar — bepul</b>",
     "TOPIK 1 dan 6 gacha 35 ta bo'lim, Hangul alifbosidan boshlab: pastdan tepaga boriladigan xarita, yulduzlar, Sirli qutilar, mashq va diktant — so'zlar o'zi yodda qoladi.",
     "",
-    "🏆 <b>2. Haftalik turnir</b>",
+    "📖 <b>2. 30 000 so'zlik lug'at va TOPIK mashqlari</b>",
+    "Istalgan koreyscha so'zni o'zbekcha izohi bilan toping, tinglang va saqlang. Grammatika, o'qish va tinglash mashqlari — TOPIK imtihoniga tayyorgarlik.",
+    "",
+    "🏆 <b>3. Haftalik turnir</b>",
     "20 kishilik guruhlarda XP yig'ing: Kurtak ligasidan Afsonagacha ko'tariling, kunlik seriyani uzmang 🔥",
     "",
-    "🐯 <b>3. Hori AI — jonli ustoz (Super)</b>",
+    "🐯 <b>4. Hori AI — jonli ustoz (Super)</b>",
     "Hori bilan istalgan mavzuda ovozli va matnli gaplashasiz, Gemini Live'da real vaqtda. U xatolaringizni hazil bilan (ba'zan qattiq 😼) to'g'rilaydi.",
     "",
-    "🎭 <b>4. Har xil xarakterlar</b>",
+    "🎭 <b>5. Har xil xarakterlar</b>",
     "Romantik Hori 💘, qattiqqo'l Professor, hazilkash yoki 18+ «bezori» Hori — kim bilan o'rganishni o'zingiz tanlaysiz.",
     "",
     "🌐 Ilova 12 tilda: o'zbek, rus, ingliz, qozoq, qirg'iz, tojik, turk va boshqalar.",
@@ -440,8 +443,8 @@ export function startBot(token = env('TELEGRAM_BOT_TOKEN')): Bot | null {
     if (me?.username) username = me.username;
     const url = appUrl();
     await tg('setChatMenuButton', { menu_button: { type: 'web_app', text: 'Go Topic App 🚀', web_app: { url } } }).catch(() => {});
-    await tg('setMyShortDescription', { short_description: "Go Topic — koreys tilini o'yin tariqasida o'rganing 🇰🇷 A1→C2. Hori AI ustoz — Super'da 🐯" }).catch(() => {});
-    await tg('setMyDescription', { description: "🇰🇷 Go Topic — koreys tilini o'zbek tilida o'rganing.\n\n🗺 O'yin tariqasida darslar A1→C2 — bepul\n🏆 Haftalik turnir va kunlik seriya\n🐯 Hori AI va Gemini Live — Super obunada\n💎 Super: 1 hafta, 1 oy yoki 3 oy — Payme, Click, karta yoki Visa\n\nBoshlash uchun «Start» ni bosing 👇" }).catch(() => {});
+    await tg('setMyShortDescription', { short_description: "Go Topic — koreys tilini o'yin tariqasida o'rganing 🇰🇷 TOPIK 1–6. Hori AI ustoz — Super'da 🐯" }).catch(() => {});
+    await tg('setMyDescription', { description: "🇰🇷 Go Topic — koreys tilini o'zbek tilida o'rganing.\n\n🗺 O'yin tariqasida darslar TOPIK 1→6 — bepul\n📖 30 000 so'zlik lug'at va TOPIK mashqlari\n🏆 Haftalik turnir va kunlik seriya\n🐯 Hori AI va Gemini Live — Super obunada\n💎 Super: 1 hafta, 1 oy yoki 3 oy — Payme, Click, karta yoki Visa\n\nBoshlash uchun «Start» ni bosing 👇" }).catch(() => {});
     await tg('setMyCommands', { commands: [{ command: 'start', description: 'Boshlash' }, { command: 'plans', description: '💎 Super tariflari' }, { command: 'me', description: 'Mening obunam' }] }).catch(() => {});
     let offset = 0;
     for (;;) {
