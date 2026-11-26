@@ -275,7 +275,8 @@ describe('qiyin mashqlar', () => {
     expect('Quand Malika était petite, elle jouait dans le jardin.').toBe(c.display.replace('_____', c.answer));
   });
   it('yuqori darajada cloze va diktant chiqadi', () => {
-    const u = { ...COURSE[0], level: 'B2' as const };
+    const base = COURSE.find((x) => x.lessons.length >= 4)!;
+    const u = { ...base, level: 'B2' as const };
     const exs = buildLesson(u.lessons[3], u, { level: 1, tts: true, rand: rng(5) });
     const modes = exs.filter((e) => e.kind === 'type').map((e) => (e as { mode?: string }).mode ?? 'translate');
     expect(modes.some((m) => m === 'cloze' || m === 'dictation')).toBe(true);

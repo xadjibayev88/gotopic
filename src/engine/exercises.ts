@@ -73,11 +73,10 @@ function distractorTokens(answerTokens: string[], pool: string[], n: number, ran
 }
 
 export function makePick(word: Word, pool: Word[], rand: () => number): Exercise {
-  const others = sample(
-    pool.filter((w) => w.fr !== word.fr && w.uz !== word.uz),
-    3,
-    rand,
-  );
+  // Variantlar tarjimasi bir-biridan farqli bo'lishi shart (bir xil ma'noli so'zlar chalg'itmasin).
+  const seen = new Set([word.uz]);
+  const uniq = pool.filter((w) => w.fr !== word.fr && !seen.has(w.uz) && (seen.add(w.uz), true));
+  const others = sample(uniq, 3, rand);
   return { id: nextId(), kind: 'pick', word, options: shuffle([word, ...others], rand), wordRefs: [word.fr], ref: `w:${word.fr}` };
 }
 
@@ -118,8 +117,9 @@ export function makeSentenceExercise(
       return { ...base, kind: 'listen', tokens: shuffle([...ans, ...extra], rand), accepted: accFr };
     }
     case 'choose': {
+      const seen = new Set([normalize(sentence.uz)]);
       const wrong = sample(
-        pool.filter((s) => normalize(s.uz) !== normalize(sentence.uz)).map((s) => s.uz),
+        pool.map((s) => s.uz).filter((uz) => !seen.has(normalize(uz)) && (seen.add(normalize(uz)), true)),
         2,
         rand,
       );

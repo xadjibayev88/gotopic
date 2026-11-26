@@ -4,3 +4,4 @@ android
 data
 .git
 *.log
+legacy
