@@ -84,31 +84,31 @@ export const COURSE: Unit[] = [
   "lessons": [
    {
     "id": "u1l1",
-    "title": "«a» tovushi, «eo» tovushi",
+    "title": "ㅏ ㅓ ㅗ ㅜ ㅡ",
     "words": [
      {
       "fr": "ㅏ",
-      "uz": "«a» tovushi",
+      "uz": "a",
       "ro": "a"
      },
      {
       "fr": "ㅓ",
-      "uz": "«eo» tovushi",
+      "uz": "eo",
       "ro": "eo"
      },
      {
       "fr": "ㅗ",
-      "uz": "«o» tovushi",
+      "uz": "o",
       "ro": "o"
      },
      {
       "fr": "ㅜ",
-      "uz": "«u» tovushi",
+      "uz": "u",
       "ro": "u"
      },
      {
       "fr": "ㅡ",
-      "uz": "«eu» tovushi",
+      "uz": "eu",
       "ro": "eu"
      }
     ],
@@ -142,31 +142,31 @@ export const COURSE: Unit[] = [
    },
    {
     "id": "u1l2",
-    "title": "«i» tovushi, «ya» tovushi",
+    "title": "ㅣ ㅑ ㅕ ㅛ ㅠ",
     "words": [
      {
       "fr": "ㅣ",
-      "uz": "«i» tovushi",
+      "uz": "i",
       "ro": "i"
      },
      {
       "fr": "ㅑ",
-      "uz": "«ya» tovushi",
+      "uz": "ya",
       "ro": "ya"
      },
      {
       "fr": "ㅕ",
-      "uz": "«yeo» tovushi",
+      "uz": "yeo",
       "ro": "yeo"
      },
      {
       "fr": "ㅛ",
-      "uz": "«yo» tovushi",
+      "uz": "yo",
       "ro": "yo"
      },
      {
       "fr": "ㅠ",
-      "uz": "«yu» tovushi",
+      "uz": "yu",
       "ro": "yu"
      }
     ],
@@ -239,31 +239,43 @@ export const COURSE: Unit[] = [
   "lessons": [
    {
     "id": "u2l1",
-    "title": "«g / k» tovushi, «n» tovushi",
+    "title": "ㄱ ㄴ ㄷ ㄹ ㅁ",
     "words": [
      {
       "fr": "ㄱ",
-      "uz": "«g / k» tovushi",
-      "ro": "g"
+      "uz": "g / k",
+      "ro": "g",
+      "alt": [
+       "g",
+       "k"
+      ]
      },
      {
       "fr": "ㄴ",
-      "uz": "«n» tovushi",
+      "uz": "n",
       "ro": "n"
      },
      {
       "fr": "ㄷ",
-      "uz": "«d / t» tovushi",
-      "ro": "d"
+      "uz": "d / t",
+      "ro": "d",
+      "alt": [
+       "d",
+       "t"
+      ]
      },
      {
       "fr": "ㄹ",
-      "uz": "«r / l» tovushi",
-      "ro": "r"
+      "uz": "r / l",
+      "ro": "r",
+      "alt": [
+       "r",
+       "l"
+      ]
      },
      {
       "fr": "ㅁ",
-      "uz": "«m» tovushi",
+      "uz": "m",
       "ro": "m"
      }
     ],
@@ -297,31 +309,39 @@ export const COURSE: Unit[] = [
    },
    {
     "id": "u2l2",
-    "title": "«b / p» tovushi, «s» tovushi",
+    "title": "ㅂ ㅅ ㅇ ㅈ ㅊ",
     "words": [
      {
       "fr": "ㅂ",
-      "uz": "«b / p» tovushi",
-      "ro": "b"
+      "uz": "b / p",
+      "ro": "b",
+      "alt": [
+       "b",
+       "p"
+      ]
      },
      {
       "fr": "ㅅ",
-      "uz": "«s» tovushi",
+      "uz": "s",
       "ro": "s"
      },
      {
       "fr": "ㅇ",
-      "uz": "«– / ng» tovushi",
-      "ro": "–"
+      "uz": "– / ng",
+      "ro": "–",
+      "alt": [
+       "–",
+       "ng"
+      ]
      },
      {
       "fr": "ㅈ",
-      "uz": "«j» tovushi",
+      "uz": "j",
       "ro": "j"
      },
      {
       "fr": "ㅊ",
-      "uz": "«ch» tovushi",
+      "uz": "ch",
       "ro": "ch"
      }
     ],
@@ -355,35 +375,35 @@ export const COURSE: Unit[] = [
    },
    {
     "id": "u2l3",
-    "title": "«k, «t",
+    "title": "ㅋ ㅌ ㅍ ㅎ",
     "words": [
      {
       "fr": "ㅋ",
-      "uz": "«k (nafasli)» tovushi",
+      "uz": "k (nafasli)",
       "ro": "k",
       "alt": [
-       "«k» tovushi"
+       "k"
       ]
      },
      {
       "fr": "ㅌ",
-      "uz": "«t (nafasli)» tovushi",
+      "uz": "t (nafasli)",
       "ro": "t",
       "alt": [
-       "«t» tovushi"
+       "t"
       ]
      },
      {
       "fr": "ㅍ",
-      "uz": "«p (nafasli)» tovushi",
+      "uz": "p (nafasli)",
       "ro": "p",
       "alt": [
-       "«p» tovushi"
+       "p"
       ]
      },
      {
       "fr": "ㅎ",
-      "uz": "«h» tovushi",
+      "uz": "h",
       "ro": "h"
      }
     ],

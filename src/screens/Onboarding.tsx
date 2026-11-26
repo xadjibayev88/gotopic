@@ -7,7 +7,7 @@ import { speak } from '../engine/audio';
 import { AuthScreen } from './Auth';
 import { useAccount } from '../state/account';
 import { Ic, type IconName } from '../components/Icons';
-import type { Cefr } from '../data/course';
+import { levelLabel, type Cefr } from '../data/course';
 
 /** Ilova haqida qisqa tanishtiruv kartalari. */
 const FEATURES: { icon: IconName; title: string; text: string; c1: string; c2: string }[] = [
@@ -21,9 +21,9 @@ const FEATURES: { icon: IconName; title: string; text: string; c1: string; c2: s
 const LEVELS: { id: string; title: string; sub: string; bars: number; jump: Cefr | null }[] = [
   { id: 'zero', title: 'Umuman bilmayman', sub: "Noldan boshlayman", bars: 0, jump: null },
   { id: 'words', title: "Bir necha so'z bilaman", sub: 'Bonjour, merci, au revoir…', bars: 1, jump: null },
-  { id: 'basic', title: 'Oddiy gaplar tuzaman', sub: "O'zim haqimda gapira olaman — A2", bars: 2, jump: 'A2' },
-  { id: 'talk', title: 'Suhbatlasha olaman', sub: 'Kundalik mavzularda — B1', bars: 3, jump: 'B1' },
-  { id: 'fluent', title: 'Erkin gapiraman', sub: 'Murakkab mavzular — B2', bars: 4, jump: 'B2' },
+  { id: 'basic', title: 'Oddiy gaplar tuzaman', sub: "O'zim haqimda gapira olaman — TOPIK 2", bars: 2, jump: 'A2' },
+  { id: 'talk', title: 'Suhbatlasha olaman', sub: 'Kundalik mavzularda — TOPIK 3', bars: 3, jump: 'B1' },
+  { id: 'fluent', title: 'Erkin gapiraman', sub: 'Murakkab mavzular — TOPIK 4', bars: 4, jump: 'B2' },
 ];
 const PENDING_JUMP = 'voila.pendingJump';
 
@@ -183,7 +183,7 @@ export function Onboarding() {
           </div>
           {LEVELS.find((l) => l.id === level)?.jump && (
             <p className="ob-note">
-              <Ic name="bolt" size={16} /> {`Tanishuvdan so'ng ${LEVELS.find((l) => l.id === level)!.jump} darajasiga qisqa test — o'tsangiz, oldingi darslar ochiladi.`}
+              <Ic name="bolt" size={16} /> {`Tanishuvdan so'ng ${levelLabel(LEVELS.find((l) => l.id === level)!.jump!)} darajasiga qisqa test — o'tsangiz, oldingi darslar ochiladi.`}
             </p>
           )}
           <button type="button" className="btn btn-success btn-lg" disabled={!level} onClick={() => setStep(4)}>

@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
-import { COURSE, type Cefr, type Unit } from '../data/course';
+import { COURSE, levelLabel, type Cefr, type Unit } from '../data/course';
 import { buildPath, isLessonUnlocked, nodeState, spinWheel, type PathNode, type WheelPrize } from '../engine/game';
 import { playSfx, speak } from '../engine/audio';
 import { motionAllowed } from '../engine/motion';
@@ -75,7 +75,7 @@ export function Learn({ onStart }: { onStart: (c: SessionConfig) => void }) {
     <div className="learn lmap">
       <div className="course-end">
         <Mascot mood="sleep" size={100} />
-        <p className="muted">Go Topic ! Siz C2 — eng yuqori darajaga yetdingiz. 축하해요!</p>
+        <p className="muted">Go Topic! Siz TOPIK 6 — eng yuqori darajaga yetdingiz. 축하해요!</p>
       </div>
       <AdSlot />
       {order.map(({ u, ui }) => {
@@ -116,14 +116,14 @@ export function Learn({ onStart }: { onStart: (c: SessionConfig) => void }) {
             </header>
             {levelStart && (
               <div className={`level-head lv-${lvl}`}>
-                <span className="level-badge">{lvl}</span>
+                <span className="level-badge">{levelLabel(lvl).replace('TOPIK ', 'T')}</span>
                 <div>
                   <b>{LEVEL_NAMES[lvl]}</b>
                   <small>{`${COURSE.filter((x) => (x.level ?? 'A1') === lvl).length} ta liniya`}</small>
                 </div>
                 {locked && ui > 0 && (
                   <button type="button" className="btn btn-jump" onClick={() => onStart({ kind: 'jump', level: lvl })}>
-                    <Ic name="bolt" size={16} /> {lvl} ga sakrash
+                    <Ic name="bolt" size={16} /> {levelLabel(lvl)} ga sakrash
                   </button>
                 )}
               </div>

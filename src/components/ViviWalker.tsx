@@ -4,7 +4,7 @@
 // bir marta holatni almashtiradi. Sahifa yashirin bo'lsa yoki «kam harakat» yoqilgan bo'lsa — to'xtaydi.
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { motionAllowed } from '../engine/motion';
-import { FUR, FUR_SHADE, LINE, INK } from './Mascot';
+import { FUR, FUR_SHADE, LINE, INK, STRIPE } from './Mascot';
 
 type Mode = 'walk' | 'sit' | 'sleep' | 'jump';
 
@@ -157,7 +157,7 @@ export function ViviWalker({ cheerKey }: { cheerKey: number }) {
   );
 }
 
-/** Yon tomondan Hori: oq-lavanda mo'yna, binafsha beret, pushti quloqlar. */
+/** Yon tomondan Hori: oq Amur yo'lbarschasi — qora chiziqlar, halqali dum, yumaloq quloqlar. */
 function CatSide() {
   return (
     <svg className="vw-cat" viewBox="0 0 44 32" width={CAT_W} height="29" aria-hidden="true">
@@ -166,6 +166,7 @@ function CatSide() {
         <g className="vw-tail">
           <path d="M9.5 17.5 C3 16.5 2.5 8 7 5.5" fill="none" stroke={LINE} strokeWidth="4.6" strokeLinecap="round" />
           <path d="M9.5 17.5 C3 16.5 2.5 8 7 5.5" fill="none" stroke={FUR} strokeWidth="2.6" strokeLinecap="round" />
+          <path d="M9.5 17.5 C3 16.5 2.5 8 7 5.5" fill="none" stroke={STRIPE} strokeWidth="2.6" strokeDasharray="1.4 2.4" />
         </g>
         {/* uzoqdagi oyoqlar */}
         <g className="vw-legs far">
@@ -174,6 +175,11 @@ function CatSide() {
         </g>
         <ellipse cx="19.5" cy="18" rx="11.5" ry="6.6" fill={FUR} stroke={LINE} strokeWidth="1.5" />
         <path d="M11 20.5 Q19 24.5 28 20.5" fill="none" stroke={FUR_SHADE} strokeWidth="2" strokeLinecap="round" />
+        <g fill={STRIPE}>
+          <path d="M14 12.2 C15.6 14 15.8 16.4 14.8 18.4 C14 16.6 13.4 14.4 14 12.2 Z" />
+          <path d="M19 11.5 C20.6 13.5 20.8 16 19.8 18.2 C19 16.2 18.4 13.8 19 11.5 Z" />
+          <path d="M24 12 C25.6 13.8 25.8 16.2 24.8 18.2 C24 16.4 23.4 14.2 24 12 Z" />
+        </g>
         {/* yaqindagi oyoqlar */}
         <g className="vw-legs near">
           <rect className="vw-leg b" x="10" y="19.5" width="3.2" height="9" rx="1.6" fill={FUR} stroke={LINE} strokeWidth="1.2" />
@@ -186,24 +192,30 @@ function CatSide() {
         <g className="vw-tail2">
           <path d="M13 26.8 C5.5 27.4 3.2 19.5 6.8 15.2" fill="none" stroke={LINE} strokeWidth="4.6" strokeLinecap="round" />
           <path d="M13 26.8 C5.5 27.4 3.2 19.5 6.8 15.2" fill="none" stroke={FUR} strokeWidth="2.6" strokeLinecap="round" />
+          <path d="M13 26.8 C5.5 27.4 3.2 19.5 6.8 15.2" fill="none" stroke={STRIPE} strokeWidth="2.6" strokeDasharray="1.4 2.4" />
         </g>
         <rect x="27.3" y="17" width="3" height="11.6" rx="1.5" fill={FUR_SHADE} stroke={LINE} strokeWidth="1.1" />
         <path d="M24.5 10.8 C30.4 12 31 20 29.8 28.5 L14.2 28.5 C9.2 28.5 8.6 21.8 11.2 17.6 C13.6 13.8 18.2 11 24.5 10.8 Z" fill={FUR} stroke={LINE} strokeWidth="1.5" strokeLinejoin="round" />
         <path d="M26.6 15.5 Q24.8 19 26.4 22.5" fill="none" stroke={FUR_SHADE} strokeWidth="1.8" strokeLinecap="round" />
+        <g fill={STRIPE}>
+          <path d="M14.5 15.6 C16.4 17 17 19.4 16.4 21.6 C15.4 19.8 14.6 17.8 14.5 15.6 Z" />
+          <path d="M19.5 13.4 C21.4 14.8 22 17.2 21.4 19.4 C20.4 17.6 19.6 15.6 19.5 13.4 Z" />
+        </g>
         <path d="M11.8 26.6 C10.8 20.4 18.8 18.6 20.8 25.4" fill="none" stroke={LINE} strokeWidth="1.2" strokeLinecap="round" />
         <ellipse cx="17.4" cy="28.5" rx="3.4" ry="1.25" fill={FUR} stroke={LINE} strokeWidth="1.1" />
         <rect x="23.9" y="17.6" width="3.3" height="11" rx="1.65" fill={FUR} stroke={LINE} strokeWidth="1.2" />
         <ellipse cx="26" cy="28.6" rx="2.5" ry="1.15" fill={FUR} stroke={LINE} strokeWidth="1.1" />
       </g>
       <g className="vw-head">
-        <path d="M26 7.5 L26.8 0.8 Q27.2 -0.2 28 0.6 L31.6 4.6 Z" fill={FUR} stroke={LINE} strokeWidth="1.3" strokeLinejoin="round" />
-        <path d="M27.4 5.6 L27.8 2.6 L29.7 4.7 Z" fill="#F9A8D4" />
-        <path d="M33.4 4.4 L37.4 0.8 Q38.3 0.2 38.4 1.2 L38.4 7.8 Z" fill={FUR} stroke={LINE} strokeWidth="1.3" strokeLinejoin="round" />
-        <path d="M35 4.6 L37.3 2.6 L37.3 5.8 Z" fill="#F9A8D4" />
+        <path d="M25.6 7.6 C24.2 4.4 25.6 1.4 28.4 1.4 C30.6 1.4 31.8 3.2 31.6 5 Z" fill={FUR} stroke={LINE} strokeWidth="1.3" strokeLinejoin="round" />
+        <path d="M26.9 5.9 C26.4 4.2 27.2 2.8 28.4 2.8 C29.5 2.8 30.2 3.7 30.2 4.8 Z" fill="#FBCFE8" />
+        <path d="M33.2 4.6 C34 2.6 35.6 1.4 37.4 1.8 C39.2 2.4 39.4 5 38.6 7.6 Z" fill={FUR} stroke={LINE} strokeWidth="1.3" strokeLinejoin="round" />
+        <path d="M34.6 4.6 C35.2 3.4 36.2 2.8 37.2 3.2 C38 3.6 38 4.9 37.6 6 Z" fill="#FBCFE8" />
         <circle cx="32" cy="11.2" r="7.4" fill={FUR} stroke={LINE} strokeWidth="1.5" />
-        <g className="vw-beret">
-          <ellipse cx="31" cy="4.6" rx="5.4" ry="2.1" fill="#B49CFF" stroke={LINE} strokeWidth="1.1" transform="rotate(-14 31 4.6)" />
-          <circle cx="31.4" cy="2.2" r="0.9" fill="#7C3AED" />
+        <g fill={STRIPE} className="vw-stripes">
+          <path d="M30.2 4.4 C31 5.6 31.2 7 30.8 8.2 C30.2 7 29.9 5.7 30.2 4.4 Z" />
+          <path d="M32.6 4.2 C33.4 5.4 33.6 6.8 33.2 8 C32.6 6.8 32.3 5.5 32.6 4.2 Z" />
+          <path d="M25.4 10.4 C26.8 10.6 27.8 11.2 28.4 12.2 C27.2 12 26 12 25 12.4 Z" />
         </g>
         <ellipse className="vw-eye" cx="35" cy="10.4" rx="1.35" ry="1.8" fill={INK} />
         <circle cx="35.4" cy="9.8" r="0.45" fill="#fff" />

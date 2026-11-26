@@ -1,7 +1,7 @@
 // Yuqori panel ikonkalari — emoji o'rniga bir uslubdagi SVG'lar (ikkala mavzuda ham aniq ko'rinadi).
 // Animatsiyalar faqat transform/opacity (CSS'da), kam harakat rejimida to'xtaydi.
 
-/** Dumaloq Koreya bayrog'i nishoni, ustida shisha yaltirog'i. */
+/** Dumaloq Koreya bayrog'i (Taegeukgi) nishoni: oq maydon, qizil-ko'k taegeuk va to'rt trigramma. */
 export function FlagIcon() {
   return (
     <svg className="tbi tbi-flag" viewBox="0 0 28 28" width="26" height="26" aria-hidden="true">
@@ -15,12 +15,20 @@ export function FlagIcon() {
         </linearGradient>
       </defs>
       <g clipPath="url(#tbi-flag-clip)">
-        <rect x="0" y="0" width="10.5" height="28" fill="#2B59E0" />
-        <rect x="10.5" y="0" width="7" height="28" fill="#F8FAFF" />
-        <rect x="17.5" y="0" width="10.5" height="28" fill="#EF3B4B" />
+        <rect x="0" y="0" width="28" height="28" fill="#FFFFFF" />
+        <g transform="rotate(-33.7 14 14)">
+          <path d="M8.6 14a5.4 5.4 0 0 1 10.8 0a2.7 2.7 0 0 1-5.4 0a2.7 2.7 0 0 0-5.4 0z" fill="#CD2E3A" />
+          <path d="M8.6 14a5.4 5.4 0 0 0 10.8 0a2.7 2.7 0 0 0-5.4 0a2.7 2.7 0 0 1-5.4 0z" fill="#0047A0" />
+        </g>
+        <g stroke="#1A1A1A" strokeWidth="1.1">
+          <path d="M4.2 7.6l2.2-1.5M4.8 8.5l2.2-1.5M5.4 9.4l2.2-1.5" />
+          <path d="M21.6 18.6l2.2-1.5M22.2 19.5l2.2-1.5M22.8 20.4l2.2-1.5" />
+          <path d="M20.4 6.1l2.2 1.5M19.8 7l.9.6M21.6 8.2l.9.6M19.2 7.9l2.2 1.5" />
+          <path d="M3.6 18l.9.6M5.4 19.2l.9.6M3 18.9l2.2 1.5M2.4 19.8l.9.6M4.2 21l.9.6" />
+        </g>
         <ellipse cx="14" cy="7" rx="11" ry="6" fill="url(#tbi-flag-gloss)" />
       </g>
-      <circle cx="14" cy="14" r="12.25" fill="none" stroke="rgba(255,255,255,.75)" strokeWidth="1.5" />
+      <circle cx="14" cy="14" r="12.25" fill="none" stroke="rgba(30,30,60,.25)" strokeWidth="1.5" />
     </svg>
   );
 }

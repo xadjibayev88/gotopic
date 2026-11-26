@@ -34,7 +34,7 @@ def alts(uz):
     out = []
     base = re.sub(r'\s*\([^)]*\)', '', uz).strip()
     if base and base != uz: out.append(base)
-    for part in re.split(r'[;,]', base):
+    for part in re.split(r'[;,/]', base):
         p = part.strip()
         if p and p != uz and p not in out: out.append(p)
     return out
@@ -61,7 +61,7 @@ def add_unit(title, level, words, sentences, guide, desc):
         n = len(sentences)
         start = (i * 3) % n
         sents = [sentences[(start + j) % n] for j in range(min(5, n))]
-        title_l = ', '.join(short(w['uz']) for w in ws[:2]).capitalize()
+        title_l = ' '.join(w['fr'] for w in ws) if title.startswith('Hangul') else ', '.join(short(w['uz']) for w in ws[:2]).capitalize()
         lessons.append({'id': f"{uid}l{i + 1}", 'title': title_l, 'words': ws, 'sentences': sents})
     units.append({'id': uid, 'level': level, 'title': title, 'description': desc, 'color': COLORS[len(units) % len(COLORS)],
                   'guide': guide, 'lessons': lessons})
@@ -82,10 +82,10 @@ def guide(title):
     return [{'title': t, 'text': x, **({'examples': [[a, b] for a, b in ex]} if ex else {})} for t, x, ex in D['GUIDES'].get(title, [])]
 
 # 1-2. Hangul
-vow = [word(l, r, f"«{r}» tovushi") for l, r, _, _ in D['HANGUL_VOWELS']]
+vow = [word(l, r, r) for l, r, _, _ in D['HANGUL_VOWELS']]
 vs = [sent(k, r, u) for k, r, u, _ in D['HANGUL_SYLLABLE_WORDS_V']]
 add_unit('Hangul: unlilar', 'A1', vow, vs, guide('Hangul: unlilar'), "Koreys alifbosi: 10 ta asosiy unli")
-con = [word(l, r.split(' ')[0], f"«{r}» tovushi") for l, r, _, _ in D['HANGUL_CONSONANTS']]
+con = [word(l, r.split(' ')[0], r) for l, r, _, _ in D['HANGUL_CONSONANTS']]
 cs = [sent(k, r, u) for k, r, u, _ in D['HANGUL_SYLLABLE_WORDS_C']]
 add_unit('Hangul: undoshlar', 'A1', con, cs, guide('Hangul: undoshlar'), "14 ta undosh va birinchi so'zlar")
 

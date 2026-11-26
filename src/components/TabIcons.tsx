@@ -17,35 +17,35 @@ const ICONS: Record<string, (on: boolean) => ReactNode> = {
   // Hori — yo'lbarscha boshi
   tutor: (on) => (
     <>
-      <path className="ti-ear-l" d="M5.2 9.6 4.6 3.8l4.6 2.9" {...S} />
-      <path className="ti-ear-r" d="M18.8 9.6l.6-5.8-4.6 2.9" {...S} />
-      <path d="M12 20.6c-4.6 0-8-2.6-8-6.6 0-4.2 3.6-7.6 8-7.6s8 3.4 8 7.6c0 4-3.4 6.6-8 6.6z" {...S} fill={on ? 'url(#ic-candy)' : 'none'} />
+      {/* Hori — oq yo'lbars boshi: yumaloq quloqlar, peshonada 王 */}
+      <path className="ti-ear-l" d="M5.6 9.4C3.8 7.6 4 4.2 6.6 3.8c1.6-.2 2.8.8 3.4 2" {...S} />
+      <path className="ti-ear-r" d="M18.4 9.4c1.8-1.8 1.6-5.2-1-5.6-1.6-.2-2.8.8-3.4 2" {...S} />
+      <path d="M12 20.6c-4.6 0-8.2-2.6-8.2-6.8 0-4.2 3.7-7.6 8.2-7.6s8.2 3.4 8.2 7.6c0 4.2-3.6 6.8-8.2 6.8z" {...S} fill={on ? 'url(#ic-candy)' : 'none'} />
+      <path d="M10 8.6h4M10.4 10.2h3.2M12 8.4v2.6" {...S} strokeWidth={1.2} />
+      <path d="M4.6 12.6l2 .4M4.8 15l1.8-.2M19.4 12.6l-2 .4M19.2 15l-1.8-.2" {...S} strokeWidth={1.2} />
       <g className="ti-eyes">
-        <circle cx="9" cy="13" r="1.15" fill="currentColor" />
-        <circle cx="15" cy="13" r="1.15" fill="currentColor" />
+        <circle cx="9.2" cy="13.4" r="1.15" fill="currentColor" />
+        <circle cx="14.8" cy="13.4" r="1.15" fill="currentColor" />
       </g>
-      <path d="M11 15.6h2l-1 1z" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
-      <path d="M2.4 14.6l3.4.4M2.8 17.4l3.2-.9M21.6 14.6l-3.4.4M21.2 17.4l-3.2-.9" {...S} strokeWidth={1.4} />
+      <path d="M11 16h2l-1 1z" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
     </>
   ),
-  // Tteokbokki — har kungi mashq
+  // Buchae — koreys an'anaviy yelpig'ichi: har kungi mashq
   practice: (on) => (
     <>
-      <path
-        d="M3.2 15.4c1.2-5.6 5-9 8.8-9s7.6 3.4 8.8 9c-1.8 1-3.4 1.2-4.6.6L12 18.4l-4.2-2.4c-1.2.6-2.8.4-4.6-.6z"
-        {...S}
-        fill={on ? 'url(#ic-candy)' : 'none'}
-      />
-      <path d="M12 6.6v11.6M8.2 8.4l-.4 7.6M15.8 8.4l.4 7.6" {...S} strokeWidth={1.5} />
+      <path d="M3 15.4A9 9 0 0 1 21 15.4L12 18.6z" {...S} fill={on ? 'url(#ic-candy)' : 'none'} />
+      <path d="M12 18.6 6.2 8.6M12 18.6 9 7.2M12 18.6 12 6.6M12 18.6l3-11.4M12 18.6l5.8-10" {...S} strokeWidth={1.2} />
+      <path d="M12 18.6v2.6" {...S} />
+      <circle cx="12" cy="21.4" r=".9" fill="currentColor" />
     </>
   ),
-  // Namsan minorasi — turnir
+  // N Seoul (Namsan) minorasi — turnir
   leagues: (on) => (
     <>
-      <path d="M12 2.2v2.6" {...S} />
-      <path d="M10.6 4.8h2.8l1 5.2h-4.8z" {...S} fill={on ? 'url(#ic-candy)' : 'none'} />
-      <path d="M9.2 10h5.6M9.6 10 6.4 21.4M14.4 10l3.2 11.4M8.2 14.6h7.6" {...S} />
-      <path d="M8.4 21.4c.4-2.6 1.8-4 3.6-4s3.2 1.4 3.6 4" {...S} />
+      <path d="M12 1.6v4" {...S} />
+      <path d="M8.6 7.4c0-1.1.9-1.8 2-1.8h2.8c1.1 0 2 .7 2 1.8v.6c0 1-.9 1.8-2 1.8h-2.8c-1.1 0-2-.8-2-1.8z" {...S} fill={on ? 'url(#ic-candy)' : 'none'} />
+      <path d="M11 9.8 10.4 18.4M13 9.8l.6 8.6" {...S} />
+      <path d="M6.2 21.4c.6-1.8 2.2-3 5.8-3s5.2 1.2 5.8 3" {...S} />
       <path className="ti-spark" d="M19.4 3.4v2.4M18.2 4.6h2.4" {...S} strokeWidth={1.5} />
     </>
   ),
@@ -57,11 +57,11 @@ const ICONS: Record<string, (on: boolean) => ReactNode> = {
       <path d="M10.2 14.6c.6.8 1.2 1.2 1.8 1.2s1.2-.4 1.8-1.2" {...S} strokeWidth={1.5} />
     </>
   ),
-  // Beretli odam — profil
+  // Odam — profil
   profile: (on) => (
     <>
-      <circle cx="12" cy="10" r="3.8" {...S} fill={on ? 'url(#ic-candy)' : 'none'} />
-      <path className="ti-beret" d="M7.4 7.6c.6-2.2 2.6-3.4 4.8-3.4 2.4 0 4.2 1 4.6 2.6-1.4.6-3 .9-4.8.9s-3.4-.1-4.6-.1zM12.4 4.2l.6-1.4" {...S} fill="currentColor" fillOpacity={0.9} />
+      <circle cx="12" cy="9.6" r="3.9" {...S} fill={on ? 'url(#ic-candy)' : 'none'} />
+      <path className="ti-beret" d="M8.4 8.4c.8-2 2.2-2.9 3.8-2.9 1.8 0 3.1 1 3.6 2.6" {...S} strokeWidth={1.6} />
       <path d="M4.8 20.6c.8-3.4 3.6-5.4 7.2-5.4s6.4 2 7.2 5.4" {...S} />
     </>
   ),
