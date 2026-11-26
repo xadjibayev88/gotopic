@@ -1,19 +1,19 @@
-FROM node:22-bookworm-slim AS builder
+# Salut! — Railway / istalgan Docker hosting uchun.
+FROM node:22-slim AS build
 WORKDIR /app
-RUN corepack enable && corepack prepare pnpm@11.25.0 --activate
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm install --frozen-lockfile
-COPY tsconfig.json ./
-COPY server ./server
-RUN pnpm build
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
 
-FROM node:22-bookworm-slim
-ENV NODE_ENV=production PORT=3000
+FROM node:22-slim
+ENV NODE_ENV=production NODE_NO_WARNINGS=1 PORT=8787 SALUT_DATA_DIR=/data
 WORKDIR /app
-RUN corepack enable && corepack prepare pnpm@11.25.0 --activate
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm install --prod --frozen-lockfile
-COPY --from=builder /app/dist ./dist
-COPY public ./public
-EXPOSE 3000
-CMD ["node", "dist/main.js"]
+COPY --from=build /app/package.json ./
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/server ./server
+COPY --from=build /app/src/engine/voice/stt-result.ts ./src/engine/voice/stt-result.ts
+COPY --from=build /app/src/shared ./src/shared
+RUN mkdir -p /data
+EXPOSE 8787
+CMD ["node", "server/main.ts"]

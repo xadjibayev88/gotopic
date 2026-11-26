@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.log
+*.pcm
+*.wav
+android/.gradle/
+android/local.properties
+android/**/build/
+*.jks
+*.keystore
+
+# Temporary translation quality pilot; source and final dataset stay versioned.
+data/dictionary-uz-pilot.jsonl

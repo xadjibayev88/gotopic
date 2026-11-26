@@ -1,39 +1,15 @@
 {
-  "id": "./",
-  "name": "Go Topic",
-  "short_name": "Go Topic",
-  "lang": "uz",
-  "dir": "ltr",
+  "name": "Voilà! — Fransuz tili o'zbekcha",
+  "short_name": "Voilà!",
+  "description": "Fransuz tilini o'zbek tilida o'rganing",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "display_override": [
-    "standalone"
-  ],
   "orientation": "portrait",
-  "background_color": "#0b1020",
-  "theme_color": "#0b1020",
-  "description": "Koreys tilini noldan TOPIK 6 gacha o'rganish",
-  "categories": [
-    "education",
-    "language"
-  ],
+  "background_color": "#0b0d24",
+  "theme_color": "#0b0d24",
+  "lang": "uz",
   "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    },
-    {
-      "src": "icon-maskable.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    }
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
   ]
 }
