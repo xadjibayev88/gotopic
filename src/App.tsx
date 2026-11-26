@@ -30,6 +30,7 @@ const loaders = {
   Shop: () => import('./screens/Shop').then((m) => ({ default: m.Shop })),
   About: () => import('./screens/About').then((m) => ({ default: m.About })),
   Dictionary: () => import('./screens/Dictionary').then((m) => ({ default: m.Dictionary })),
+  Topik: () => import('./screens/Topik').then((m) => ({ default: m.Topik })),
   Admin: () => import('./screens/Admin').then((m) => ({ default: m.Admin })),
   Session: () => import('./screens/Session').then((m) => ({ default: m.Session })),
 };
@@ -39,6 +40,7 @@ const Profile = lazy(loaders.Profile);
 const Shop = lazy(loaders.Shop);
 const About = lazy(loaders.About);
 const Dictionary = lazy(loaders.Dictionary);
+const Topik = lazy(loaders.Topik);
 const Admin = lazy(loaders.Admin);
 const Session = lazy(loaders.Session);
 if (typeof window !== 'undefined') {
@@ -73,6 +75,7 @@ const PaneBody = memo(function PaneBody({ id, onStart, onManageAiConsent }: { id
       {id === 'shop' && <Shop />}
       {id === 'about' && <About />}
       {id === 'dict' && <Dictionary />}
+      {id === 'topik' && <Topik />}
       {id === 'admin' && <Admin />}
     </Suspense>
   );
@@ -123,7 +126,7 @@ const Pane = memo(function Pane({ id, on, dir, onStart, onManageAiConsent }: { i
 
 import { initAds, loadAdsense, maybeInterstitial, setImmersive } from './engine/ads';
 
-type Tab = 'learn' | 'tutor' | 'practice' | 'leagues' | 'profile' | 'shop' | 'about' | 'admin' | 'dict';
+type Tab = 'learn' | 'tutor' | 'practice' | 'leagues' | 'profile' | 'shop' | 'about' | 'admin' | 'dict' | 'topik';
 
 const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: 'learn', label: 'Darslar', icon: '🚇' },
@@ -138,7 +141,7 @@ const TAB_ITEMS: readonly TabItem<Tab>[] = TABS.map((t) => ({ id: t.id, label: t
 
 function readTab(): Tab {
   const h = location.hash.replace('#/', '').split('?')[0] as Tab;
-  return TABS.some((t) => t.id === h) || h === 'about' || h === 'admin' || h === 'dict' ? h : 'learn';
+  return TABS.some((t) => t.id === h) || h === 'about' || h === 'admin' || h === 'dict' || h === 'topik' ? h : 'learn';
 }
 
 export function App() {

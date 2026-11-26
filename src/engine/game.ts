@@ -681,6 +681,11 @@ export function grantSuperFreeze(s: GameState, now = new Date()): GameState {
 
 /** Reklama (video) ko'rgani uchun XP — kunlik maqsad, seriya va turnirga ham hisoblanadi. */
 export const AD_XP = 20;
+/** Mashq (TOPIK grammatika/o'qish/tinglash) uchun XP: seriya, turnir va kunlik maqsadga qo'shiladi. */
+export function grantXp(s: GameState, xp: number, now = new Date()): GameState {
+  return xp > 0 ? grantAdXp(s, Math.round(xp), now) : s;
+}
+
 export function grantAdXp(s: GameState, xp = AD_XP, now = new Date()): GameState {
   const today = dayKey(now);
   let next = touchStreak(rolloverLeague(s, now), now);
