@@ -63,7 +63,7 @@ export interface CallOptions {
   autoSend?: boolean;
   stt: SttEngine;
   micLang: string;
-  /** Mikrofon tili «Avto»: Vivi javobiga qarab o'zi almashadi. */
+  /** Mikrofon tili «Avto»: Hori javobiga qarab o'zi almashadi. */
   autoMic?: boolean;
   rate: number;
   name: string;
@@ -83,7 +83,7 @@ export interface Snapshot {
   image: { q: string; key: number } | null;
   level: number;
   partial: string;
-  /** STT natijasi: Vivi'ga yuborishdan oldin tahrirlash uchun. */
+  /** STT natijasi: Hori'ga yuborishdan oldin tahrirlash uchun. */
   draft: string;
   /** Metadata-only result remains available through retry; it is never a submitted user turn. */
   sttResult: SttResult | null;
@@ -271,7 +271,7 @@ export class VoiceCall {
   private onVadStart() {
     if (this.o.inputMode !== 'handsfree') return;
     if (this.snap.phase === 'speaking') {
-      // Barge-in: Vivi gapirayotganda o'quvchi gapira boshladi.
+      // Barge-in: Hori gapirayotganda o'quvchi gapira boshladi.
       const now = Date.now();
       this.bargeIns = [...this.bargeIns.filter((t) => now - t < 20_000), now];
       if (this.bargeIns.length >= 3) this.notice('nudgeNoise');
@@ -320,7 +320,7 @@ export class VoiceCall {
       return;
     }
     this.set({ phase: 'review', draft: t, sttResult: result, retryAvailable: false, partial: '', live: '', level: 0 });
-    // Avto-yuborish: gapirgan matn tekshirish oynasisiz darhol Vivi'ga ketadi (suhbat matnida ko'rinadi).
+    // Avto-yuborish: gapirgan matn tekshirish oynasisiz darhol Hori'ga ketadi (suhbat matnida ko'rinadi).
     // Faqat «autoSend: false» bo'lsa, avvalgidek tasdiqlash oynasi qoladi.
     if (this.o.autoSend !== false) this.submitDraft(t);
   }
@@ -331,7 +331,7 @@ export class VoiceCall {
     this.set({ draft: text });
   }
 
-  /** Tahrirlangan matnni Vivi'ga yuborish; qayta urinishda user turn takrorlanmaydi. */
+  /** Tahrirlangan matnni Hori'ga yuborish; qayta urinishda user turn takrorlanmaydi. */
   submitDraft(text = this.snap.draft) {
     if (this.snap.phase !== 'review') return;
     const draft = text.trim();
@@ -383,7 +383,7 @@ export class VoiceCall {
     if (this.finishing || Date.now() - this.startedAt >= this.snap.limitMs) this.end('limit');
   }
 
-  // ---------- Vivi javobi ----------
+  // ---------- Hori javobi ----------
 
   private history() {
     return this.snap.turns.filter((t) => t.id !== this.draftTurnId).slice(-20).map((t) => ({ role: t.role, text: t.text }));
@@ -475,7 +475,7 @@ export class VoiceCall {
       clearTimeout(watchdog);
       if (seq !== this.requestSeq || this.snap.phase === 'ended') return;
       if (stalled) {
-        this.notice('upstream', 'Vivi javob bermadi — matnni tekshirib, qayta yuboring.', 6000);
+        this.notice('upstream', 'Hori javob bermadi — matnni tekshirib, qayta yuboring.', 6000);
         this.responseWaitingForDrain = false;
         this.set({ phase: this.draftSubmitted ? 'review' : 'ready', draft: this.draftSubmitted ? this.snap.draft || message : this.snap.draft, retryAvailable: this.draftSubmitted, live: '', level: 0 });
         return;
@@ -497,7 +497,7 @@ export class VoiceCall {
     }
   }
 
-  /** Vivi gapini bo'lish: ovoz va oqim darhol to'xtaydi. */
+  /** Hori gapini bo'lish: ovoz va oqim darhol to'xtaydi. */
   interrupt() {
     this.tts.stop();
     this.ac?.abort();
@@ -513,12 +513,12 @@ export class VoiceCall {
 
   // ---------- Sozlamalar (suhbat davomida) ----------
 
-  /** Avtomatik mikrofon tili: Vivi fransuzcha javob kutsa — fr-FR, aks holda asosiy til. */
+  /** Avtomatik mikrofon tili: Hori koreyscha javob kutsa — ko-KR, aks holda asosiy til. */
   private autoMic(reply: string) {
     if (!this.o.autoMic) return;
     const want = answerLang(reply);
     if (!want) return;
-    const next = want === 'fr' ? 'fr-FR' : this.o.micLang.startsWith('fr') ? 'uz-UZ' : this.o.micLang;
+    const next = want === 'fr' ? 'ko-KR' : this.o.micLang.startsWith('ko') ? 'uz-UZ' : this.o.micLang;
     if (next !== this.snap.micLang) this.set({ micLang: next });
   }
 

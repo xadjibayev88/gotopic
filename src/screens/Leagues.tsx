@@ -160,7 +160,7 @@ export function Leagues() {
         <ul>
           <li>Har hafta siz {LEAGUE_SIZE} kishilik guruhda bellashasiz. Hafta dushanbadan yakshanbagacha.</li>
           <li>
-            <b>XP</b> — darslar, mashqlar va Vivi bilan suhbatda to'playdigan ochkolaringiz. Qancha ko'p o'qisangiz, shuncha ko'p XP.
+            <b>XP</b> — darslar, mashqlar va Hori bilan suhbatda to'playdigan ochkolaringiz. Qancha ko'p o'qisangiz, shuncha ko'p XP.
           </li>
           <li>
             Hafta oxirida <b>1–{PROMOTE}-o'rinlar</b> keyingi ligaga ko'tariladi, <b>{PROMOTE + 1}–{LEAGUE_SIZE - DEMOTE}-o'rinlar</b> shu ligada qoladi, <b>oxirgi {DEMOTE} kishi</b> pastga tushadi.

@@ -1,11 +1,11 @@
-// Super taklifi: Vivi ustozga kirganda (bepul foydalanuvchilar) va bepul ovozli suhbat tugaganda.
+// Super taklifi: Hori ustozga kirganda (bepul foydalanuvchilar) va bepul ovozli suhbat tugaganda.
 import { createPortal } from 'react-dom';
 import { Ic } from './Icons';
 import { FishIcon } from './TopBarIcons';
 import { Mascot } from './Mascot';
 
 const PERKS: [React.ReactNode, string, string][] = [
-  [<Ic key="a" name="mic" size={20} />, 'Vivi bilan cheksiz ovozli suhbat', "30 daqiqalik sessiyalar, kunlik limit yo'q"],
+  [<Ic key="a" name="mic" size={20} />, 'Hori bilan cheksiz ovozli suhbat', "30 daqiqalik sessiyalar, kunlik limit yo'q"],
   [<Ic key="b" name="chat" size={20} />, 'Cheksiz xabarlar', "Kuniga 30 ta emas — xohlagancha"],
   [<Ic key="c" name="shield" size={20} />, 'Reklamasiz', "Darslar va suhbat orasida reklama yo'q"],
   [<FishIcon key="d" />, 'Cheksiz baliqcha', "Xato qilsangiz ham darsdan chiqmaysiz"],
@@ -16,7 +16,7 @@ export function SuperBanner({ onOpen }: { onOpen: () => void }) {
     <button type="button" className="super-banner" onClick={onOpen}>
       <span className="sb-badge">SUPER</span>
       <span className="sb-text">
-        <b>Vivi bilan cheksiz gaplashing</b>
+        <b>Hori bilan cheksiz gaplashing</b>
         <small>Bepul: kuniga 5 daqiqa ovoz va 30 ta xabar</small>
       </span>
       <span className="sb-go">›</span>
@@ -30,9 +30,9 @@ export function SuperOfferModal({ reason = 'enter', onClose }: { reason?: 'enter
       <div className="sheet super-offer" onClick={(e) => e.stopPropagation()}>
         <Mascot mood={reason === 'limit' ? 'sad' : 'cheer'} size={96} />
         <div className="super-badge">SUPER</div>
-        <h3>{reason === 'limit' ? "Bugungi 5 daqiqa tugadi, jonim 😿" : 'Vivi bilan cheklovsiz gaplashing'}</h3>
+        <h3>{reason === 'limit' ? "Bugungi 5 daqiqa tugadi, jonim 😿" : 'Hori bilan cheklovsiz gaplashing'}</h3>
         <p className="muted">
-          {reason === 'limit' ? "Suhbatni hoziroq davom ettirmoqchimisiz? Super bilan Vivi siz bilan istalgancha gaplashadi." : 'Tezroq o\'rganing — Super bilan hech qanday limit yo\'q.'}
+          {reason === 'limit' ? "Suhbatni hoziroq davom ettirmoqchimisiz? Super bilan Hori siz bilan istalgancha gaplashadi." : 'Tezroq o\'rganing — Super bilan hech qanday limit yo\'q.'}
         </p>
         <ul className="super-perks">
           {PERKS.map(([i, t, d]) => (

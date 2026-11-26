@@ -30,7 +30,7 @@ export interface GameState {
   name: string;
   /** Avatar: emoji yoki rasm (data:/https: URL). */
   avatar?: string;
-  /** Vivi'ning uzoq muddatli xotirasi (o'quvchi haqidagi faktlar). */
+  /** Hori'ning uzoq muddatli xotirasi (o'quvchi haqidagi faktlar). */
   memory?: string;
   onboarded: boolean;
   dailyGoal: number;
@@ -165,8 +165,8 @@ export function streakActiveToday(s: GameState, now = new Date()): boolean {
 
 // ---------- Liga ----------
 
-// Turnir bosqichlari — Fransiya shaharlari bo'ylab sayohat (Ruandan Parijgacha).
-// Ligalar: aniq daraja nomi (Bronza → Chempion) + fransuz shahri (mavzu uchun).
+// Turnir bosqichlari — Koreya shaharlari bo'ylab sayohat (Ruandan Seulgacha).
+// Ligalar: aniq daraja nomi (Bronza → Chempion) + koreys shahri (mavzu uchun).
 export const LEAGUES = [
   { name: 'Kurtak', motto: 'Birinchi qadamlar', color: '#16A34A', color2: '#86EFAC', icon: '🌱' },
   { name: 'Bronza', motto: 'Odat shakllanmoqda', color: '#B45309', color2: '#FDBA74', icon: '🥉' },
@@ -177,7 +177,7 @@ export const LEAGUES = [
   { name: 'Sapfir', motto: 'Chuqur bilim', color: '#1D4ED8', color2: '#93C5FD', icon: '💙' },
   { name: 'Yoqut', motto: 'Olovli ishtiyoq', color: '#BE123C', color2: '#FDA4AF', icon: '❤️‍🔥' },
   { name: 'Olmos', motto: 'Eng yaxshilar', color: '#0891B2', color2: '#E0F2FE', icon: '💎' },
-  { name: 'Afsona', motto: 'Fransuz tili afsonasi', color: '#7C3AED', color2: '#F0ABFC', icon: '👑' },
+  { name: 'Afsona', motto: 'Koreys tili afsonasi', color: '#7C3AED', color2: '#F0ABFC', icon: '👑' },
 ];
 /** Hafta yakunidagi mukofot (XP): 1-, 2-, 3-o'rin. */
 export const LEAGUE_PRIZE_XP = [0, 100, 60, 40];
@@ -193,7 +193,7 @@ const BOT_NAMES = [
   'Lucas', 'Feruza', 'Doniyor', 'Manon', 'Kamola', 'Ulugbek', 'Emma', 'Sevara', 'Javohir', 'Nathan',
   'Shoira', 'Akmal', 'Jade', 'Sanjar', 'Laylo', 'Jules', 'Mohira', 'Islom', 'Zoé', 'Diyora',
 ];
-const AVATARS = ['🦊', '🐼', '🐯', '🦁', '🐨', '🐸', '🐵', '🦉', '🐧', '🐙', '🦄', '🐻', '🐰', '🐶', '🐱', '🦋'];
+const AVATARS = ['🦊', '🐼', '🐯', '🦁', '🐨', '🐸', '🐵', '🦉', '🐧', '🐙', '🦄', '🐻', '🐰', '🐶', '🐯', '🦋'];
 
 export interface LeagueRow {
   id: string;
@@ -209,7 +209,7 @@ function weekProgress(wid: string, now: Date): number {
   return Math.min(1, Math.max(0, (now.getTime() - start) / (7 * 86_400_000)));
 }
 
-export function leagueStandings(league: LeagueState, now = new Date(), name = 'Siz', avatar = '🐱'): LeagueRow[] {
+export function leagueStandings(league: LeagueState, now = new Date(), name = 'Siz', avatar = '🐯'): LeagueRow[] {
   const r = rng(hashString(`${league.weekId}:${league.tier}`));
   const p = weekProgress(league.weekId, now);
   const pool = BOT_NAMES.slice();
@@ -223,7 +223,7 @@ export function leagueStandings(league: LeagueState, now = new Date(), name = 'S
     const curve = Math.pow(p, 0.85 + r() * 0.4);
     rows.push({ id: `b${i}`, name: botName, avatar: AVATARS[Math.floor(r() * AVATARS.length)], xp: Math.round(activity * jitter * curve), isMe: false });
   }
-  rows.push({ id: 'me', name: name || 'Siz', avatar: avatar || '🐱', xp: league.weeklyXp, isMe: true });
+  rows.push({ id: 'me', name: name || 'Siz', avatar: avatar || '🐯', xp: league.weeklyXp, isMe: true });
   return rows.sort((a, b) => b.xp - a.xp || (a.isMe ? -1 : b.isMe ? 1 : 0));
 }
 
@@ -417,10 +417,10 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: 'perfect5', title: 'Mukammal', desc: '5 ta xatosiz dars', icon: '💯', goal: 5, progress: (s) => s.perfectLessons },
   { id: 'words50', title: "So'z ustasi", desc: "50 ta so'z o'rganing", icon: '📚', goal: 50, progress: learnedWords },
   { id: 'words100', title: "Lug'at", desc: "100 ta so'z o'rganing", icon: '📖', goal: 100, progress: learnedWords },
-  { id: 'unit1', title: 'Bonjour !', desc: "1-bo'limni tugating", icon: '🇫🇷', goal: 1, progress: (s) => (unitComplete(s, 0) ? 1 : 0) },
-  { id: 'course', title: 'Parijga tayyor', desc: 'Butun kursni tugating', icon: '🗼', goal: ALL_LESSONS.length, progress: (s) => ALL_LESSONS.filter((l) => s.lessonsDone[l.id]).length },
-  { id: 'chat10', title: 'Suhbatdosh', desc: 'Vivi bilan 10 ta xabar almashing', icon: '🗨️', goal: 10, progress: (s) => s.chatMessages },
-  { id: 'chat100', title: 'Gapdon', desc: 'Vivi bilan 100 ta xabar', icon: '🎙️', goal: 100, progress: (s) => s.chatMessages },
+  { id: 'unit1', title: 'Bonjour !', desc: "1-bo'limni tugating", icon: '🇰🇷', goal: 1, progress: (s) => (unitComplete(s, 0) ? 1 : 0) },
+  { id: 'course', title: 'Seulga tayyor', desc: 'Butun kursni tugating', icon: '🗼', goal: ALL_LESSONS.length, progress: (s) => ALL_LESSONS.filter((l) => s.lessonsDone[l.id]).length },
+  { id: 'chat10', title: 'Suhbatdosh', desc: 'Hori bilan 10 ta xabar almashing', icon: '🗨️', goal: 10, progress: (s) => s.chatMessages },
+  { id: 'chat100', title: 'Gapdon', desc: 'Hori bilan 100 ta xabar', icon: '🎙️', goal: 100, progress: (s) => s.chatMessages },
   { id: 'practice10', title: 'Takror — ilm onasi', desc: '10 marta mashq qiling', icon: '🏋️', goal: 10, progress: (s) => s.practiceDone },
 ];
 
@@ -579,7 +579,7 @@ const QUEST_POOL: QuestDef[] = [
   { id: 'xp', title: "{n} ball to'plang", icon: '⭐', value: (d) => d.xp, goals: [20, 30, 40] },
   { id: 'lessons', title: '{n} ta dars tugating', icon: '🚇', value: (d) => d.lessons, goals: [1, 2, 3] },
   { id: 'perfect', title: "{n} ta darsni xatosiz o'ting", icon: '💯', value: (d) => d.perfect, goals: [1, 2] },
-  { id: 'chat', title: 'Vivi bilan {n} ta xabar almashing', icon: '💬', value: (d) => d.chat, goals: [3, 5] },
+  { id: 'chat', title: 'Hori bilan {n} ta xabar almashing', icon: '💬', value: (d) => d.chat, goals: [3, 5] },
   { id: 'combo', title: "Ketma-ket {n} ta to'g'ri javob", icon: '⚡', value: (d) => d.combo, goals: [8, 12] },
   { id: 'practice', title: '{n} marta mashq qiling', icon: '🏋️', value: (d) => d.practice, goals: [1, 2] },
 ];

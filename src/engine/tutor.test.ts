@@ -106,7 +106,7 @@ describe('client tutor SSE contract', () => {
 });
 
 describe('client tutor transient retry', () => {
-  const sse = () => new Response([JSON.stringify({ t: 'Merci !' }), JSON.stringify({ done: true })].map((e) => `data: ${e}\n\n`).join(''), { headers: { 'content-type': 'text/event-stream' } });
+  const sse = () => new Response([JSON.stringify({ t: '감사합니다!' }), JSON.stringify({ done: true })].map((e) => `data: ${e}\n\n`).join(''), { headers: { 'content-type': 'text/event-stream' } });
   const err = (status: number, code: string) => new Response(JSON.stringify({ code, message: 'x' }), { status, headers: { 'content-type': 'application/json' } });
 
   it('asks once more after a brief Google overload and shows the reply', async () => {
@@ -119,7 +119,7 @@ describe('client tutor transient retry', () => {
       await vi.advanceTimersByTimeAsync(1300);
       await done;
       expect(fetchMock).toHaveBeenCalledTimes(2);
-      expect(onText).toHaveBeenCalledWith('Merci !');
+      expect(onText).toHaveBeenCalledWith('감사합니다!');
     } finally {
       vi.useRealTimers();
     }

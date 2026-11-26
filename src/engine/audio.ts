@@ -1,4 +1,4 @@
-// Fransuzcha talaffuz (Web Speech API) va ovoz effektlari (WebAudio sintez).
+// Koreyscha talaffuz (Web Speech API) va ovoz effektlari (WebAudio sintez).
 
 let frVoice: SpeechSynthesisVoice | null = null;
 
@@ -9,11 +9,11 @@ export function ttsSupported(): boolean {
 function pickVoice() {
   if (!ttsSupported()) return;
   const voices = window.speechSynthesis.getVoices();
-  const fr = voices.filter((v) => v.lang?.toLowerCase().startsWith('fr'));
+  const fr = voices.filter((v) => v.lang?.toLowerCase().startsWith('ko'));
   // Yuqori sifatli (Google / Enhanced / Natural) ovozlarni afzal ko'ramiz.
   frVoice =
-    fr.find((v) => /natural|enhanced|premium|google/i.test(v.name) && /fr-FR/i.test(v.lang)) ??
-    fr.find((v) => /fr-FR/i.test(v.lang)) ??
+    fr.find((v) => /natural|enhanced|premium|google/i.test(v.name) && /ko-KR/i.test(v.lang)) ??
+    fr.find((v) => /ko-KR/i.test(v.lang)) ??
     fr[0] ??
     null;
 }
@@ -32,21 +32,21 @@ export function speak(text: string, rate = 0.9): void {
   const synth = window.speechSynthesis;
   synth.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'fr-FR';
+  u.lang = 'ko-KR';
   if (frVoice) u.voice = frVoice;
   u.rate = rate;
   u.pitch = 1;
   synth.speak(u);
 }
 
-/** Bir nechta fransuzcha iborani ketma-ket o'qiydi. */
+/** Bir nechta koreyscha iborani ketma-ket o'qiydi. */
 export function speakQueue(parts: string[], rate = 0.9): void {
   if (!ttsSupported() || !parts.length) return;
   const synth = window.speechSynthesis;
   synth.cancel();
   for (const p of parts) {
     const u = new SpeechSynthesisUtterance(p);
-    u.lang = 'fr-FR';
+    u.lang = 'ko-KR';
     if (frVoice) u.voice = frVoice;
     u.rate = rate;
     synth.speak(u);

@@ -1,4 +1,4 @@
-// Pull to Refresh — «Logo fill» + «Toast»: sahifa tepasida pastga tortilganda Vivi siluetti pastdan yuqoriga
+// Pull to Refresh — «Logo fill» + «Toast»: sahifa tepasida pastga tortilganda Hori siluetti pastdan yuqoriga
 // to'ladi; yetarli tortilsa qo'yib yuborishda progress sinxronlanadi, so'ng «Yangilandi» xabari chiqadi.
 // Faqat sensorli ekranda va sahifa eng tepada bo'lganda ishlaydi; brauzerning o'z «tortib yangilash»i o'chiriladi.
 import { useEffect, useRef, useState } from 'react';

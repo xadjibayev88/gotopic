@@ -20,7 +20,7 @@ function deps(over: Partial<LiveRouteDeps> = {}) {
     markStarted: vi.fn(),
     premiumMinutes: 30,
     readBody: async () => ({ react: true, vad: 'manual' }),
-    instruction: () => 'Sen Vivi.',
+    instruction: () => 'Sen Hori.',
     mintToken,
     model: 'gemini-3.8-live',
     voice: 'Leda',

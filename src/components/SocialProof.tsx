@@ -138,7 +138,7 @@ export function ReviewForm() {
           </button>
         ))}
       </div>
-      <textarea className="text-input" rows={3} maxLength={400} placeholder="Voilà va Vivi haqida fikringiz…" value={text} onChange={(e) => setText(e.target.value)} />
+      <textarea className="text-input" rows={3} maxLength={400} placeholder="Go Topic va Hori haqida fikringiz…" value={text} onChange={(e) => setText(e.target.value)} />
       {err && <p className="auth-error">{err}</p>}
       <button type="button" className="btn btn-primary btn-beam" disabled={state === 'busy' || text.trim().length < 10} onClick={() => void submit()}>
         {state === 'busy' ? 'Yuborilmoqda…' : 'Yuborish'}
@@ -179,7 +179,7 @@ export function PurchaseToast({ data }: { data: SocialData | null }) {
           <small>{ago(p.at)}</small>
         </div>
         <span className="buy-name">{p.name}</span>
-        <small className="buy-plan">Voilà Super — {p.plan}</small>
+        <small className="buy-plan">Go Topic Super — {p.plan}</small>
       </div>
       <button type="button" className="buy-x" aria-label="Yopish" onClick={() => setClosed(true)}>
         ✕
@@ -207,7 +207,7 @@ export function StatsLine({ data }: { data: SocialData | null }) {
   const round = (n: number) => (n >= 100 ? `${Math.floor(n / 10) * 10}+` : String(n));
   return (
     <p className="stats-line">
-      👥 <b>{round(data.users)}</b> o'quvchi Voilà bilan fransuz tilini o'rganmoqda{data.supers >= 5 ? <> · 💎 <b>{round(data.supers)}</b> Super obunachi</> : null}
+      👥 <b>{round(data.users)}</b> o'quvchi Go Topic bilan koreys tilini o'rganmoqda{data.supers >= 5 ? <> · 💎 <b>{round(data.supers)}</b> Super obunachi</> : null}
     </p>
   );
 }

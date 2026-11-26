@@ -1,4 +1,4 @@
-// Vivi «mo'ralovchi»: matn maydoni chetidan boshchasini chiqarib turgan Vivi (asl mushukcha rasmi).
+// Hori «mo'ralovchi»: matn maydoni chetidan boshchasini chiqarib turgan Hori (asl yo'lbarscha rasmi).
 // idle — xotirjam; typing — siz yozayotganda sekin bosh irg'ab «kuzatadi» (har harfda sakramaydi);
 // thinking — javob tayyorlayotganda yengil chayqaladi, yonida «…» pufakchasi. Faqat transform/opacity.
 import { Mascot } from './Mascot';

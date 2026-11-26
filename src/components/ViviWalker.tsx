@@ -1,4 +1,4 @@
-// Yuqori panel ichida yuradigan kichkina Vivi (yon tomondan). Yuradi, o'tiradi, ko'z qisadi, dumini
+// Yuqori panel ichida yuradigan kichkina Hori (yon tomondan). Yuradi, o'tiradi, ko'z qisadi, dumini
 // silkitadi, uzoq tegilmasa uxlab qoladi; bosilsa sakraydi, tanga/seriya oshsa quvonib sakraydi.
 // Qotmasligi uchun: harakat faqat transform (CSS transition/animation), JS esa faqat bir necha soniyada
 // bir marta holatni almashtiradi. Sahifa yashirin bo'lsa yoki «kam harakat» yoqilgan bo'lsa — to'xtaydi.
@@ -134,8 +134,8 @@ export function ViviWalker({ cheerKey }: { cheerKey: number }) {
         className={`vw-pos vw-${mode}`}
         style={{ transform: `translate3d(${x}px,0,0)`, transitionDuration: `${dur}s` } as CSSProperties}
         onClick={jump}
-        aria-label="Vivi — bosing, sakraydi"
-        title="Vivi"
+        aria-label="Hori — bosing, sakraydi"
+        title="Hori"
       >
         {heart > 0 && (
           <span key={heart} className="vw-heart" aria-hidden="true">
@@ -157,7 +157,7 @@ export function ViviWalker({ cheerKey }: { cheerKey: number }) {
   );
 }
 
-/** Yon tomondan Vivi: oq-lavanda mo'yna, binafsha beret, pushti quloqlar. */
+/** Yon tomondan Hori: oq-lavanda mo'yna, binafsha beret, pushti quloqlar. */
 function CatSide() {
   return (
     <svg className="vw-cat" viewBox="0 0 44 32" width={CAT_W} height="29" aria-hidden="true">
@@ -180,7 +180,7 @@ function CatSide() {
           <rect className="vw-leg a" x="23.2" y="19.5" width="3.2" height="9" rx="1.6" fill={FUR} stroke={LINE} strokeWidth="1.2" />
         </g>
       </g>
-      {/* O'tirgan Vivi — alohida chizilgan siluet: tik ko'krak, yumaloq son, oldingi panjalar yerda,
+      {/* O'tirgan Hori — alohida chizilgan siluet: tik ko'krak, yumaloq son, oldingi panjalar yerda,
           dum orqada jingalak. Yurish tanasi o'tirganda yashiriladi (qiyalatilmaydi). */}
       <g className="vw-sitpose">
         <g className="vw-tail2">

@@ -1,4 +1,4 @@
-// Reklama (video) ko'rib mukofot: 🐟 baliqcha, ⭐ XP yoki 🐱 Vivi bilan qo'shimcha daqiqalar.
+// Reklama (video) ko'rib mukofot: 🐟 baliqcha, ⭐ XP yoki 🐯 Hori bilan qo'shimcha daqiqalar.
 // Android ilovada — AdMob, saytda — AdSense mukofotli video. Super obunachilarga ko'rinmaydi.
 import { useEffect, useState } from 'react';
 import { AD_XP, grantAdXp, MAX_HEARTS } from '../engine/game';
@@ -9,7 +9,7 @@ import { useStore } from '../state/store';
 const TEXT: Record<RewardKind, { icon: string; title: string; sub: (left: number) => string; done: string }> = {
   coffee: { icon: '🎬', title: "Reklama ko'rib baliqcha olish", sub: (l) => `Qisqa video — +1 baliqcha · bugun ${l} ta qoldi`, done: '+1 baliqcha kofe ☕' },
   xp: { icon: '⭐', title: `Video ko'rib +${AD_XP} XP`, sub: (l) => `Turnirda oldinga chiqing · bugun ${l} ta qoldi`, done: `+${AD_XP} XP ⭐` },
-  vivi: { icon: '🐱', title: "Video ko'rib Vivi bilan +2 daqiqa", sub: (l) => `Bepul vaqt tugasa ham gaplashing · bugun ${l} ta qoldi`, done: "Vivi bilan +2 daqiqa qo'shildi 🎉" },
+  vivi: { icon: '🐯', title: "Video ko'rib Hori bilan +2 daqiqa", sub: (l) => `Bepul vaqt tugasa ham gaplashing · bugun ${l} ta qoldi`, done: "Hori bilan +2 daqiqa qo'shildi 🎉" },
 };
 
 export function RewardedButton({ compact = false, onGranted, kind = 'coffee', viviLeft }: { compact?: boolean; onGranted?: () => void; kind?: RewardKind; viviLeft?: number }) {
@@ -32,7 +32,7 @@ export function RewardedButton({ compact = false, onGranted, kind = 'coffee', vi
   const run = async () => {
     setBusy(true);
     setMsg(null);
-    // Vivi daqiqalari: server avval bir martalik chipta beradi (reklamani ko'rmasdan mukofot olib bo'lmasin).
+    // Hori daqiqalari: server avval bir martalik chipta beradi (reklamani ko'rmasdan mukofot olib bo'lmasin).
     let nonce = '';
     const startedAt = Date.now();
     if (kind === 'vivi') {

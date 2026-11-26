@@ -41,7 +41,7 @@ describe('prompt', () => {
   it('includes persona, scenario and learner data', () => {
     const r = parseTutorRequest({ ...base, scenario: 'cafe' }) as TutorRequest;
     const s = systemInstruction(r);
-    expect(s).toContain('Vivi');
+    expect(s).toContain('Hori');
     expect(s).toContain('[fr]');
     expect(s).toContain('ofitsiant');
     expect(s).toContain('"name":"Ali"');
@@ -173,12 +173,12 @@ describe('explicit mode does not override the tutor contract', () => {
   it("retains the user's explicit-topic choice without adding insults or executable markers", () => {
     const r = parseTutorRequest({ scenario: 'free', message: 'salom', character: 'strict', explicit: true, mode: 'voice', audioTags: true }) as TutorRequest;
     const sys = systemInstruction(r);
-    expect(sys).toContain('18+ mavzulardagi ochiqroq fransuzcha misol');
+    expect(sys).toContain('18+ mavzulardagi ochiqroq koreyscha misol');
     expect(sys).toContain('hurmat, rozilik va bitta qisqa tuzatish qoidalarini o\'zgartirmaydi');
     expect(sys).not.toContain('[fuck]');
     expect(sys).not.toContain('[[shape:');
     const plain = systemInstruction(parseTutorRequest({ scenario: 'free', message: 'salom', character: 'strict', mode: 'voice', audioTags: true }) as TutorRequest);
-    expect(plain).not.toContain('18+ mavzulardagi ochiqroq fransuzcha misol');
+    expect(plain).not.toContain('18+ mavzulardagi ochiqroq koreyscha misol');
     expect(plain).not.toContain('[fuck]');
   });
 });
@@ -222,10 +222,10 @@ describe('zaxira AI xizmati', () => {
 
 describe('xotira promptda', () => {
   it("xotira va yangi suhbat ko'rsatmasi qo'shiladi", () => {
-    const r = parseTutorRequest({ scenario: 'free', message: '[SUHBAT BOSHLANDI] salom', context: { memory: '- Parijga bormoqchi' } }) as TutorRequest;
+    const r = parseTutorRequest({ scenario: 'free', message: '[SUHBAT BOSHLANDI] salom', context: { memory: '- Seulga bormoqchi' } }) as TutorRequest;
     const sys = systemInstruction(r);
     expect(sys).toContain('Oldingi suhbat xotirasi');
-    expect(sys).toContain('Parijga bormoqchi');
+    expect(sys).toContain('Seulga bormoqchi');
     expect(sys).toContain('Yangi suhbat boshlandi');
     expect(systemInstruction(parseTutorRequest({ scenario: 'free', message: 'salom' }) as TutorRequest)).not.toContain('Oldingi suhbat xotirasi');
   });
@@ -242,7 +242,7 @@ describe('Gemini Live ko\'rsatmasi', () => {
 });
 
 
-describe('Task 7 French tutor behavior contract', () => {
+describe('Task 7 Korean tutor behavior contract', () => {
   const request = (overrides: Record<string, unknown> = {}) => parseTutorRequest({
     scenario: 'free',
     message: 'Est-ce que je peux dire « je voudrais » ?',
@@ -251,10 +251,10 @@ describe('Task 7 French tutor behavior contract', () => {
     ...overrides,
   }) as TutorRequest;
 
-  it('keeps Voilà! on French A1–C2 practice rather than IELTS', () => {
+  it('keeps Go Topic on Korean TOPIK 1–6 practice rather than IELTS', () => {
     const prompt = systemInstruction(request());
-    expect(prompt).toContain('A1–C2');
-    expect(prompt).toContain('fransuz');
+    expect(prompt).toContain('TOPIK 1–6');
+    expect(prompt).toContain('koreys');
     expect(prompt).not.toMatch(/IELTS/i);
   });
 
@@ -267,7 +267,7 @@ describe('Task 7 French tutor behavior contract', () => {
 
   it('does not reject acceptable French alternatives and limits ordinary turns to one gentle correction', () => {
     const prompt = systemInstruction(request());
-    expect(prompt).toMatch(/maqbul.{0,80}(variant|fransuzcha)/i);
+    expect(prompt).toMatch(/maqbul.{0,80}(variant|koreyscha)/i);
     expect(prompt).toMatch(/ko'pi bilan bitta.{0,80}(tuzat|correction)/i);
     expect(prompt).not.toMatch(/xatoni masxara|o'quvchini qovur/i);
   });

@@ -113,7 +113,7 @@ export function AiConsentDialog({ open, onClose }: { open: boolean; onClose: () 
     }
     update((s) => ({ ...s, memory: '' }));
     setDeletingMemory(false);
-    setMessage('Vivi xotirasi ushbu qurilmadan va hisob sinxronizatsiyasidan o‘chirildi.');
+    setMessage('Hori xotirasi ushbu qurilmadan va hisob sinxronizatsiyasidan o‘chirildi.');
   };
 
   const memoryExists = !!state.memory?.trim();
@@ -123,7 +123,7 @@ export function AiConsentDialog({ open, onClose }: { open: boolean; onClose: () 
     <div className="modal-back" onClick={onClose}>
       <div className="sheet ai-consent-sheet" style={{ overflowY: 'auto', alignItems: 'stretch' }} role="dialog" aria-modal="true" aria-labelledby="ai-consent-title" onClick={(e) => e.stopPropagation()}>
         <div className="big-emoji" aria-hidden="true"><Ic name="shield" size={48} /></div>
-        <h3 id="ai-consent-title">Vivi AI — rozilik va maxfiylik</h3>
+        <h3 id="ai-consent-title">Hori AI — rozilik va maxfiylik</h3>
         <p className="muted">Har bir tur alohida ixtiyoriy. Belgilar sukut bo‘yicha tanlanmaydi. Rozilik serverda hisobingizga bog‘lanadi va istalgan payt bekor qilinadi.</p>
         {policyVersion && <p><b>Siyosat versiyasi:</b> {policyVersion}</p>}
         {loading ? <p className="muted">Rozilik holati yuklanmoqda…</p> : (
@@ -165,11 +165,11 @@ export function AiConsentDialog({ open, onClose }: { open: boolean; onClose: () 
         <button type="button" className="btn btn-text danger" disabled={loading || saving || !me.user || !consent || consent.revokedAt !== null} onClick={() => void revoke()}>
           Barcha AI roziligini bekor qilish
         </button>
-        <div className="panel" aria-label="Vivi xotirasi">
-          <b>Vivi xotirasi</b>
-          <p className="muted small">Bu amal profilingizdagi Vivi xotirasini va server bilan sinxronlangan progressdagi shu xotira maydonini o‘chiradi. Oxirgi suhbat transkripti, asl audio yoki providerda bo‘lishi mumkin bo‘lgan ma’lumotni o‘chirmaydi.</p>
+        <div className="panel" aria-label="Hori xotirasi">
+          <b>Hori xotirasi</b>
+          <p className="muted small">Bu amal profilingizdagi Hori xotirasini va server bilan sinxronlangan progressdagi shu xotira maydonini o‘chiradi. Oxirgi suhbat transkripti, asl audio yoki providerda bo‘lishi mumkin bo‘lgan ma’lumotni o‘chirmaydi.</p>
           <button type="button" className="btn btn-text danger" disabled={!memoryExists || deletingMemory} onClick={() => void clearMemory()}>
-            {deletingMemory ? 'O‘chirilmoqda…' : 'Saqlangan Vivi xotirasini o‘chirish'}
+            {deletingMemory ? 'O‘chirilmoqda…' : 'Saqlangan Hori xotirasini o‘chirish'}
           </button>
         </div>
         <button type="button" className="btn btn-text" onClick={onClose}>Yopish</button>

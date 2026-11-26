@@ -29,7 +29,7 @@ export type Exercise =
       sentence: Sentence;
       /** translate — tarjima; cloze — bo'sh joyni to'ldirish; dictation — eshitib yozish (diktant). */
       mode?: 'translate' | 'cloze' | 'dictation';
-      /** cloze: «____» bilan ko'rsatiladigan fransuzcha gap. */
+      /** cloze: «____» bilan ko'rsatiladigan koreyscha gap. */
       display?: string;
     });
 
@@ -37,7 +37,7 @@ export type ExerciseKind = Exercise['kind'];
 
 export interface GenOptions {
   rand?: () => number;
-  /** Brauzer fransuzcha ovoz chiqara oladimi. */
+  /** Brauzer koreyscha ovoz chiqara oladimi. */
   tts?: boolean;
   /** Dars necha marta o'tilgan (qiyinlik oshadi). */
   level?: number;

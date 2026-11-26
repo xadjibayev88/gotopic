@@ -14,12 +14,12 @@ const THROTTLE_MS: Record<AiKeyProblem, number> = { quota: 3 * 60 * 60 * 1000, i
 
 export function aiKeyAlertText(problem: AiKeyProblemDetail): string {
   if (problem.kind === 'invalid_key') {
-    return '🔑 <b>Vivi AI kaliti ishlamayapti</b>\n'
+    return '🔑 <b>Hori AI kaliti ishlamayapti</b>\n'
       + `Google kalitni rad etdi (model: <code>${problem.model}</code>). Kalit o‘chirilgan yoki noto‘g‘ri bo‘lishi mumkin.\n\n`
       + 'Yangi kalit: aistudio.google.com/apikey → serverdagi <code>GEMINI_API_KEY</code> ni almashtiring va serverni qayta ishga tushiring.';
   }
-  return `⚠️ <b>Vivi AI ${problem.daily ? 'kunlik' : 'bepul'} limiti tugadi</b>\n`
-    + `Google so‘rovlarni rad etyapti (model: <code>${problem.model}</code>). Foydalanuvchilar hozir Vivi javobini olmaydi.\n\n`
+  return `⚠️ <b>Hori AI ${problem.daily ? 'kunlik' : 'bepul'} limiti tugadi</b>\n`
+    + `Google so‘rovlarni rad etyapti (model: <code>${problem.model}</code>). Foydalanuvchilar hozir Hori javobini olmaydi.\n\n`
     + (problem.daily
       ? 'Kunlik limit AQSh Tinch okeani vaqti bilan yarim tunda (Toshkentda taxminan 12:00–13:00) yangilanadi. '
       : 'Daqiqalik limit odatda bir daqiqada tiklanadi; xabar takrorlansa, kunlik limit tugagan. ')

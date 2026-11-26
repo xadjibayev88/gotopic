@@ -73,7 +73,7 @@ describe('Gemini API (free) provider', () => {
     const { p, fetchImpl } = provider([textReply({ text: "Salom, je m'appelle Ali", language: 'mixed' })]);
     const result = await p.transcribe({ audio: new Uint8Array([1, 2, 3]), languageCode: 'uz-UZ', mimeType: 'audio/webm', autoLanguage: true });
     expect(result.segments[0].alternatives[0].transcript).toBe("Salom, je m'appelle Ali");
-    expect(result.segments.map((s) => s.languageCode)).toEqual(['uz-UZ', 'fr-FR']);
+    expect(result.segments.map((s) => s.languageCode)).toEqual(['uz-UZ', 'ko-KR']);
     const body = JSON.parse(String((fetchImpl.mock.calls[0] as unknown as [string, RequestInit])[1].body));
     expect(body.contents[0].parts[0].inlineData.mimeType).toBe('audio/webm');
   });

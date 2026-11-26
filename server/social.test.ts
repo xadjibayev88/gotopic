@@ -12,7 +12,7 @@ describe('social proof (real data only)', () => {
     const a = register('a@x.uz', 'parol12345', 'Islomjon Xojibayev');
     const b = register('b@x.uz', 'parol12345', 'Shahnoza');
     if (!a.ok || !b.ok) throw new Error('reg');
-    const ra = submitReview(a.user.id, 5, 'Vivi bilan har kuni gaplashaman, zo\'r!');
+    const ra = submitReview(a.user.id, 5, 'Hori bilan har kuni gaplashaman, zo\'r!');
     const rb = submitReview(b.user.id, 4, 'Juda foydali ilova ekan, rahmat.');
     if (!ra.ok || !rb.ok) throw new Error('submit');
     expect(publicReviews().count).toBe(0); // tasdiqlanmaguncha ko'rinmaydi

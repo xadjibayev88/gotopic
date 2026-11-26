@@ -124,7 +124,7 @@ type Tab = 'learn' | 'tutor' | 'practice' | 'leagues' | 'profile' | 'shop' | 'ab
 
 const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: 'learn', label: 'Darslar', icon: '🚇' },
-  { id: 'tutor', label: 'Vivi', icon: '🐱' },
+  { id: 'tutor', label: 'Hori', icon: '🐯' },
   { id: 'practice', label: 'Mashq', icon: '🏋️' },
   { id: 'leagues', label: 'Turnir', icon: '🗼' },
   { id: 'shop', label: "Do'kon", icon: '🛍️' },
@@ -237,7 +237,7 @@ export function App() {
     <div className={`shell ${tab === 'tutor' ? 'tutor-mode' : ''}`}>
       <nav className="sidebar">
         <div className="logo">
-          <Mascot size={38} mood="happy" className="logo-cat" /> Voilà!
+          <Mascot size={38} mood="happy" className="logo-cat" /> Go Topic
         </div>
         {TABS.map((t) => (
           <button key={t.id} type="button" className={`nav-item ${tab === t.id ? 'active' : ''}`} onClick={() => go(t.id)}>
@@ -322,7 +322,7 @@ function TopBar({ onShop, onProfile }: { onShop: () => void; onProfile: () => vo
   return (
     <header className={`topbar ${compact ? 'compact' : ''} ${glass ? 'lg-on' : ''}`}>
       {glass && <GlassRefraction radius={30} />}
-      <button type="button" className="stat flag" title="Fransuz tili" aria-label="Fransuz tili" onClick={onProfile}>
+      <button type="button" className="stat flag" title="Koreys tili" aria-label="Koreys tili" onClick={onProfile}>
         <FlagIcon />
       </button>
       <ViviWalker cheerKey={state.gems + state.streak * 100000} />

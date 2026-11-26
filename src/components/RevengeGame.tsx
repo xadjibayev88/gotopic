@@ -1,5 +1,5 @@
 // «Qasos rejimi» — ovozli suhbat paytidagi multfilm uslubidagi mini-o'yin:
-// Vivi aytgan hamma gaplari uchun undan «o'ch olasiz». Qurollar g'ildiragi, sog'liq chizig'i,
+// Hori aytgan hamma gaplari uchun undan «o'ch olasiz». Qurollar g'ildiragi, sog'liq chizig'i,
 // qidiruv yulduzlari, nokaut va qayta tirilish. Hammasi original (kod, nom, dizayn).
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { playSfx, vibrate, type Sfx } from '../engine/audio';
@@ -113,11 +113,11 @@ export function useRevenge(enabled: boolean, sound: boolean) {
 
 export type Revenge = ReturnType<typeof useRevenge>;
 
-/** Yuqoridagi HUD: qurol, Vivi sog'lig'i, qidiruv darajasi. */
+/** Yuqoridagi HUD: qurol, Hori sog'lig'i, qidiruv darajasi. */
 export function RevengeHud({ g }: { g: Revenge }) {
   const pct = (g.hp / MAX_HP) * 100;
   return (
-    <div className="rv-hud" role="status" aria-label={`Qurol: ${g.weapon.name}. Vivi sog'lig'i: ${MAX_HP} dan ${g.hp}. Qidiruv darajasi: 5 dan ${g.stars}.`}>
+    <div className="rv-hud" role="status" aria-label={`Qurol: ${g.weapon.name}. Hori sog'lig'i: ${MAX_HP} dan ${g.hp}. Qidiruv darajasi: 5 dan ${g.stars}.`}>
       <button type="button" className="rv-weapon" onClick={() => g.setWheel(true)} aria-label="Qurollar g'ildiragini ochish">
         <span>{g.weapon.icon}</span>
         <small>{g.weapon.name}</small>
@@ -151,7 +151,7 @@ export function RevengeOverlay({ g }: { g: Revenge }) {
         ))}
       </div>
       {g.ko === 'down' && <div className="rv-ko">NOKAUT!</div>}
-      {g.ko === 'respawn' && <div className="rv-respawn">Vivi o'rnidan turmoqda…</div>}
+      {g.ko === 'respawn' && <div className="rv-respawn">Hori o'rnidan turmoqda…</div>}
       {g.wheel && (
         <div className="rv-wheel-back" onClick={() => g.setWheel(false)}>
           <div className="rv-wheel" role="dialog" aria-label="Qurollar" onClick={(e) => e.stopPropagation()}>

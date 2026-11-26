@@ -306,7 +306,7 @@ export class TtsQueue {
         const s = queue[i++];
         const u = new SpeechSynthesisUtterance(s.text);
         const v = s.fr ? frVoice : mainVoice;
-        u.lang = s.fr ? 'fr-FR' : v?.lang ?? this.explainLang;
+        u.lang = s.fr ? 'ko-KR' : v?.lang ?? this.explainLang;
         if (v) u.voice = v;
         u.rate = s.fr ? Math.min(1, this.rate * 0.92) : this.rate;
         // Brauzer ovozida audio signal yo'q — og'iz bo'g'in ritmida harakatlanadi, so'z chegarasida urg'u.

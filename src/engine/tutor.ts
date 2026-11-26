@@ -1,5 +1,5 @@
 import { normalizeMarkers } from './voice/markers';
-// Vivi ustoz — mijoz tomoni: kontekst yig'ish, oqimli so'rov, javobni bo'laklash.
+// Hori ustoz — mijoz tomoni: kontekst yig'ish, oqimli so'rov, javobni bo'laklash.
 import { ALL_LESSONS } from '../data/course';
 import type { GameState } from './game';
 import { validateViviCue, type ViviCue } from '../shared/vivi-cue';
@@ -32,15 +32,15 @@ export const SCENARIOS: ScenarioInfo[] = [
     title: 'Erkin suhbat',
     icon: '💬',
     greet: (n) =>
-      `${n ? `${n}, ` : ''}[fr]Salut ![/fr] (salyu) Men Vivi — parijlik mushukcha va sizning fransuz tili ustozingizman. Xohlagan narsangizni so'rang: so'z, grammatika, Parij... Faqat qornimni silamang, darsni unutib qo'yaman 😸 Bugun nimadan boshlaymiz?`,
-    suggestions: ['Fransuzlar qanday salomlashadi?', 'Menga 3 ta foydali ibora o\'rgat', 'Fransuzcha bir hazil aytib ber'],
+      `${n ? `${n}, ` : ''}[fr]Salut ![/fr] (salyu) Men Hori — seullik yo'lbarscha va sizning koreys tili ustozingizman. Xohlagan narsangizni so'rang: so'z, grammatika, Seul... Faqat qornimni silamang, darsni unutib qo'yaman 😸 Bugun nimadan boshlaymiz?`,
+    suggestions: ['Koreyslar qanday salomlashadi?', 'Menga 3 ta foydali ibora o\'rgat', 'Koreyscha bir hazil aytib ber'],
   },
   {
     id: 'cafe',
-    title: 'Parij kafesi',
+    title: 'Seul kafesi',
     icon: '☕',
     greet: () =>
-      `[fr]Bonjour ! Bienvenue au café ![/fr] (Salom! Kafega xush kelibsiz!) Men bugun ofitsiantman. Buyurtmani fransuzcha bering — qo'rqmang, men faqat narxni baland aytaman, xatoni emas. [fr]Qu'est-ce que vous voulez ?[/fr] (Nima xohlaysiz?)`,
+      `[fr]Bonjour ! Bienvenue au café ![/fr] (Salom! Kafega xush kelibsiz!) Men bugun ofitsiantman. Buyurtmani koreyscha bering — qo'rqmang, men faqat narxni baland aytaman, xatoni emas. [fr]Qu'est-ce que vous voulez ?[/fr] (Nima xohlaysiz?)`,
     suggestions: ['Bonjour ! Un café, s\'il vous plaît.', 'Le menu, s\'il vous plaît.', 'Qanday javob beraman?'],
   },
   {
@@ -48,7 +48,7 @@ export const SCENARIOS: ScenarioInfo[] = [
     title: 'Tanishuv',
     icon: '🤝',
     greet: () =>
-      `[fr]Salut ! Je m'appelle Vivi. Et toi ?[/fr] (Salom! Mening ismim Vivi. Seningchi?) Tasavvur qiling, Parijdagi parkda tanishdik. Fransuzcha javob berishga harakat qiling — bilmasangiz o'zbekcha yozing, birga tuzamiz.`,
+      `[fr]Salut ! Je m'appelle Hori. Et toi ?[/fr] (Salom! Mening ismim Hori. Seningchi?) Tasavvur qiling, Seuldagi parkda tanishdik. Koreyscha javob berishga harakat qiling — bilmasangiz o'zbekcha yozing, birga tuzamiz.`,
     suggestions: ["Je m'appelle Ali.", 'Je suis ouzbek.', 'Qanday tanishtiraman o\'zimni?'],
   },
   {
@@ -56,7 +56,7 @@ export const SCENARIOS: ScenarioInfo[] = [
     title: 'Grammatika',
     icon: '📐',
     greet: () =>
-      `Grammatika — fransuz tilining eng nozik qismi, xuddi kalava ipidek chigal, lekin birga yechamiz 🧶 Savolingizni bering: artikllar, rod, fe'llar, inkor — hammasini oddiy misollar bilan tushuntiraman.`,
+      `Grammatika — koreys tilining eng nozik qismi, xuddi kalava ipidek chigal, lekin birga yechamiz 🧶 Savolingizni bering: artikllar, rod, fe'llar, inkor — hammasini oddiy misollar bilan tushuntiraman.`,
     suggestions: ['un va une ning farqi nima?', "être fe'lini tushuntir", 'Inkor gap qanday tuziladi?'],
   },
   {
@@ -90,7 +90,7 @@ export function learnerContext(s: GameState) {
   return { name: s.name, lessons: lessons.map((l) => l.title), words, mistakes, streak: s.streak, memory: s.memory ?? '' };
 }
 
-/** Suhbatdan keyin faqat foydalanuvchi ko'rib, aniq tasdiqlagan turnlar bilan Vivi xotirasini yangilaydi. */
+/** Suhbatdan keyin faqat foydalanuvchi ko'rib, aniq tasdiqlagan turnlar bilan Hori xotirasini yangilaydi. */
 export async function updateMemory(
   memory: string,
   turns: { role: 'user' | 'tutor'; text: string }[],

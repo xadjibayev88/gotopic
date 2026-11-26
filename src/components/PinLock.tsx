@@ -254,7 +254,7 @@ export function LockScreen({
       </div>
       <PinPad
         title="PIN kodni kiriting"
-        subtitle="Voilà! shaxsiy PIN bilan himoyalangan."
+        subtitle="Go Topic shaxsiy PIN bilan himoyalangan."
         onSubmit={verify}
         onSuccess={onUnlock}
         onResult={(ok) => {

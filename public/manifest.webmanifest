@@ -1,7 +1,7 @@
 {
-  "name": "Voilà! — Fransuz tili o'zbekcha",
-  "short_name": "Voilà!",
-  "description": "Fransuz tilini o'zbek tilida o'rganing",
+  "name": "Go Topic — Koreys tili o'zbekcha",
+  "short_name": "Go Topic",
+  "description": "Koreys tilini o'zbek tilida o'rganing",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

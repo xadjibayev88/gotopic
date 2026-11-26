@@ -9,7 +9,7 @@ declare global {
   }
 }
 
-const SHARE_TEXT = "Voilà! — fransuz tilini o'zbek tilida o'rganish ilovasi. AI ustoz Vivi bilan jonli gaplashib o'rganaman, sen ham qo'shil! 🐱🇫🇷";
+const SHARE_TEXT = "Go Topic — koreys tilini o'zbek tilida o'rganish ilovasi. AI ustoz Hori bilan jonli gaplashib o'rganaman, sen ham qo'shil! 🐯🇰🇷";
 
 export function About() {
   const cfg = window.VOILA_SITE ?? {};
@@ -19,7 +19,7 @@ export function About() {
   const share = async () => {
     try {
       if (navigator.share) {
-        await navigator.share({ title: 'Voilà!', text: SHARE_TEXT, url });
+        await navigator.share({ title: 'Go Topic', text: SHARE_TEXT, url });
         return;
       }
     } catch {
@@ -45,18 +45,18 @@ export function About() {
     <div className="page about">
       <div className="about-hero">
         <Mascot mood="cheer" size={110} />
-        <h1>Voilà!</h1>
-        <p className="muted">Fransuz tilini o'zbek tilida — qiziqarli, tez va samarali.</p>
+        <h1>Go Topic</h1>
+        <p className="muted">Koreys tilini o'zbek tilida — qiziqarli, tez va samarali.</p>
       </div>
 
       <section className="about-card">
         <h2>Biz haqimizda</h2>
         <p>
-          Voilà! — fransuz tilini o'zbek tilida o'rgatadigan birinchi ilova. A1 dan C2 gacha 50 ta bo'lim, mingdan ortiq so'z va gaplar, tinglash, diktant va
-          tarjima mashqlari. Eng asosiysi — AI ustoz <b>Vivi</b>: u siz bilan jonli ovozda gaplashadi, xatolaringizni tuzatadi, hazil qiladi va o'tgan
+          Go Topic — koreys tilini o'zbek tilida o'rgatadigan birinchi ilova. A1 dan C2 gacha 50 ta bo'lim, mingdan ortiq so'z va gaplar, tinglash, diktant va
+          tarjima mashqlari. Eng asosiysi — AI ustoz <b>Hori</b>: u siz bilan jonli ovozda gaplashadi, xatolaringizni tuzatadi, hazil qiladi va o'tgan
           suhbatlaringizni eslab qoladi.
         </p>
-        <p className="muted small">Maqsadimiz — har bir o'zbek yoshiga Parijda, Lionda yoki Monrealda bemalol gaplasha olish imkonini berish.</p>
+        <p className="muted small">Maqsadimiz — har bir o'zbek yoshiga Seulda, Lionda yoki Monrealda bemalol gaplasha olish imkonini berish.</p>
       </section>
 
       <button type="button" className="btn btn-primary btn-lg share-btn" onClick={share}>

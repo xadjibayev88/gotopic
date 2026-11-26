@@ -1,4 +1,4 @@
-// Vivi matnidagi maxsus belgilar: xavfsiz imo-ishoralar faqat shared whitelist orqali; shakl va tovush buyruqlari ijro etilmaydi.
+// Hori matnidagi maxsus belgilar: xavfsiz imo-ishoralar faqat shared whitelist orqali; shakl va tovush buyruqlari ijro etilmaydi.
 import { VIVI_CUE_ACTIONS, type ViviCueAction } from '../../shared/vivi-cue';
 
 export const ACTIONS = VIVI_CUE_ACTIONS;
@@ -17,7 +17,7 @@ function tagCues(text: string, cue: Cue) {
 export interface Cue {
   /** Only actions shared with src/shared/vivi-cue.ts are retained. */
   actions: ViviCueAction[];
-  /** [[img:...]] — standalone image display, not a Vivi cue. */
+  /** [[img:...]] — standalone image display, not a Hori cue. */
   image?: string;
 }
 
@@ -143,14 +143,14 @@ export function talkStats(utterances: string[]): TalkStats {
   return { words: words.length, sentences: utterances.length ? sentences : 0, unique: new Set(words).size };
 }
 
-/** Infer whether Vivi expects the learner to answer in French or Uzbek. */
+/** Infer whether Hori expects the learner to answer in French or Uzbek. */
 export function answerLang(raw: string): 'fr' | 'uz' | null {
   const m = /\[\[\s*ans\s*:\s*(fr|uz|ru|en)\s*\]\]/i.exec(raw);
   const tail = raw.replace(/\[\[[^\]]*\]\]/g, '').trim().slice(-260);
   const lastFr = /\[fr\]([^[]*)\[\/fr\]([^[]*)$/i.exec(tail);
   if (lastFr && /\?\s*$/.test(lastFr[1]) && lastFr[2].length < 90) return 'fr';
   if (m) return m[1].toLowerCase() === 'fr' ? 'fr' : 'uz';
-  if (/(fransuzcha|frantsuzcha|fransuz tilida)[^.?!]{0,30}(ayt|yoz|javob|takrorla|qaytar|tuz|gapir)/i.test(tail)) return 'fr';
+  if (/(koreyscha|frantsuzcha|koreys tilida)[^.?!]{0,30}(ayt|yoz|javob|takrorla|qaytar|tuz|gapir)/i.test(tail)) return 'fr';
   if (/\b(takrorlang|qaytaring|takrorla)\b/i.test(tail) && /\[fr\]/i.test(tail)) return 'fr';
   if (/\?\s*\[\/fr\]\s*(\([^)]*\))?\s*$/i.test(tail)) return 'fr';
   return null;

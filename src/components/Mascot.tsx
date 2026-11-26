@@ -1,4 +1,4 @@
-// Vivi — ilovaning original maskoti: yoqimtoy parijlik mushukcha.
+// Hori — ilovaning original maskoti: yoqimtoy seullik yo'lbarscha.
 import type { CSSProperties } from 'react';
 import { NEUTRAL_VIVI_CUE, validateViviCue, type ViviCue } from '../shared/vivi-cue';
 
@@ -27,7 +27,7 @@ export function CatEars({ fill = FUR }: { fill?: string }) {
   );
 }
 
-/** Burun va mo'ylovlar — Vivining o'zgarmas tanib olinadigan yuz qismi. */
+/** Burun va mo'ylovlar — Horining o'zgarmas tanib olinadigan yuz qismi. */
 export function CatMuzzle({ x = 0, y = 0 }: { x?: number; y?: number }) {
   return (
     <g transform={`translate(${x} ${y})`}>
@@ -177,7 +177,7 @@ export function Mascot({
             : <path d="M88 115 q6 7 12 0 q6 7 12 0" stroke={INK} strokeWidth="3.4" fill="none" strokeLinecap="round" strokeLinejoin="round" />;
 
   return (
-    <svg className={classes} width={size} height={size} viewBox="0 0 200 200" role="img" aria-label="Vivi maskoti" style={{ '--vivi-level': String(numericLevel) } as CSSProperties}>
+    <svg className={classes} width={size} height={size} viewBox="0 0 200 200" role="img" aria-label="Hori maskoti" style={{ '--vivi-level': String(numericLevel) } as CSSProperties}>
       <ellipse cx="100" cy="190" rx="62" ry="7" fill="rgba(0,0,0,.14)" />
       <g className="vivi-bob vivi-cue-body">
         <CatBase />

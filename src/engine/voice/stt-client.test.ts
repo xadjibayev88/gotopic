@@ -8,7 +8,7 @@ describe('CloudStt typed response contract (mock transport)', () => {
   it('forwards transcript metadata and review reasons from a synthetic server response', async () => {
     const fetchMock = vi.fn(async () => new Response(JSON.stringify({
       text: 'Je veux un café',
-      detectedLanguage: 'fr-FR',
+      detectedLanguage: 'ko-KR',
       confidence: 0.12,
       alternatives: ['Je veux un gâteau'],
       reviewReasons: ['alternatives_conflict', 'language_mismatch'],
@@ -31,7 +31,7 @@ describe('CloudStt typed response contract (mock transport)', () => {
     expect(fetchMock).toHaveBeenCalledOnce();
     expect(onFinal).toHaveBeenCalledWith({
       text: 'Je veux un café',
-      detectedLanguage: 'fr-FR',
+      detectedLanguage: 'ko-KR',
       confidence: 0.12,
       alternatives: ['Je veux un gâteau'],
       reviewReasons: ['alternatives_conflict', 'language_mismatch'],
@@ -54,7 +54,7 @@ describe('CloudStt typed response contract (mock transport)', () => {
     internal.chunks = [new Blob([new Uint8Array(1600)], { type: 'audio/webm' })];
     internal.startedAt = Date.now() - 1000;
 
-    await internal.finish('audio/webm', 'fr-FR');
+    await internal.finish('audio/webm', 'ko-KR');
 
     expect(onFinal).not.toHaveBeenCalled();
     expect(onError).toHaveBeenCalledWith('failed', 'STT natijasi notoʻgʻri formatda');

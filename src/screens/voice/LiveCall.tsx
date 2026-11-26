@@ -1,4 +1,4 @@
-// Jonli rejim (Gemini Live) ekrani: qo'lsiz suhbat, Vivi gapini istalgan payt bo'lish mumkin.
+// Jonli rejim (Gemini Live) ekrani: qo'lsiz suhbat, Hori gapini istalgan payt bo'lish mumkin.
 import { useEffect, useMemo, useState } from 'react';
 import { Ic } from '../../components/Icons';
 import { CHARACTERS } from '../../data/characters';
@@ -39,7 +39,7 @@ export function LiveCallScreen({ options, subtitles, onEnded }: { options: LiveO
   const clean = (t: string) => t.replace(/\[\[[^\]]*\]\]/g, '').replace(/\[\/?fr\]/gi, '').replace(/\s{2,}/g, ' ').trim();
   const tutorLine = clean(s.liveTutor || lastTutor);
   const userLine = s.liveUser || (s.liveTutor ? '' : lastUser);
-  const label = s.phase === 'connecting' ? 'Ulanmoqda…' : s.userTalking ? 'Eshityapman…' : s.phase === 'speaking' ? 'Vivi gapirmoqda…' : s.phase === 'ended' ? 'Suhbat tugadi' : s.muted ? 'Mikrofon o\'chiq' : ptt ? 'Tinglash o\'chiq — boshlash uchun tugmani bosing' : 'Qo\'lsiz tinglayapman — gapiring';
+  const label = s.phase === 'connecting' ? 'Ulanmoqda…' : s.userTalking ? 'Eshityapman…' : s.phase === 'speaking' ? 'Hori gapirmoqda…' : s.phase === 'ended' ? 'Suhbat tugadi' : s.muted ? 'Mikrofon o\'chiq' : ptt ? 'Tinglash o\'chiq — boshlash uchun tugmani bosing' : 'Qo\'lsiz tinglayapman — gapiring';
 
   return (
     <div className={`call live-call phase-${s.phase === 'speaking' ? 'speaking' : 'ready'}`} style={{ ['--ch' as string]: ch.color }}>

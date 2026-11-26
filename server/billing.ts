@@ -1,4 +1,4 @@
-// Voilà Super obunasi: Payme (Merchant API, JSON-RPC) va Click (SHOP API prepare/complete).
+// Go Topic Super obunasi: Payme (Merchant API, JSON-RPC) va Click (SHOP API prepare/complete).
 // Har bir provayder faqat uning kalitlari muhitda bo'lsa yoqiladi. Kalitlar kodga yozilmaydi.
 // Mantiq GoTopic billing modulidan ko'chirilgan (protokol javoblari va xato kodlari o'sha).
 import { createHash, timingSafeEqual } from 'node:crypto';

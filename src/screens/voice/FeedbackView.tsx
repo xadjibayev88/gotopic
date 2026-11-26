@@ -165,14 +165,14 @@ export function FeedbackView({ record, lang, onBack, onAgain, onExam }: { record
       )}
 
       <button type="button" className="exam-nudge" onClick={onExam}>
-        🎓 Aniq bahoni bilmoqchimisiz? DELF A1 og'zaki mashqini sinab ko'ring →
+        🎓 Aniq bahoni bilmoqchimisiz? TOPIK gapirish mashqini sinab ko'ring →
       </button>
       <div className="fb-actions">
         <button type="button" className="btn btn-primary btn-lg" onClick={onAgain}>
           Yana gaplashish
         </button>
         <button type="button" className="btn btn-text" onClick={onBack}>
-          Vivi sahifasiga qaytish
+          Hori sahifasiga qaytish
         </button>
       </div>
     </div>

@@ -82,7 +82,7 @@ describe('answerLang — mikrofon tilini avtomatik tanlash', () => {
     expect(answerLang('Bugun nima o\'rganamiz? [[ans:uz]]')).toBe('uz');
   });
   it('belgisiz — matndan taxmin', () => {
-    expect(answerLang("Qani, buni fransuzcha ayting: men talabaman.")).toBe('fr');
+    expect(answerLang("Qani, buni koreyscha ayting: men talabaman.")).toBe('fr');
     expect(answerLang("[fr]Comment tu t'appelles ?[/fr]")).toBe('fr');
     expect(answerLang('Bugun kayfiyatingiz qanday?')).toBeNull();
   });
@@ -93,8 +93,8 @@ describe('answerLang — mikrofon tilini avtomatik tanlash', () => {
   });
 });
 
-describe('answerLang — fransuzcha savol belgidan ustun', () => {
-  it("oxirgi fransuzcha savol + tarjima → fr", () => {
+describe('answerLang — koreyscha savol belgidan ustun', () => {
+  it("oxirgi koreyscha savol + tarjima → fr", () => {
     expect(answerLang("Tanishamiz: [fr]Comment tu t'appelles ?[/fr] (komma tü appel) — isming nima?\n\n[[ans:uz]]")).toBe('fr');
     expect(answerLang("[fr]Bonjour ![/fr] — salom. Bugun nimani o'rganamiz? [[ans:uz]]")).toBe('uz');
   });
@@ -112,7 +112,7 @@ describe('effektlar: rasm va noto\'g\'ri teglar', () => {
   });
 });
 
-describe('ovoz teglari va xavfsiz Vivi imo-ishoralari', () => {
+describe('ovoz teglari va xavfsiz Hori imo-ishoralari', () => {
   it('maps laughter only to approved giggle and strips unsafe/sound tags without side effects', () => {
     expect(extractCues('[laughs] Voy!').cue.actions).toContain('giggle');
     expect(extractCues('[crying] Nega?').cue).toEqual({ actions: [] });
@@ -127,7 +127,7 @@ describe('ovoz teglari va xavfsiz Vivi imo-ishoralari', () => {
 
 describe('noto\'g\'ri yozilgan belgilar', () => {
   it('bitta qavsli belgilar ham ishlaydi va ko\'rinmaydi', () => {
-    const r = extractCues("Jonim, xuddi [img:Samarqand] Registondagi [do:flip] mushukdek.");
+    const r = extractCues("Jonim, xuddi [img:Samarqand] Registondagi [do:flip] yo'lbarsdek.");
     expect(r.cue.image).toBe('Samarqand');
     expect(r.cue.actions).toEqual([]);
     expect(r.clean).not.toMatch(/\[/);

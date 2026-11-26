@@ -1,4 +1,4 @@
-// Chatdagi yashil fransuzcha ibora: bosilganda o'qiladi va ustida o'zbekcha tarjimasi chiqadi.
+// Chatdagi yashil koreyscha ibora: bosilganda o'qiladi va ustida o'zbekcha tarjimasi chiqadi.
 // Avval kurs lug'atidan qidiriladi, topilmasa — serverdan (Gemini) so'raladi va keshlanadi.
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Ic } from './Icons';

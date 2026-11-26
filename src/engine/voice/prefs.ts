@@ -15,13 +15,13 @@ export interface VoicePrefs {
   voiceId: string;
   inputMode: InputMode;
   stt: SttEngine;
-  micLang: 'auto' | 'uz-UZ' | 'fr-FR' | 'ru-RU' | 'en-US';
+  micLang: 'auto' | 'uz-UZ' | 'ko-KR' | 'ru-RU' | 'en-US';
   subtitles: boolean;
   fullscreen: boolean;
   rate: number;
   introSeen: boolean;
   strictConsent: boolean;
-  /** «Menga 18 yosh to'lgan» tasdig'i (Bezori Vivi 18+ uchun). */
+  /** «Menga 18 yosh to'lgan» tasdig'i (Bezori Hori 18+ uchun). */
   adultConfirmed: boolean;
   /** «Senzurasiz rejim (18+)» — har qanday xarakter keskinroq, filtrlanmagan bo'ladi. */
   explicit: boolean;
@@ -122,7 +122,7 @@ export function saveSession(rec: SessionRecord) {
   write(HISTORY_KEY, list.slice(0, 30));
 }
 
-/** Vivi dam olish vaqti (sessiya limiti tugagach). */
+/** Hori dam olish vaqti (sessiya limiti tugagach). */
 export const restUntil = (): number => read<number>(REST_KEY, 0);
 export const setRestUntil = (t: number) => write(REST_KEY, t);
 

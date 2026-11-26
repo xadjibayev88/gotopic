@@ -241,9 +241,9 @@ describe('Google Cloud provider fake transport', () => {
     const ok = jsonResponse({ results: [{ alternatives: [{ transcript: 'Bonjour' }] }] });
     const { provider, fetchImpl } = setup(ok, {
       ...validConfig(),
-      speechToText: { ...validConfig().speechToText, locations: { 'uz-UZ': 'asia-southeast1', 'fr-FR': 'europe-west4' } },
+      speechToText: { ...validConfig().speechToText, locations: { 'uz-UZ': 'asia-southeast1', 'ko-KR': 'europe-west4' } },
     });
-    await provider.transcribe({ audio: new Uint8Array([1, 2]), languageCode: 'fr-FR' });
+    await provider.transcribe({ audio: new Uint8Array([1, 2]), languageCode: 'ko-KR' });
     expect(String(fetchImpl.mock.calls[0][0])).toBe('https://europe-west4-speech.googleapis.com/v2/projects/voila-ai-project/locations/europe-west4/recognizers/_:recognize');
   });
 

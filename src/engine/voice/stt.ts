@@ -193,7 +193,7 @@ export class CloudStt implements ReviewedStt {
     if (this.cancelled) return;
     const blob = new Blob(this.chunks, { type: mime });
     if (Date.now() - this.startedAt < 350 || blob.size < 1200) {
-      const languageCodes = lang.startsWith('fr') ? ['fr-FR'] : lang.startsWith('uz') ? ['uz-UZ'] : [];
+      const languageCodes = lang.startsWith('ko') ? ['ko-KR'] : lang.startsWith('uz') ? ['uz-UZ'] : [];
       return this.onFinal?.(reviewSttResult({ text: '', languageCodes }));
     }
     this.ac = new AbortController();
@@ -201,13 +201,13 @@ export class CloudStt implements ReviewedStt {
       const res = await fetch('./api/stt', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ audio: await blobToBase64(blob), mime: mime.split(';')[0], hint: lang === 'auto' ? 'auto' : lang.startsWith('fr') ? 'fr' : lang.startsWith('uz') ? 'uz' : 'auto', context: this.context().slice(-600) }),
+        body: JSON.stringify({ audio: await blobToBase64(blob), mime: mime.split(';')[0], hint: lang === 'auto' ? 'auto' : lang.startsWith('ko') ? 'fr' : lang.startsWith('uz') ? 'uz' : 'auto', context: this.context().slice(-600) }),
         signal: this.ac.signal,
       });
       const body = (await res.json().catch(() => ({}))) as { text?: unknown; detectedLanguage?: unknown; confidence?: unknown; alternatives?: unknown; reviewReasons?: unknown; code?: string; message?: string };
       if (this.cancelled) return;
       if (!res.ok) return this.onError?.(res.status === 429 ? 'quota' : 'failed', body.message);
-      const detectedLanguage = body.detectedLanguage === 'uz-UZ' || body.detectedLanguage === 'fr-FR' || body.detectedLanguage === 'unknown'
+      const detectedLanguage = body.detectedLanguage === 'uz-UZ' || body.detectedLanguage === 'ko-KR' || body.detectedLanguage === 'unknown'
         ? body.detectedLanguage
         : null;
       const alternatives = Array.isArray(body.alternatives) && body.alternatives.every((value) => typeof value === 'string')

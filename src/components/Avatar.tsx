@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 export const isImageAvatar = (v?: string | null) => !!v && /^(data:image\/|https:\/\/)/.test(v);
 
 export function Avatar({ value, size = 40, className = '' }: { value?: string | null; size?: number; className?: string }) {
-  const v = value || '🐱';
+  const v = value || '🐯';
   if (isImageAvatar(v)) return <img className={`avatar-img ${className}`} src={v} alt="" width={size} height={size} referrerPolicy="no-referrer" />;
   return (
     <span className={`avatar-emoji ${className}`} style={{ fontSize: Math.round(size * 0.72) }}>
@@ -14,7 +14,7 @@ export function Avatar({ value, size = 40, className = '' }: { value?: string | 
   );
 }
 
-const PRESETS = ['🐱', '😺', '😸', '😻', '😼', '🙀', '🦊', '🐼', '🐨', '🐯', '🦁', '🐰', '🐻', '🐸', '🦄', '🐧', '🐵', '🐶', '🦉', '🐙', '👩‍🎓', '👨‍🎓', '🧑‍🎨', '🧑‍💻', '👸', '🤴', '🥷', '🧙', '🥐', '🗼', '🇫🇷', '🇺🇿'];
+const PRESETS = ['🐯', '😺', '😸', '😻', '😼', '🙀', '🦊', '🐼', '🐨', '🐯', '🦁', '🐰', '🐻', '🐸', '🦄', '🐧', '🐵', '🐶', '🦉', '🐙', '👩‍🎓', '👨‍🎓', '🧑‍🎨', '🧑‍💻', '👸', '🤴', '🥷', '🧙', '🥐', '🗼', '🇰🇷', '🇺🇿'];
 
 /** Rasmni kvadrat qilib qirqib, 192×192 JPEG ga kichraytiradi (~15 KB) — sinxronlash uchun yengil. */
 async function toAvatar(file: File): Promise<string> {

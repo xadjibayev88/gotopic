@@ -1,4 +1,4 @@
-// Vivi xarakterlari va rol o'yinlari (ovozli va matnli suhbat uchun umumiy).
+// Hori xarakterlari va rol o'yinlari (ovozli va matnli suhbat uchun umumiy).
 
 export type CharacterId = 'classic' | 'strict' | 'kind' | 'witty' | 'adult';
 export type RoleId = 'free' | 'cafe' | 'meet' | 'shop' | 'hotel' | 'exam' | 'grammar' | 'mistakes' | 'custom';
@@ -20,16 +20,16 @@ export interface Character {
 export const CHARACTERS: Character[] = [
   {
     id: 'classic',
-    name: 'Klassik Vivi',
+    name: 'Klassik Hori',
     tagline: 'Muvozanatli ustoz',
     description: "Do'stona, aniq va sabrli. Kundalik mashq uchun eng yaxshi tanlov.",
     sample: "Keling, bugun kafeda buyurtma berishni mashq qilamiz. Birinchi so'z — «Bonjour»!",
     color: '#2B3A9B',
-    icon: '🐱',
+    icon: '🐯',
   },
   {
     id: 'strict',
-    name: 'Professor Vivi',
+    name: 'Professor Hori',
     tagline: 'Talabchan murabbiy',
     description: "Bo'sh maqtov yo'q. Har bir javobni to'liq gap bilan talab qiladi.",
     sample: 'Yetarli emas. Qaytadan — bu safar to\'liq gap bilan.',
@@ -39,7 +39,7 @@ export const CHARACTERS: Character[] = [
   },
   {
     id: 'kind',
-    name: 'Romantik Vivi',
+    name: 'Romantik Hori',
     tagline: 'Sevgi va iliqlik bilan',
     description: "«Jonim, asalim, farishtam» — har bir so'zingizni sevgi bilan qadrlaydi, yurakchalar va o'pichlar bilan o'rgatadi.",
     sample: "Voy, asalim, zo'r aytding! Mon cœur, yana bir marta ayt-chi — ovozingga to'yib bo'lmaydi 💕",
@@ -48,18 +48,18 @@ export const CHARACTERS: Character[] = [
   },
   {
     id: 'witty',
-    name: 'Hazilkash Vivi',
+    name: 'Hazilkash Hori',
     tagline: 'Hozirjavob va kinoyali',
     description: 'Aqlli hazillar bilan sizni hushyor tutadi. Zerikish taqiqlangan.',
-    sample: "Voy, zo'r gap! Endi buni fransuzcha ayting — o'zbekchasini o'zim ham bilaman.",
+    sample: "Voy, zo'r gap! Endi buni koreyscha ayting — o'zbekchasini o'zim ham bilaman.",
     color: '#C2410C',
     icon: '😏',
   },
   {
     id: 'adult',
-    name: 'Bezori Vivi 18+',
+    name: 'Bezori Hori 18+',
     tagline: 'Faqat kattalar uchun',
-    description: "Tili achchiq, uyalmas mushuk: so'kinadi, qovuradi, ko'cha jargoni va kattalar mavzularini o'rgatadi.",
+    description: "Tili achchiq, uyalmas yo'lbars: so'kinadi, qovuradi, ko'cha jargoni va kattalar mavzularini o'rgatadi.",
     sample: "Putain ! Yana «je suis» o'rniga «je es» deding-a? Eshak ham bunaqa qilmaydi. Qani, qaytadan!",
     color: '#7F1D1D',
     icon: '😼',
@@ -77,7 +77,7 @@ export interface Role {
   /** Ovozli suhbatdagi birinchi gap (qisqa). */
   voiceGreet: (name: string) => string;
   suggestions: string[];
-  micLang: 'uz-UZ' | 'fr-FR';
+  micLang: 'uz-UZ' | 'ko-KR';
 }
 
 export const ROLES: Role[] = [
@@ -86,39 +86,39 @@ export const ROLES: Role[] = [
     title: 'Erkin suhbat',
     icon: '💬',
     greet: (n) =>
-      `${n ? `${n}, ` : ''}[fr]Salut ![/fr] (salyu) Men Vivi — parijlik mushukcha va sizning fransuz tili ustozingizman. Xohlagan narsangizni so'rang: so'z, grammatika, Parij... Faqat qornimni silamang, darsni unutib qo'yaman 😸 Bugun nimadan boshlaymiz?`,
-    voiceGreet: (n) => `[[do:wave]] [fr]Salut ![/fr] ${n ? `${n}, ` : ''}men Vivi. Bugun nima haqida gaplashamiz?`,
-    suggestions: ['Fransuzlar qanday salomlashadi?', "Menga 3 ta foydali ibora o'rgat", 'Fransuzcha bir hazil aytib ber'],
+      `${n ? `${n}, ` : ''}[fr]Salut ![/fr] (salyu) Men Hori — seullik yo'lbarscha va sizning koreys tili ustozingizman. Xohlagan narsangizni so'rang: so'z, grammatika, Seul... Faqat qornimni silamang, darsni unutib qo'yaman 😸 Bugun nimadan boshlaymiz?`,
+    voiceGreet: (n) => `[[do:wave]] [fr]Salut ![/fr] ${n ? `${n}, ` : ''}men Hori. Bugun nima haqida gaplashamiz?`,
+    suggestions: ['Koreyslar qanday salomlashadi?', "Menga 3 ta foydali ibora o'rgat", 'Koreyscha bir hazil aytib ber'],
     micLang: 'uz-UZ',
   },
   {
     id: 'cafe',
-    title: 'Parij kafesi',
+    title: 'Seul kafesi',
     icon: '☕',
     greet: () =>
-      `[fr]Bonjour ! Bienvenue au café ![/fr] (Salom! Kafega xush kelibsiz!) Men bugun ofitsiantman. Buyurtmani fransuzcha bering — qo'rqmang, men faqat narxni baland aytaman, xatoni emas. [fr]Qu'est-ce que vous voulez ?[/fr] (Nima xohlaysiz?)`,
+      `[fr]Bonjour ! Bienvenue au café ![/fr] (Salom! Kafega xush kelibsiz!) Men bugun ofitsiantman. Buyurtmani koreyscha bering — qo'rqmang, men faqat narxni baland aytaman, xatoni emas. [fr]Qu'est-ce que vous voulez ?[/fr] (Nima xohlaysiz?)`,
     voiceGreet: () => `[[do:wave]] [fr]Bonjour ! Bienvenue au café ![/fr] Kafega xush kelibsiz. [fr]Qu'est-ce que vous voulez ?[/fr]`,
     suggestions: ["Bonjour ! Un café, s'il vous plaît.", "Le menu, s'il vous plaît.", 'Qanday javob beraman?'],
-    micLang: 'fr-FR',
+    micLang: 'ko-KR',
   },
   {
     id: 'meet',
     title: 'Tanishuv',
     icon: '🤝',
     greet: () =>
-      `[fr]Salut ! Je m'appelle Vivi. Et toi ?[/fr] (Salom! Mening ismim Vivi. Seningchi?) Tasavvur qiling, Parijdagi parkda tanishdik. Fransuzcha javob berishga harakat qiling — bilmasangiz o'zbekcha ayting, birga tuzamiz.`,
-    voiceGreet: () => `[[do:wave]] [fr]Salut ! Je m'appelle Vivi. Et toi ?[/fr] Ismingizni fransuzcha ayting!`,
+      `[fr]Salut ! Je m'appelle Hori. Et toi ?[/fr] (Salom! Mening ismim Hori. Seningchi?) Tasavvur qiling, Seuldagi parkda tanishdik. Koreyscha javob berishga harakat qiling — bilmasangiz o'zbekcha ayting, birga tuzamiz.`,
+    voiceGreet: () => `[[do:wave]] [fr]Salut ! Je m'appelle Hori. Et toi ?[/fr] Ismingizni koreyscha ayting!`,
     suggestions: ["Je m'appelle Ali.", 'Je suis ouzbek.', "Qanday tanishtiraman o'zimni?"],
-    micLang: 'fr-FR',
+    micLang: 'ko-KR',
   },
   {
     id: 'shop',
     title: "Kiyim do'koni",
     icon: '🛍️',
-    greet: () => `[fr]Bonjour ! Je peux vous aider ?[/fr] (Salom! Yordam bera olamanmi?) Men sotuvchiman. Nima qidiryapsiz — ko'ylakmi, shimmi, beretmi? Beret tavsiya qilaman — mushukchalarga ham juda yarashadi 😸`,
+    greet: () => `[fr]Bonjour ! Je peux vous aider ?[/fr] (Salom! Yordam bera olamanmi?) Men sotuvchiman. Nima qidiryapsiz — ko'ylakmi, shimmi, beretmi? Beret tavsiya qilaman — yo'lbarschalarga ham juda yarashadi 😸`,
     voiceGreet: () => `[[shape:card]] [fr]Bonjour ! Je peux vous aider ?[/fr] Nima qidiryapsiz?`,
     suggestions: ['Je voudrais un t-shirt.', "C'est combien ?", 'Qanday so\'rayman narxini?'],
-    micLang: 'fr-FR',
+    micLang: 'ko-KR',
   },
   {
     id: 'hotel',
@@ -127,22 +127,22 @@ export const ROLES: Role[] = [
     greet: () => `[fr]Bonsoir ! Vous avez une réservation ?[/fr] (Xayrli kech! Bron qilganmisiz?) Lion shahridagi mehmonxonaga xush kelibsiz. Ro'yxatdan o'tamiz!`,
     voiceGreet: () => `[fr]Bonsoir ! Vous avez une réservation ?[/fr] Bron qilganmisiz?`,
     suggestions: ["Oui, j'ai une réservation.", 'Le petit-déjeuner, c\'est à quelle heure ?', 'Qanday javob beraman?'],
-    micLang: 'fr-FR',
+    micLang: 'ko-KR',
   },
   {
     id: 'exam',
-    title: 'DELF A1 mashqi',
+    title: 'TOPIK A1 mashqi',
     icon: '🎓',
-    greet: () => `Og'zaki imtihon mashqi! Men savol beraman, siz fransuzcha javob berasiz, keyin qisqa baho olasiz. Birinchi savol: [fr]Présentez-vous, s'il vous plaît.[/fr] (O'zingizni tanishtiring.)`,
+    greet: () => `Og'zaki imtihon mashqi! Men savol beraman, siz koreyscha javob berasiz, keyin qisqa baho olasiz. Birinchi savol: [fr]Présentez-vous, s'il vous plaît.[/fr] (O'zingizni tanishtiring.)`,
     voiceGreet: () => `[[shape:slab]] Imtihon mashqi. Birinchi savol: [fr]Présentez-vous, s'il vous plaît.[/fr]`,
     suggestions: ["Je m'appelle Ali, j'ai vingt ans.", 'Savolni tushunmadim'],
-    micLang: 'fr-FR',
+    micLang: 'ko-KR',
   },
   {
     id: 'grammar',
     title: 'Grammatika',
     icon: '📐',
-    greet: () => `Grammatika — fransuz tilining eng nozik qismi, xuddi kalava ipidek chigal, lekin birga yechamiz 🧶 Savolingizni bering: artikllar, rod, fe'llar, inkor — hammasini oddiy misollar bilan tushuntiraman.`,
+    greet: () => `Grammatika — koreys tilining eng nozik qismi, xuddi kalava ipidek chigal, lekin birga yechamiz 🧶 Savolingizni bering: artikllar, rod, fe'llar, inkor — hammasini oddiy misollar bilan tushuntiraman.`,
     voiceGreet: () => `[[shape:book]] Grammatika vaqti! Qaysi mavzu qiynayapti?`,
     suggestions: ['un va une ning farqi nima?', "être fe'lini tushuntir", 'Inkor gap qanday tuziladi?'],
     micLang: 'uz-UZ',

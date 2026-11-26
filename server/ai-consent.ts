@@ -168,7 +168,7 @@ export function revokeAiConsent(subject: AiSubject, now = Date.now()): AiConsent
   return getAiConsent(subject);
 }
 
-/** Remove only the signed account's saved Vivi memory from its synced progress document. */
+/** Remove only the signed account's saved Hori memory from its synced progress document. */
 export function deleteAiMemory(subject: AiSubject, now = Date.now()): boolean {
   if (!accountExists(subject)) return false;
   const updatedAt = timestamp(now);

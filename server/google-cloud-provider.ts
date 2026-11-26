@@ -24,7 +24,7 @@ export interface VerifiedServiceConfig {
 
 export interface VerifiedSttConfig extends VerifiedServiceConfig {
   readonly recognizer?: string;
-  /** Per-language regions: Chirp 2 serves uz-UZ and fr-FR from different documented locations. */
+  /** Per-language regions: Chirp 2 serves uz-UZ and ko-KR from different documented locations. */
   readonly locations?: Readonly<Partial<Record<SpeechLanguageCode, string>>>;
 }
 
@@ -59,7 +59,7 @@ const TEXT_LOCATIONS = new Set(['asia-southeast1', 'europe-west4']);
 const STT_MODELS = new Set(['chirp_2']);
 const STT_LOCATION_BY_LANGUAGE: Readonly<Record<SpeechLanguageCode, string>> = {
   'uz-UZ': 'asia-southeast1',
-  'fr-FR': 'europe-west4',
+  'ko-KR': 'europe-west4',
 };
 const TTS_MODELS = new Set(['gemini-3.8-flash-tts', 'gemini-3.8-flash-lite-tts']);
 const TTS_ENDPOINTS: Readonly<Record<string, string>> = {

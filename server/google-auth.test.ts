@@ -76,7 +76,7 @@ describe('Google ADC token source', () => {
 describe('AI runtime wiring', () => {
   it('builds per-language STT regions and an Uzbek-first TTS style from env', () => {
     const config = googleProviderConfigFromEnv({ VIVI_STT_VERIFIED: 'true', VIVI_TTS_VERIFIED: 'true' });
-    expect(config.speechToText).toMatchObject({ model: 'chirp_2', verified: true, locations: { 'uz-UZ': 'asia-southeast1', 'fr-FR': 'europe-west4' } });
+    expect(config.speechToText).toMatchObject({ model: 'chirp_2', verified: true, locations: { 'uz-UZ': 'asia-southeast1', 'ko-KR': 'europe-west4' } });
     expect(config.textToSpeech).toMatchObject({ model: 'gemini-3.8-flash-tts', voice: 'Leda', location: 'global', style: DEFAULT_TTS_STYLE });
     expect(googleProviderConfigFromEnv({ VIVI_TTS_STYLE: 'off' }).textToSpeech?.style).toBeUndefined();
   });

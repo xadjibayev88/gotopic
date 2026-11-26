@@ -1,4 +1,4 @@
-export type DetectedSpeechLanguage = 'uz-UZ' | 'fr-FR' | 'unknown';
+export type DetectedSpeechLanguage = 'uz-UZ' | 'ko-KR' | 'unknown';
 
 export type SttReviewReason =
   | 'confidence_missing'
@@ -24,7 +24,7 @@ export interface SttReviewMetadata {
   readonly languageCodes?: readonly string[];
   readonly confidence?: number;
   readonly alternatives?: readonly string[];
-  readonly expectedLanguage?: 'uz-UZ' | 'fr-FR';
+  readonly expectedLanguage?: 'uz-UZ' | 'ko-KR';
   readonly targetPhrase?: string;
   readonly noiseSuspected?: boolean;
 }
@@ -32,7 +32,7 @@ export interface SttReviewMetadata {
 function knownLanguage(code: string): Exclude<DetectedSpeechLanguage, 'unknown'> | null {
   const normalized = code.trim().toLowerCase();
   if (normalized === 'uz-uz') return 'uz-UZ';
-  if (normalized === 'fr-fr') return 'fr-FR';
+  if (normalized === 'ko-kr') return 'ko-KR';
   return null;
 }
 

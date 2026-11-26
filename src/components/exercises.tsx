@@ -282,7 +282,7 @@ export function TypeView({ ex, locked, onAnswer }: ViewProps<'type'>) {
   return (
     <div className="ex">
       <h2 className="ex-title">
-        {mode === 'cloze' ? "Bo'sh joyni to'ldiring" : mode === 'dictation' ? 'Eshitganingizni to\'liq yozing (diktant)' : ex.dir === 'fr2uz' ? "O'zbek tiliga tarjima qiling" : 'Fransuz tiliga tarjima qiling'}
+        {mode === 'cloze' ? "Bo'sh joyni to'ldiring" : mode === 'dictation' ? 'Eshitganingizni to\'liq yozing (diktant)' : ex.dir === 'fr2uz' ? "O'zbek tiliga tarjima qiling" : 'Koreys tiliga tarjima qiling'}
       </h2>
       {mode === 'dictation' ? (
         <div className="listen-row">
@@ -314,7 +314,7 @@ export function TypeView({ ex, locked, onAnswer }: ViewProps<'type'>) {
         className="type-input"
         value={text}
         disabled={locked}
-        placeholder={mode === 'cloze' ? "Tushib qolgan so'zni yozing" : mode === 'dictation' ? 'Eshitgan gapingizni fransuzcha yozing' : ex.dir === 'fr2uz' ? "O'zbekcha yozing" : 'Fransuzcha yozing'}
+        placeholder={mode === 'cloze' ? "Tushib qolgan so'zni yozing" : mode === 'dictation' ? 'Eshitgan gapingizni koreyscha yozing' : ex.dir === 'fr2uz' ? "O'zbekcha yozing" : 'Koreyscha yozing'}
         rows={mode === 'cloze' ? 1 : undefined}
         lang={ex.dir === 'fr2uz' ? 'uz' : 'fr'}
         autoCapitalize="off"

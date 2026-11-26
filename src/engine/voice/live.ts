@@ -1,6 +1,6 @@
 // Gemini Live: real vaqtli ovozli suhbat. Brauzer to'g'ridan-to'g'ri Gemini bilan WebSocket orqali gaplashadi
 // (server bergan bir martalik token bilan — API kalit brauzerga chiqmaydi). Mikrofon: PCM16 16 kHz,
-// Vivi ovozi: PCM16 24 kHz. Gapni bo'lish, subtitrlar (transkripsiya), taymer va suhbat yozuvi.
+// Hori ovozi: PCM16 24 kHz. Gapni bo'lish, subtitrlar (transkripsiya), taymer va suhbat yozuvi.
 import type { CharacterId, ExplainLang, RoleId } from '../../data/characters';
 import type { InputMode, SessionRecord } from './prefs';
 import { talkStats } from './markers';
@@ -14,7 +14,7 @@ export type LivePhase = 'connecting' | 'listening' | 'speaking' | 'ended';
 
 export interface LiveSnap {
   phase: LivePhase;
-  /** Vivi ovozi darajasi (0..1). */
+  /** Hori ovozi darajasi (0..1). */
   level: number;
   /** Mikrofon darajasi (0..1). */
   micLevel: number;
@@ -185,9 +185,9 @@ export class LiveSession {
       this.timer = window.setInterval(() => this.tick(), 500);
       this.loop();
       this.set({ phase: 'listening' });
-      // Vivi o'zi salomlashadi (xotiradan eslab).
+      // Hori o'zi salomlashadi (xotiradan eslab).
       this.ws?.send(JSON.stringify({ realtimeInput: { text: '[SUHBAT BOSHLANDI]' } }));
-      // Qo'riqchi: 7 soniyada Vivi ovozi kelmasa — salomlashishni qayta so'raymiz.
+      // Qo'riqchi: 7 soniyada Hori ovozi kelmasa — salomlashishni qayta so'raymiz.
       window.setTimeout(() => {
         if (!this.heard && this.snap.phase !== 'ended') this.ws?.send(JSON.stringify({ realtimeInput: { text: '[SUHBAT BOSHLANDI] Salomlash.' } }));
       }, 7000);
@@ -195,7 +195,7 @@ export class LiveSession {
     }
     if (m.goAway) return this.end('limit');
     if (m.toolCall?.functionCalls?.length) {
-      // Avval javob — Vivi kutib qolmasin; effektlar keyin (xato bo'lsa ham suhbat davom etadi).
+      // Avval javob — Hori kutib qolmasin; effektlar keyin (xato bo'lsa ham suhbat davom etadi).
       this.stats.tools++;
       this.ws?.send(JSON.stringify({ toolResponse: { functionResponses: m.toolCall.functionCalls.map((f) => ({ id: f.id, name: f.name, response: { ok: true }, scheduling: 'WHEN_IDLE' })) } }));
       for (const f of m.toolCall.functionCalls) {
@@ -210,7 +210,7 @@ export class LiveSession {
     const sc = m.serverContent;
     if (!sc) return;
     if (sc.interrupted) {
-      // O'quvchi gapni bo'ldi — Vivi darhol jim bo'ladi.
+      // O'quvchi gapni bo'ldi — Hori darhol jim bo'ladi.
       this.stopPlayback();
       if (this.snap.liveTutor) this.pushTurn('tutor', `${this.snap.liveTutor}…`);
       this.set({ liveTutor: '', phase: 'listening' });
@@ -222,7 +222,7 @@ export class LiveSession {
         this.play(fromBase64(p.inlineData.data));
       }
     if (sc.inputTranscription?.text) {
-      // Vivi gapira boshlasa, o'quvchining gapi yakunlangan hisoblanadi.
+      // Hori gapira boshlasa, o'quvchining gapi yakunlangan hisoblanadi.
       this.stats.heardUser = true;
       this.set({ liveUser: this.snap.liveUser + sc.inputTranscription.text });
       if (this.snap.liveUser.length < 400) this.guessCueOnce();
@@ -258,7 +258,7 @@ export class LiveSession {
     this.vad.len = 0;
     this.vad.quiet = 0;
     if (start) {
-      // Vivi gapirayotgan bo'lsa — darhol jim bo'ladi (gapni bo'lish).
+      // Hori gapirayotgan bo'lsa — darhol jim bo'ladi (gapni bo'lish).
       if (this.sources.size) {
         this.stopPlayback();
         if (this.snap.liveTutor) this.pushTurn('tutor', `${this.snap.liveTutor}…`);
@@ -287,7 +287,7 @@ export class LiveSession {
     const playing = this.sources.size > 0;
     // Shovqin darajasi: tez pasayadi, sekin ko'tariladi.
     v.floor = rms < v.floor ? v.floor * 0.7 + rms * 0.3 : v.floor + (rms - v.floor) * 0.003;
-    // Vivi gapirayotganda karnay ovozi mikrofonga tushmasligi uchun chegara balandroq.
+    // Hori gapirayotganda karnay ovozi mikrofonga tushmasligi uchun chegara balandroq.
     const thr = playing ? Math.max(0.07, v.floor * 7) : Math.max(0.014, v.floor * 3.2);
     if (v.on) {
       this.sendAudio(pcm);

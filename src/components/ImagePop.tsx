@@ -1,4 +1,4 @@
-// Rasm effekti: Vivi gapida tilga olingan odam / joy / narsaning rasmi (Vikipediyadan) qalqib chiqadi.
+// Rasm effekti: Hori gapida tilga olingan odam / joy / narsaning rasmi (Vikipediyadan) qalqib chiqadi.
 import { useEffect, useState } from 'react';
 
 type Found = { url: string; title: string } | null;

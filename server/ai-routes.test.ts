@@ -324,7 +324,7 @@ describe('AI route consent/quota middleware', () => {
     const operations = createAiRouteOperations();
     const harness = createRouteHarness({
       operations,
-      providerCallOverride: async () => ({ text: 'Bonjour, je suis Vivi.', cue: { state: 'speaking', face: 'neutral' } }),
+      providerCallOverride: async () => ({ text: 'Bonjour, je suis Hori.', cue: { state: 'speaking', face: 'neutral' } }),
       sanitizeBody: (route, _subject, body) => {
         if (route !== 'POST /api/tutor' || typeof body !== 'object' || body === null) return body;
         const input = body as Record<string, unknown>;
@@ -366,7 +366,7 @@ describe('AI route consent/quota middleware', () => {
     const operations = createAiRouteOperations();
     const harness = createRouteHarness({
       operations,
-      providerCallOverride: async () => ({ text: 'Bonjour, je suis Vivi.', cue: { state: 'speaking', face: 'neutral' } }),
+      providerCallOverride: async () => ({ text: 'Bonjour, je suis Hori.', cue: { state: 'speaking', face: 'neutral' } }),
       sanitizeBody: (route, subject, body) => route === 'POST /api/tutor'
         ? sanitizeTutorBodyForMemoryConsent(subject, body)
         : body,
@@ -420,7 +420,7 @@ describe('AI route consent/quota middleware', () => {
     expect(harness.providerCalls[0]).toEqual({
       routeKey: 'POST /api/stt',
       provider: 'google-cloud-speech-to-text',
-      payload: { audio: new Uint8Array(Buffer.from('SGVsbG8=', 'base64')), languageCode: 'fr-FR' },
+      payload: { audio: new Uint8Array(Buffer.from('SGVsbG8=', 'base64')), languageCode: 'ko-KR' },
     });
   });
 
@@ -670,7 +670,7 @@ describe('AI route consent/quota middleware', () => {
     expect(tutor).toContain('tutorVoice: !s.settings.tutorVoice');
     expect(privacy).toContain('server AI va STT o‘chiq');
     expect(privacy).toContain('server TTS inson tomonidan tekshirilmagan va runtime’da faqat matn rejimida');
-    expect(privacy).toContain('Matnli tutor javobidagi fransuzcha qismlarni avtomatik o‘qish sozlamasi yangi profil uchun sukut bo‘yicha yoqilgan');
+    expect(privacy).toContain('Matnli tutor javobidagi koreyscha qismlarni avtomatik o‘qish sozlamasi yangi profil uchun sukut bo‘yicha yoqilgan');
     expect(privacy).toContain('Matn tanlangan brauzer/qurilma SpeechSynthesis dvigateliga berilib');
     expect(privacy).toContain('Server TTS o‘chiq, sozlanmagan yoki xatoga uchraganida, server oqimida brauzer SpeechSynthesis’ga yashirin fallback qilinmaydi');
     expect(privacy).toContain('Live ham o‘chiq');

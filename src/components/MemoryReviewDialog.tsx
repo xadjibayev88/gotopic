@@ -20,14 +20,14 @@ export function MemoryReviewDialog({ turns, busy = false, onConfirm, onCancel }:
         aria-labelledby="memory-review-title"
         onClick={(event) => event.stopPropagation()}
       >
-        <h3 id="memory-review-title">Vivi xotirasini yangilash</h3>
+        <h3 id="memory-review-title">Hori xotirasini yangilash</h3>
         <p className="muted small">
           Quyidagi suhbat qismlarini ko'rib chiqing. Tasdiqlasangiz, aynan shu matnlar xotira yangilash so'roviga yuboriladi va keyingi darslarda ishlatilishi mumkin.
         </p>
         <div className="memory-review-turns" aria-label="Xotirani yangilashga yuboriladigan suhbat qismlari">
           {turns.map((turn, index) => (
             <article className={`memory-review-turn memory-review-${turn.role}`} key={`${index}-${turn.role}`}>
-              <b>{turn.role === 'user' ? 'Siz' : 'Vivi'}</b>
+              <b>{turn.role === 'user' ? 'Siz' : 'Hori'}</b>
               <p>{turn.text}</p>
             </article>
           ))}

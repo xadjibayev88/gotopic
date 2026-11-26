@@ -469,10 +469,10 @@ export function createAiConsentRoutes(deps: AiConsentHttpDependencies): Readonly
     },
     'DELETE /api/ai/memory': (req, res) => {
       if (!mutationAllowed(req, res)) return;
-      const subject = signedSubject(req, res, 'Vivi xotirasini o‘chirish');
+      const subject = signedSubject(req, res, 'Hori xotirasini o‘chirish');
       if (!subject) return;
       try { return json(res, 200, { deleted: deps.deleteMemory(subject) }); }
-      catch { return json(res, 503, { code: 'ai_memory_unavailable', message: 'Vivi xotirasini o‘chirish vaqtincha mavjud emas.' }); }
+      catch { return json(res, 503, { code: 'ai_memory_unavailable', message: 'Hori xotirasini o‘chirish vaqtincha mavjud emas.' }); }
     },
   });
 }

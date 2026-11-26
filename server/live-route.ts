@@ -9,7 +9,7 @@ import type { AiSubject } from './ai-consent.ts';
 /** Mimika: faqat xavfsiz cue sxemasidagi qiymatlar (mijoz ham validateViviCue bilan qayta tekshiradi). */
 export const LIVE_REACT_TOOL = Object.freeze({
   name: 'vivi',
-  description: "Ekrandagi Vivi maskotining yuzi va imo-ishorasini o'zgartiradi. Har javobda gapirishdan oldin chaqir.",
+  description: "Ekrandagi Hori maskotining yuzi va imo-ishorasini o'zgartiradi. Har javobda gapirishdan oldin chaqir.",
   behavior: 'NON_BLOCKING',
   parameters: {
     type: 'OBJECT',
@@ -50,7 +50,7 @@ export function createLiveTokenRoute(d: LiveRouteDeps) {
     const subject = d.subject(req);
     if (!subject) return d.respond(res, 401, { code: 'auth', message: 'Jonli suhbat uchun hisobga kiring.' });
     if (!d.hasConsent(subject)) {
-      return d.respond(res, 403, { code: 'ai_consent_required', scope: 'live_session', message: 'Jonli suhbat uchun «Vivi AI va maxfiylik» bo‘limida rozilik bering.' });
+      return d.respond(res, 403, { code: 'ai_consent_required', scope: 'live_session', message: 'Jonli suhbat uchun «Hori AI va maxfiylik» bo‘limida rozilik bering.' });
     }
     if (d.killSwitchActive()) return d.respond(res, 503, { code: 'ai_kill_switch', message: 'AI so‘rovlari vaqtincha o‘chirilgan.' });
     const limited = d.rateLimited(req);

@@ -34,9 +34,9 @@ export interface GeminiApiProviderConfig {
   readonly onKeyProblem?: (problem: AiKeyProblemDetail) => void;
 }
 
-const STT_INSTRUCTION = `Sen nutqni matnga aylantiruvchisan. Gapiruvchi — fransuz tilini o'rganayotgan o'zbek o'quvchi; u AI ustoz «Vivi» bilan gaplashyapti.
-- Audiodagi BARCHA aytilgan so'zlarni boshidan oxirigacha AYNAN yoz: hech bir qismini (o'zbekcha ham, fransuzcha ham) tashlab ketma, tarjima qilma, javob berma, o'zingdan so'z qo'shma.
-- Nutq o'zbekcha, fransuzcha yoki aralash bo'lishi mumkin: o'zbekcha — lotin yozuvida (o', g', sh, ch), fransuzcha — fransuz imlosida (urg'u belgilari bilan).
+const STT_INSTRUCTION = `Sen nutqni matnga aylantiruvchisan. Gapiruvchi — koreys tilini o'rganayotgan o'zbek o'quvchi; u AI ustoz «Hori» bilan gaplashyapti.
+- Audiodagi BARCHA aytilgan so'zlarni boshidan oxirigacha AYNAN yoz: hech bir qismini (o'zbekcha ham, koreyscha ham) tashlab ketma, tarjima qilma, javob berma, o'zingdan so'z qo'shma.
+- Nutq o'zbekcha, koreyscha yoki aralash bo'lishi mumkin: o'zbekcha — lotin yozuvida (o', g', sh, ch), koreyscha — koreys imlosida (urg'u belgilari bilan).
 - O'quvchining grammatik xatolarini TUZATMA.
 - Ustozning oxirgi gapi faqat ism va so'zlarni to'g'ri yozish uchun beriladi; uni audioda aytilmagan bo'lsa matnga qo'shma, lekin audioda aytilgan gapni u bilan o'xshash deb tashlab ham ketma.
 - Nutq eshitilmasa yoki tushunarsiz bo'lsa — text bo'sh.
@@ -187,7 +187,7 @@ export function createGeminiApiProvider(config: GeminiApiProviderConfig, fetchIm
       if (!(request.audio instanceof Uint8Array) || request.audio.byteLength === 0 || !AUDIO_MIME.test(mime)) {
         throw new AiProviderError('provider_unavailable');
       }
-      const expected = request.autoLanguage ? 'aralash yoki noma\'lum' : request.languageCode === 'fr-FR' ? 'fransuzcha' : 'o\'zbekcha';
+      const expected = request.autoLanguage ? 'aralash yoki noma\'lum' : request.languageCode === 'ko-KR' ? 'koreyscha' : 'o\'zbekcha';
       const body = {
         systemInstruction: { parts: [{ text: STT_INSTRUCTION }] },
         contents: [{
@@ -214,9 +214,9 @@ export function createGeminiApiProvider(config: GeminiApiProviderConfig, fetchIm
       if (!text) return { segments: [] };
       if (parsed.language === 'mixed') {
         // Two segment language tags make the review step ask the learner to confirm a code-switched transcript.
-        return { segments: [{ languageCode: 'uz-UZ', alternatives: [{ transcript: text }] }, { languageCode: 'fr-FR', alternatives: [] }] };
+        return { segments: [{ languageCode: 'uz-UZ', alternatives: [{ transcript: text }] }, { languageCode: 'ko-KR', alternatives: [] }] };
       }
-      const languageCode = parsed.language === 'fr' ? 'fr-FR' : parsed.language === 'uz' ? 'uz-UZ' : undefined;
+      const languageCode = parsed.language === 'fr' ? 'ko-KR' : parsed.language === 'uz' ? 'uz-UZ' : undefined;
       return { segments: [{ ...(languageCode ? { languageCode } : {}), alternatives: [{ transcript: text }] }] };
     },
 

@@ -41,8 +41,8 @@ export function Shop() {
           {
             id: 'coffee',
             icon: <FishIcon />,
-            name: 'Vivi akvariumi',
-            desc: "Xato qilganda baliqcha kamayadi. Akvariumni to'ldirsangiz, Vivi to'q — darslar to'xtovsiz davom etadi.",
+            name: 'Hori akvariumi',
+            desc: "Xato qilganda baliqcha kamayadi. Akvariumni to'ldirsangiz, Hori to'q — darslar to'xtovsiz davom etadi.",
             price: HEART_REFILL_COST,
             level: (premium || state.unlimitedHearts ? MAX_HEARTS : state.hearts) / MAX_HEARTS,
             levelLabel: premium || state.unlimitedHearts ? 'Cheksiz baliqcha ∞' : `${state.hearts}/${MAX_HEARTS} baliqcha${next !== null ? ` · keyingisi ${Math.ceil(next / 60000)} daqiqada` : ''}`,
@@ -50,7 +50,7 @@ export function Shop() {
             color2: '#38bdf8',
             canBuy: !premium && !state.unlimitedHearts && state.hearts < MAX_HEARTS && state.gems >= HEART_REFILL_COST,
             whyNot: premium || state.unlimitedHearts || state.hearts >= MAX_HEARTS ? "Akvarium to'la" : 'Tanga yetmaydi',
-            buy: () => buy(buyHeartRefill, "Akvarium to'ldi! Vivi xursand 🐟"),
+            buy: () => buy(buyHeartRefill, "Akvarium to'ldi! Hori xursand 🐟"),
           },
           {
             id: 'xp',

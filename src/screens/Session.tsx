@@ -29,7 +29,7 @@ export type SessionConfig =
   | { kind: 'jump'; level: Cefr }
   | { kind: 'practice'; mode: 'smart' | 'mistakes' | 'listening' };
 
-const PRAISE = ['Voilà !', 'Voilà !', 'Ajoyib!', "Zo'r!", 'Barakalla!', 'Juda yaxshi!', 'Très bien !', 'Parfait !', 'Qoyil!', 'Super!'];
+const PRAISE = ['Go Topic !', 'Go Topic !', 'Ajoyib!', "Zo'r!", 'Barakalla!', 'Juda yaxshi!', 'Très bien !', 'Parfait !', 'Qoyil!', 'Super!'];
 
 function generate(cfg: SessionConfig, state: ReturnType<typeof useStore>['state']): Exercise[] {
   const tts = ttsSupported() && state.settings.listening;
@@ -255,10 +255,10 @@ export function Session({ config, onExit }: { config: SessionConfig; onExit: (co
 
       <footer className={`session-foot ${evaluation ? (evaluation.correct ? 'ok' : 'bad') : ''}`}>
         {evaluation?.correct && (
-          // Vivi sehr ko'rsatadi: har to'g'ri javobda «Voilà !»
+          // Hori sehr ko'rsatadi: har to'g'ri javobda «Go Topic !»
           <div className="voila-burst" key={`v-${pos}-${solved}`} aria-hidden="true">
             <Mascot mood="cheer" size={72} />
-            <b>Voilà !</b>
+            <b>Go Topic !</b>
             <i className="spark s1">✦</i>
             <i className="spark s2">✧</i>
             <i className="spark s3">✦</i>
@@ -326,7 +326,7 @@ export function Session({ config, onExit }: { config: SessionConfig; onExit: (co
           <div className="sheet">
             <Mascot mood="sad" size={96} />
             <h3>Hozircha yetmadi</h3>
-            <p className="muted">{`Testda ${JUMP_MAX_MISTAKES} tadan ko'p xato bo'ldi. Darslarni ketma-ket o'tib, keyinroq yana urinib ko'ring — Vivi sizga ishonadi!`}</p>
+            <p className="muted">{`Testda ${JUMP_MAX_MISTAKES} tadan ko'p xato bo'ldi. Darslarni ketma-ket o'tib, keyinroq yana urinib ko'ring — Hori sizga ishonadi!`}</p>
             <button type="button" className="btn btn-primary btn-lg" onClick={() => onExit()}>
               Tushunarli
             </button>
@@ -338,7 +338,7 @@ export function Session({ config, onExit }: { config: SessionConfig; onExit: (co
           <div className="sheet">
             <div className="big-emoji">💔</div>
             <h3>Baliqchalar tugadi!</h3>
-            <p className="muted">Har 30 daqiqada bitta baliqcha qaytadi. Yoki mashq qilib baliqcha ishlab oling — Vivi och qolmasin!</p>
+            <p className="muted">Har 30 daqiqada bitta baliqcha qaytadi. Yoki mashq qilib baliqcha ishlab oling — Hori och qolmasin!</p>
             <button
               type="button"
               className="btn btn-primary btn-lg"

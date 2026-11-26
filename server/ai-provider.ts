@@ -50,7 +50,7 @@ export interface AiPrompt {
   readonly safetySettings?: readonly Readonly<Record<string, unknown>>[];
 }
 
-export type SpeechLanguageCode = 'uz-UZ' | 'fr-FR';
+export type SpeechLanguageCode = 'uz-UZ' | 'ko-KR';
 
 export interface TranscriptionRequest {
   readonly audio: Uint8Array;
@@ -59,7 +59,7 @@ export interface TranscriptionRequest {
   readonly mimeType?: string;
   /** True when the learner did not choose a language; the transcriber may keep mixed Uzbek/French. */
   readonly autoLanguage?: boolean;
-  /** Vivi's last line, only to spell names/words correctly. */
+  /** Hori's last line, only to spell names/words correctly. */
   readonly context?: string;
 }
 

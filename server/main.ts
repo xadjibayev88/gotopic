@@ -1,4 +1,4 @@
-// Voilà! serves dist/ and keeps AI routes disabled until provider and shared-quota readiness are verified.
+// Go Topic serves dist/ and keeps AI routes disabled until provider and shared-quota readiness are verified.
 // AI credentials are server-only; no legacy provider fallback routes are registered.
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
@@ -284,7 +284,7 @@ const routeHandlers: RouteTable = Object.freeze(registerClientLogRoute({
     json(res, 200, { nonce });
   },
 
-  // Reklama (rewarded video) oxirigacha ko'rilgach: Vivi bilan qo'shimcha daqiqalar.
+  // Reklama (rewarded video) oxirigacha ko'rilgach: Hori bilan qo'shimcha daqiqalar.
   'POST /api/reward/vivi': async (req, res) => {
     if (!originOk(req)) return json(res, 403, { message: 'Ruxsat etilmagan manba' });
     const limited = take('reward', clientIp(req));
@@ -351,7 +351,7 @@ const routeHandlers: RouteTable = Object.freeze(registerClientLogRoute({
       ai,
       model: ai ? AI_RUNTIME_CONFIG.model : null,
       exhausted: [],
-      // Names only (never values) of what keeps Vivi AI closed, for hosts without log access.
+      // Names only (never values) of what keeps Hori AI closed, for hosts without log access.
       ...(ai ? {} : { aiProblems: [
         ...AI_CONFIG_PROBLEMS,
         ...(isAiQuotaStorageReady() ? [] : ['VIVI_AI_QUOTA_STORE_SHARED_DURABLE_VERIFIED (yoki baza)']),
@@ -377,7 +377,7 @@ const routeHandlers: RouteTable = Object.freeze(registerClientLogRoute({
       ttsTier: ttsReady ? 'gemini' : 'text',
       ttsProvider: ttsReady ? (AI_PROVIDER_MODE === 'gemini-api' ? 'google-gemini-api' : 'google-agent-platform') : null,
       audioTags: false,
-      voices: ttsReady ? [{ name: 'Vivi', id: GOOGLE_TTS_VOICE }] : [],
+      voices: ttsReady ? [{ name: 'Hori', id: GOOGLE_TTS_VOICE }] : [],
       sessionMinutes: premium ? Math.max(SESSION_MIN, num('VOICE_SESSION_MINUTES_SUPER', 30)) : Math.min(SESSION_MIN, FREE_VOICE_MIN) + bonusMin(req),
       rewardMinutes: REWARD_VIVI_MIN,
       rewardsLeft: premium ? 0 : bonusClaimsLeft(req),
@@ -723,7 +723,7 @@ async function serveStatic(req: IncomingMessage, res: ServerResponse) {
   }
 }
 
-// Vivi AI (suhbat, ovoz, tarjima chiplari, xotira) va Gemini Live — faqat Super obunachilar va adminlar uchun.
+// Hori AI (suhbat, ovoz, tarjima chiplari, xotira) va Gemini Live — faqat Super obunachilar va adminlar uchun.
 // AI_SUPER_ONLY=0 bilan o'chirish mumkin. Darslar AI ishlatmaydi — ular bepul qoladi.
 const SUPER_ONLY_ROUTES = new Set([
   'POST /api/tutor', 'POST /api/tutor/feedback', 'POST /api/tutor/memory', 'POST /api/stt', 'POST /api/tts', 'POST /api/translate', 'POST /api/live/token',
@@ -738,7 +738,7 @@ const server = createServer((req, res) => {
   const path = (req.url ?? '/').split('?')[0];
   const routeKey = `${req.method} ${path}`;
   if (SUPER_ONLY_ROUTES.has(routeKey) && superOnly() && !superAllowed(req)) {
-    return json(res, 402, { code: 'super_required', message: 'Vivi AI faqat Super obunachilar uchun. Super oling 💎' });
+    return json(res, 402, { code: 'super_required', message: 'Hori AI faqat Super obunachilar uchun. Super oling 💎' });
   }
   // Gemini Live: o'z darvozasi bor (rejim/rozilik/limit); shartlar bajarilmasa — token berilmaydi.
   if (routeKey === 'POST /api/live/token') {
@@ -760,7 +760,7 @@ server.keepAliveTimeout = 65_000;
 
 startBot();
 server.listen(PORT, () =>
-  console.log(`Voilà! server: http://localhost:${PORT} · AI: ${aiRoutesEffectivelyReady()
+  console.log(`Go Topic server: http://localhost:${PORT} · AI: ${aiRoutesEffectivelyReady()
     ? `yoqilgan (${AI_PROVIDER_MODE === 'gemini-api' ? 'Gemini API, bepul' : 'Google Cloud Vertex'} · ${AI_RUNTIME_CONFIG.model})`
     : "o'chiq (.env.example va `npm run ai:status` ni tekshiring)"}`),
 );

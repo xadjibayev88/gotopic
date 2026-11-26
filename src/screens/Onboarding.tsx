@@ -12,9 +12,9 @@ import type { Cefr } from '../data/course';
 /** Ilova haqida qisqa tanishtiruv kartalari. */
 const FEATURES: { icon: IconName; title: string; text: string; c1: string; c2: string }[] = [
   { icon: 'compass', title: 'Darslar xaritasi', text: "A1 dan C2 gacha 50 ta liniya — o'yin kabi, pastdan tepaga. Yulduz yig'ing!", c1: '#7FE3FF', c2: '#B49CFF' },
-  { icon: 'chat', title: 'Vivi AI — jonli ustoz', text: "Ovozli va matnli suhbat, xatolar tahlili. Gemini Live bilan real vaqtda (Super).", c1: '#B49CFF', c2: '#FF8FD0' },
+  { icon: 'chat', title: 'Hori AI — jonli ustoz', text: "Ovozli va matnli suhbat, xatolar tahlili. Gemini Live bilan real vaqtda (Super).", c1: '#B49CFF', c2: '#FF8FD0' },
   { icon: 'trophy', title: 'Turnir va seriya', text: "Har hafta 20 kishilik guruh: Kurtak ligasidan Afsonagacha ko'tariling.", c1: '#FFD23F', c2: '#FF6B9A' },
-  { icon: 'gift', title: 'Sirli qutilar va baliqchalar', text: "Bekatlardagi qutilarda sovg'alar. Baliqchalar — Vivining «joni», xato qilsangiz kamayadi.", c1: '#FF8FD0', c2: '#9B5CFF' },
+  { icon: 'gift', title: 'Sirli qutilar va baliqchalar', text: "Bekatlardagi qutilarda sovg'alar. Baliqchalar — Horining «joni», xato qilsangiz kamayadi.", c1: '#FF8FD0', c2: '#9B5CFF' },
 ];
 
 /** Daraja so'rovi: A1 dan yuqorisi tanlansa — tanishtiruvdan keyin o'sha darajaga qisqa test (o'tsa — oldingi darslar ochiladi). */
@@ -122,9 +122,9 @@ export function Onboarding() {
         <div className="onboard-hero">
           <LangPick />
           <Mascot mood="cheer" size={200} className="bounce-in" />
-          <h1 className="brand">Voilà!</h1>
-          <p className="lead">Fransuz tilini o'zbek tilida — bepul, qiziqarli va samarali.</p>
-          <button type="button" className="btn btn-primary btn-lg" onClick={() => { speak('Salut ! Bienvenue !'); setStep(1); }}>
+          <h1 className="brand">Go Topic</h1>
+          <p className="lead">Koreys tilini o'zbek tilida — bepul, qiziqarli va samarali.</p>
+          <button type="button" className="btn btn-primary btn-lg" onClick={() => { speak('안녕하세요! 환영해요!'); setStep(1); }}>
             Boshlash
           </button>
           {!me.user && (
@@ -139,7 +139,7 @@ export function Onboarding() {
         <div className="onboard-step ob-intro">
           <div className="say">
             <Mascot mood="happy" size={90} />
-            <div className="bubble">Voilà! da sizni nimalar kutmoqda 👇</div>
+            <div className="bubble">Go Topic da sizni nimalar kutmoqda 👇</div>
           </div>
           <div className="ob-features">
             {FEATURES.map((f, i) => (
@@ -164,7 +164,7 @@ export function Onboarding() {
         <div className="onboard-step">
           <div className="say">
             <Mascot mood="think" size={90} />
-            <div className="bubble">Fransuz tilini qanchalik bilasiz?</div>
+            <div className="bubble">Koreys tilini qanchalik bilasiz?</div>
           </div>
           <div className="options ob-levels">
             {LEVELS.map((l) => (
@@ -196,7 +196,7 @@ export function Onboarding() {
         <div className="onboard-step">
           <div className="say">
             <Mascot mood="think" size={90} />
-            <div className="bubble">Nima uchun fransuz tilini o'rganmoqchisiz?</div>
+            <div className="bubble">Nima uchun koreys tilini o'rganmoqchisiz?</div>
           </div>
           <div className="options">
             {REASONS.map((r) => (
@@ -235,7 +235,7 @@ export function Onboarding() {
         <div className="onboard-step">
           <div className="say">
             <Mascot mood="cheer" size={90} />
-            <div className="bubble">Ismingiz nima? «Je m'appelle ...»</div>
+            <div className="bubble">Ismingiz nima? «저는 ...예요»</div>
           </div>
           <input className="text-input" autoFocus value={name} maxLength={24} placeholder="Ismingiz" onChange={(e) => setName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && name.trim() && (me.user ? finish() : setAuth('register'))} />
           <button type="button" className="btn btn-primary btn-lg" disabled={!name.trim()} onClick={() => (me.user ? finish() : setAuth('register'))}>

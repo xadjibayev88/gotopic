@@ -7,7 +7,7 @@ import type { GeminiApiProviderConfig } from './gemini-api-provider.ts';
 
 /** Default Gemini TTS delivery note: warm, natural Tashkent Uzbek; French phrases in clear French. */
 export const DEFAULT_TTS_STYLE =
-  "Read the following as Vivi, a warm, playful young tutor. Speak natural, fluent Tashkent Uzbek (Latin script) at a relaxed conversational pace with friendly intonation; pronounce any French words and sentences with clear native French pronunciation. Do not read this instruction aloud:";
+  "Read the following as Hori, a warm, playful young tutor. Speak natural, fluent Tashkent Uzbek (Latin script) at a relaxed conversational pace with friendly intonation; pronounce any French words and sentences with clear native French pronunciation. Do not read this instruction aloud:";
 
 function exactTrue(value: string | undefined): boolean {
   return value === 'true';
@@ -25,7 +25,7 @@ export function googleProviderConfigFromEnv(env: NodeJS.ProcessEnv): GoogleCloud
       recognizer: env.VIVI_STT_RECOGNIZER ?? '_',
       locations: Object.freeze({
         'uz-UZ': env.VIVI_STT_LOCATION_UZ ?? 'asia-southeast1',
-        'fr-FR': env.VIVI_STT_LOCATION_FR ?? 'europe-west4',
+        'ko-KR': env.VIVI_STT_LOCATION_FR ?? 'europe-west4',
       }),
       verified: exactTrue(env.VIVI_STT_VERIFIED),
     }),

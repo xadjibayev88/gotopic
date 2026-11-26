@@ -80,8 +80,8 @@ function TextChat() {
   const [listening, setListening] = useState(false);
   const [memoryReview, setMemoryReview] = useState<{ memory: string; turns: MemoryReviewTurn[]; name: string } | null>(null);
   const [memoryUpdating, setMemoryUpdating] = useState(false);
-  const [micLang, setMicLang] = useState<'uz-UZ' | 'fr-FR'>('uz-UZ');
-  // AI aniqlash (Gemini): o'zbekcha, fransuzcha va aralash gapni tilni tanlamasdan to'g'ri yozadi.
+  const [micLang, setMicLang] = useState<'uz-UZ' | 'ko-KR'>('uz-UZ');
+  // AI aniqlash (Gemini): o'zbekcha, koreyscha va aralash gapni tilni tanlamasdan to'g'ri yozadi.
   const cloudMic = useMemo(() => cloudSttSupported() && !!navigator.mediaDevices?.getUserMedia, []);
   const [transcribing, setTranscribing] = useState(false);
   const [micError, setMicError] = useState<string | null>(null);
@@ -142,15 +142,15 @@ function TextChat() {
       if (!replyText) throw new TutorError('empty_response', 'Tutor javobi bo‘sh. Qayta urinib ko‘ring.');
       const reply: ChatMessage = { id: uid(), role: 'tutor', text: replyText, cue: replyCue, ts: Date.now() };
       setMessages((m) => [...m, reply]);
-      // Har 6 ta xabardan keyin Vivi xotirasini yangilaymiz (fon rejimida).
+      // Har 6 ta xabardan keyin Hori xotirasini yangilaymiz (fon rejimida).
       const userCount = messages.filter((m) => m.role === 'user').length + 1;
       if (userCount % 6 === 0) {
         const recent = [...messages, userMsg, reply].filter((m) => !m.error).slice(-20).map((m) => ({ role: m.role, text: m.text }));
         setMemoryReview({ memory: state.memory ?? '', turns: recent, name: state.name });
       }
-      // Mikrofon tili avtomatik: Vivi fransuzcha javob kutsa — FR, aks holda UZ.
+      // Mikrofon tili avtomatik: Hori koreyscha javob kutsa — FR, aks holda UZ.
       const want = answerLang(reply.text);
-      if (want) setMicLang(want === 'fr' ? 'fr-FR' : 'uz-UZ');
+      if (want) setMicLang(want === 'fr' ? 'ko-KR' : 'uz-UZ');
       if (state.settings.tutorVoice) speakQueue(frenchParts(reply.text), state.settings.ttsRate);
       const r = applyChatTurn(state);
       update(() => r.state);
@@ -284,13 +284,13 @@ function TextChat() {
           <KruaLive cue={live} size={58} />
         </div>
         <div className="tutor-title">
-          <b>Vivi ustoz</b>
-          <small className={busy ? 'typing-label' : ''}>{busy ? 'yozmoqda…' : 'AI · fransuz tili ustozi'}</small>
+          <b>Hori ustoz</b>
+          <small className={busy ? 'typing-label' : ''}>{busy ? 'yozmoqda…' : 'AI · koreys tili ustozi'}</small>
         </div>
         <button
           type="button"
           className={`icon-btn ${state.settings.tutorVoice ? 'on' : ''}`}
-          title="Fransuzcha qismlarni avtomatik o'qish"
+          title="Koreyscha qismlarni avtomatik o'qish"
           onClick={() => update((s) => ({ ...s, settings: { ...s.settings, tutorVoice: !s.settings.tutorVoice } }))}
         >
           <Ic name={state.settings.tutorVoice ? 'speaker' : 'mute'} size={20} />
@@ -315,8 +315,8 @@ function TextChat() {
             <div className="msg-bubble">
               {m.role === 'tutor' ? <RichText text={m.text} /> : m.text}
               {m.role === 'tutor' && !m.error && frenchParts(m.text).length > 0 && ttsSupported() && (
-                <button type="button" className="msg-play" onClick={() => speakQueue(frenchParts(m.text), state.settings.ttsRate)} title="Fransuzcha qismlarni tinglash">
-                  <Ic name="play" size={12} /> fransuzcha
+                <button type="button" className="msg-play" onClick={() => speakQueue(frenchParts(m.text), state.settings.ttsRate)} title="Koreyscha qismlarni tinglash">
+                  <Ic name="play" size={12} /> koreyscha
                 </button>
               )}
               {m.upsell && (
@@ -365,13 +365,13 @@ function TextChat() {
               type="button"
               className={`mic ${listening ? 'live' : ''} ${transcribing ? 'busy' : ''}`}
               onClick={toggleMic}
-              title={listening ? "To'xtatish va yuborish" : 'Ovoz bilan yozish (o\'zbekcha yoki fransuzcha)'}
+              title={listening ? "To'xtatish va yuborish" : 'Ovoz bilan yozish (o\'zbekcha yoki koreyscha)'}
               disabled={busy || transcribing}
             >
               {transcribing ? '…' : listening ? '■' : <Ic name="mic" size={22} />}
             </button>
             {!cloudMic && (
-            <button type="button" className="mic-lang" onClick={() => setMicLang(micLang === 'uz-UZ' ? 'fr-FR' : 'uz-UZ')} title="Mikrofon tili (Vivi javobiga qarab o'zi almashadi)">
+            <button type="button" className="mic-lang" onClick={() => setMicLang(micLang === 'uz-UZ' ? 'ko-KR' : 'uz-UZ')} title="Mikrofon tili (Hori javobiga qarab o'zi almashadi)">
               {micLang === 'uz-UZ' ? 'UZ' : 'FR'}
               <i className="auto-badge">avto</i>
             </button>
@@ -384,7 +384,7 @@ function TextChat() {
           value={input}
           rows={1}
           maxLength={800}
-          placeholder={transcribing ? 'Matnga aylantirilmoqda…' : listening ? "Gapiring… tugatgach ■ ni bosing" : "Xabar yozing (o'zbekcha yoki fransuzcha)"}
+          placeholder={transcribing ? 'Matnga aylantirilmoqda…' : listening ? "Gapiring… tugatgach ■ ni bosing" : "Xabar yozing (o'zbekcha yoki koreyscha)"}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -409,7 +409,7 @@ function TextChat() {
           {micError}
         </p>
       )}
-      <p className="tutor-note">Vivi — sun'iy intellekt. Ba'zan xato qilishi mumkin; muhim narsalarni darslar bilan tekshiring.</p>
+      <p className="tutor-note">Hori — sun'iy intellekt. Ba'zan xato qilishi mumkin; muhim narsalarni darslar bilan tekshiring.</p>
       {memoryReview && (
         <MemoryReviewDialog
           turns={memoryReview.turns}
@@ -425,7 +425,7 @@ function TextChat() {
 
 const MODE_KEY = 'salut.tutor.mode';
 
-/** Vivi AI faqat Super uchun: obunasiz kirilganda chiroyli taklif ekrani. */
+/** Hori AI faqat Super uchun: obunasiz kirilganda chiroyli taklif ekrani. */
 function ViviPaywall() {
   const { me } = useAccount();
   const plans = me.billing.plans;
@@ -438,8 +438,8 @@ function ViviPaywall() {
     <div className="vpay">
       <div className="vpay-preview" aria-hidden="true">
         <div className="vpay-msg in">Bonjour ! Comment tu t'appelles ?</div>
-        <div className="vpay-msg out">Je m'appelle Ali 😊</div>
-        <div className="vpay-msg in">Enchantée, Ali ! Tu viens d'où ?</div>
+        <div className="vpay-msg out">저는 알리예요 😊</div>
+        <div className="vpay-msg in">반가워요, 알리 씨! 어디에서 왔어요?</div>
         <div className="vpay-wave">
           {Array.from({ length: 18 }, (_, i) => <i key={i} style={{ animationDelay: `${(i % 6) * 0.12}s` }} />)}
         </div>
@@ -449,12 +449,12 @@ function ViviPaywall() {
           <Mascot mood="cheer" size={92} />
           <span className="vpay-badge">SUPER</span>
         </div>
-        <h2>Vivi AI — Super a'zolari uchun</h2>
-        <p className="muted">Vivi bilan jonli ovozda va yozishib fransuzcha gaplashish faqat Super obunada. Darslar esa bepul qoladi.</p>
+        <h2>Hori AI — Super a'zolari uchun</h2>
+        <p className="muted">Hori bilan jonli ovozda va yozishib koreyscha gaplashish faqat Super obunada. Darslar esa bepul qoladi.</p>
         <ul className="vpay-perks">
           <li><span><Ic name="bolt" size={20} /></span>Gemini Live — real vaqtda ovozli suhbat</li>
           <li><span><Ic name="chat" size={20} /></span>Cheksiz matnli suhbat va xatolar tahlili</li>
-          <li><span><Ic name="brain" size={20} /></span>Vivi sizni eslab qoladi va darajangizga moslashadi</li>
+          <li><span><Ic name="brain" size={20} /></span>Hori sizni eslab qoladi va darajangizga moslashadi</li>
           <li><span><Ic name="globe" size={20} /></span>Tushuntirish o'z tilingizda</li>
         </ul>
         <button type="button" className="btn btn-primary btn-lg btn-beam vpay-cta" onClick={() => go('shop')}>

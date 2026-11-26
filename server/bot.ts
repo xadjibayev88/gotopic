@@ -1,4 +1,4 @@
-// Voilà Telegram to'lov boti: tariflar → karta raqami → chek (rasm/PDF) → admin ✅/❌ → Super faollashadi.
+// Go Topic Telegram to'lov boti: tariflar → karta raqami → chek (rasm/PDF) → admin ✅/❌ → Super faollashadi.
 // Long polling (webhook shart emas). Faqat TELEGRAM_BOT_TOKEN bo'lsa ishga tushadi.
 // Hisob bog'lash: ilovadagi «Telegram orqali to'lash» → t.me/<bot>?start=pay_<kod> (kod 30 daqiqa amal qiladi).
 // Kodsiz kirgan foydalanuvchi uchun Telegram hisobi ochiladi (ilovaga «Telegram bilan kirish» orqali shu hisob bilan kiradi).
@@ -89,28 +89,28 @@ function welcomeText(name: string): string {
   return [
     `Assalomu alaykum, <b>${esc(name)}</b>! 👋`,
     "",
-    "Fransuz tilini oylab o'rgansangiz ham, nega hali erkin gapira olmaysiz? 🤔",
+    "Koreys tilini oylab o'rgansangiz ham, nega hali erkin gapira olmaysiz? 🤔",
     "",
     "Ko'pchilik til o'rganishda eng qimmatli narsasi — <b>VAQTINI</b> yo'qotadi:",
     "❌ Grammatika jadvallarini quruq yodlash bilan soatlab vaqt ketadi;",
     "❌ Yodlangan so'zlar 3 kunda unutiladi, chunki amaliyotda ishlatilmaydi;",
     "❌ Gapirishga kelganda esa sherik yo'q yoki xato qilishdan qo'rquv to'sqinlik qiladi.",
     "",
-    "Bizning maqsadimiz — <b>fransuz tilini qiziqarli va vaqtingizni tejaydigan qilish!</b> 🚀",
+    "Bizning maqsadimiz — <b>koreys tilini qiziqarli va vaqtingizni tejaydigan qilish!</b> 🚀",
     "",
-    "<b>Voilà!</b> da hammasi yangicha ishlaydi:",
+    "<b>Go Topic</b> da hammasi yangicha ishlaydi:",
     "",
     "🗺 <b>1. O'yin tariqasidagi darslar — bepul</b>",
-    "A1 dan C2 gacha 50 ta liniya: pastdan tepaga boriladigan xarita, yulduzlar, Sirli qutilar, mashq va diktant — so'zlar o'zi yodda qoladi.",
+    "TOPIK 1 dan 6 gacha 35 ta bo'lim, Hangul alifbosidan boshlab: pastdan tepaga boriladigan xarita, yulduzlar, Sirli qutilar, mashq va diktant — so'zlar o'zi yodda qoladi.",
     "",
     "🏆 <b>2. Haftalik turnir</b>",
     "20 kishilik guruhlarda XP yig'ing: Kurtak ligasidan Afsonagacha ko'tariling, kunlik seriyani uzmang 🔥",
     "",
-    "🐱 <b>3. Vivi AI — jonli ustoz (Super)</b>",
-    "Vivi bilan istalgan mavzuda ovozli va matnli gaplashasiz, Gemini Live'da real vaqtda. U xatolaringizni hazil bilan (ba'zan qattiq 😼) to'g'rilaydi.",
+    "🐯 <b>3. Hori AI — jonli ustoz (Super)</b>",
+    "Hori bilan istalgan mavzuda ovozli va matnli gaplashasiz, Gemini Live'da real vaqtda. U xatolaringizni hazil bilan (ba'zan qattiq 😼) to'g'rilaydi.",
     "",
     "🎭 <b>4. Har xil xarakterlar</b>",
-    "Romantik Vivi 💘, qattiqqo'l Professor, hazilkash yoki 18+ «bezori» Vivi — kim bilan o'rganishni o'zingiz tanlaysiz.",
+    "Romantik Hori 💘, qattiqqo'l Professor, hazilkash yoki 18+ «bezori» Hori — kim bilan o'rganishni o'zingiz tanlaysiz.",
     "",
     "🌐 Ilova 12 tilda: o'zbek, rus, ingliz, qozoq, qirg'iz, tojik, turk va boshqalar.",
     "",
@@ -132,9 +132,9 @@ function plansText(): string {
     return `${id === 'month' ? '🔥' : '▫️'} <b>${PLANS[id].label}</b> — ${old > now ? `<s>${som(old)}</s> ` : ''}<b>${som(now)} so'm</b>${off}\n     ≈ kuniga ${som(perDay)} so'm${id === 'month' ? ' · <i>eng ommabop</i>' : ''}`;
   });
   return [
-    '💎 <b>Voilà Super</b> — fransuz tilini Vivi bilan cheksiz o\'rgan!',
+    '💎 <b>Go Topic Super</b> — koreys tilini Hori bilan cheksiz o\'rgan!',
     '',
-    '🐱 Vivi AI — faqat Super\'da: ovozli va matnli suhbat, xatolar tahlili',
+    '🐯 Hori AI — faqat Super\'da: ovozli va matnli suhbat, xatolar tahlili',
     '⚡ Gemini Live — jonli suhbat, 30 daqiqalik sessiyalar',
     '💬 Cheksiz xabarlar',
     '🐟 Cheksiz baliqcha — xato qilsangiz ham darsdan chiqmaysiz',
@@ -259,7 +259,7 @@ export function createBot(tg: Tg, download: (fileId: string) => Promise<{ mime: 
     const chat = chatOfUser(userId);
     if (!chat) return;
     const text = approve
-      ? `🎉 <b>To'lov tasdiqlandi!</b>\n💎 Super faollashdi — ${esc(meText(userId).split('\n').slice(2).join(' '))}\n\nIlovani oching: Vivi AI, Gemini Live va cheksiz baliqcha endi siz uchun ochiq!`
+      ? `🎉 <b>To'lov tasdiqlandi!</b>\n💎 Super faollashdi — ${esc(meText(userId).split('\n').slice(2).join(' '))}\n\nIlovani oching: Hori AI, Gemini Live va cheksiz baliqcha endi siz uchun ochiq!`
       : "❌ Chek tasdiqlanmadi. Summa yoki chek noto'g'ri bo'lishi mumkin. Savol bo'lsa shu yerga yozing.";
     const extra = { reply_markup: approve ? { inline_keyboard: [[{ text: '📱 Ilovani ochish', url: appUrl() }]] } : mainKb() };
     if (!approve) return void (await send(chat, text, extra).catch(() => {}));
@@ -439,9 +439,9 @@ export function startBot(token = env('TELEGRAM_BOT_TOKEN')): Bot | null {
     const me = (await tg('getMe', {}).catch(() => null)) as { username?: string } | null;
     if (me?.username) username = me.username;
     const url = appUrl();
-    await tg('setChatMenuButton', { menu_button: { type: 'web_app', text: 'Voilà App 🚀', web_app: { url } } }).catch(() => {});
-    await tg('setMyShortDescription', { short_description: "Voilà! — fransuz tilini o'yin tariqasida o'rganing 🇫🇷 A1→C2. Vivi AI ustoz — Super'da 🐱" }).catch(() => {});
-    await tg('setMyDescription', { description: "🇫🇷 Voilà! — fransuz tilini o'zbek tilida o'rganing.\n\n🗺 O'yin tariqasida darslar A1→C2 — bepul\n🏆 Haftalik turnir va kunlik seriya\n🐱 Vivi AI va Gemini Live — Super obunada\n💎 Super: 1 hafta, 1 oy yoki 3 oy — Payme, Click, karta yoki Visa\n\nBoshlash uchun «Start» ni bosing 👇" }).catch(() => {});
+    await tg('setChatMenuButton', { menu_button: { type: 'web_app', text: 'Go Topic App 🚀', web_app: { url } } }).catch(() => {});
+    await tg('setMyShortDescription', { short_description: "Go Topic — koreys tilini o'yin tariqasida o'rganing 🇰🇷 A1→C2. Hori AI ustoz — Super'da 🐯" }).catch(() => {});
+    await tg('setMyDescription', { description: "🇰🇷 Go Topic — koreys tilini o'zbek tilida o'rganing.\n\n🗺 O'yin tariqasida darslar A1→C2 — bepul\n🏆 Haftalik turnir va kunlik seriya\n🐯 Hori AI va Gemini Live — Super obunada\n💎 Super: 1 hafta, 1 oy yoki 3 oy — Payme, Click, karta yoki Visa\n\nBoshlash uchun «Start» ni bosing 👇" }).catch(() => {});
     await tg('setMyCommands', { commands: [{ command: 'start', description: 'Boshlash' }, { command: 'plans', description: '💎 Super tariflari' }, { command: 'me', description: 'Mening obunam' }] }).catch(() => {});
     let offset = 0;
     for (;;) {

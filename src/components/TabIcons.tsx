@@ -1,4 +1,4 @@
-// Pastki menyu ikonkalari — fransuz mavzusida, chiziqli (iOS uslubi), rang `currentColor` dan.
+// Pastki menyu ikonkalari — koreys mavzusida, chiziqli (iOS uslubi), rang `currentColor` dan.
 // Faol holatda ichi yengil to'ldiriladi; bosilganda har biri o'ziga xos harakat qiladi (styles.css → .ti-*).
 import type { ReactNode } from 'react';
 
@@ -14,7 +14,7 @@ const ICONS: Record<string, (on: boolean) => ReactNode> = {
       <circle cx="18" cy="8" r="1.6" fill={on ? '#FF6B9A' : 'currentColor'} stroke="none" />
     </>
   ),
-  // Vivi — mushukcha boshi
+  // Hori — yo'lbarscha boshi
   tutor: (on) => (
     <>
       <path className="ti-ear-l" d="M5.2 9.6 4.6 3.8l4.6 2.9" {...S} />
@@ -28,7 +28,7 @@ const ICONS: Record<string, (on: boolean) => ReactNode> = {
       <path d="M2.4 14.6l3.4.4M2.8 17.4l3.2-.9M21.6 14.6l-3.4.4M21.2 17.4l-3.2-.9" {...S} strokeWidth={1.4} />
     </>
   ),
-  // Kruassan — har kungi mashq
+  // Tteokbokki — har kungi mashq
   practice: (on) => (
     <>
       <path
@@ -39,7 +39,7 @@ const ICONS: Record<string, (on: boolean) => ReactNode> = {
       <path d="M12 6.6v11.6M8.2 8.4l-.4 7.6M15.8 8.4l.4 7.6" {...S} strokeWidth={1.5} />
     </>
   ),
-  // Eyfel minorasi — turnir
+  // Namsan minorasi — turnir
   leagues: (on) => (
     <>
       <path d="M12 2.2v2.6" {...S} />

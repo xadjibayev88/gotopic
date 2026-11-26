@@ -1,7 +1,7 @@
 import { PurchaseToast, Reviews, StatsLine, SupportRow, useSocial } from '../components/SocialProof';
 import { Ic } from '../components/Icons';
 import { FishIcon } from '../components/TopBarIcons';
-// Voilà Super: obuna sahifasi — taqqoslash narxi, tariflar (chegirma bilan), to'lov usullari:
+// Go Topic Super: obuna sahifasi — taqqoslash narxi, tariflar (chegirma bilan), to'lov usullari:
 // Payme / Click (avtomatik) va karta orqali o'tkazma (chek yuklanadi, admin tasdiqlaydi).
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -11,7 +11,7 @@ import { AuthScreen } from './Auth';
 import { BurstCheck, GlassPayCard, KineticTitle, RollNumber, SendButton } from '../components/StripeFx';
 
 const PERKS: [React.ReactNode, string, string][] = [
-  [<Ic key="a" name="chat" size={22} />, 'Vivi AI — faqat Super\'da', 'Fransuzcha ovozli va matnli suhbat, xatolar tahlili'],
+  [<Ic key="a" name="chat" size={22} />, 'Hori AI — faqat Super\'da', 'Koreyscha ovozli va matnli suhbat, xatolar tahlili'],
   [<Ic key="b" name="bolt" size={22} />, 'Gemini Live — jonli suhbat', 'Real vaqtda, emotsiyali; 30 daqiqalik sessiyalar'],
   [<Ic key="c" name="sparkle" size={22} />, 'Cheksiz xabarlar', 'Kunlik 30 ta xabar chegarasi yo\'q'],
   [<FishIcon key="d" />, 'Cheksiz baliqcha', 'Xato qilsangiz ham darsdan chiqib ketmaysiz'],
@@ -288,7 +288,7 @@ export function SuperPage({ onClose }: { onClose?: () => void }) {
     <div className="super">
       <SuperFlow />
       <div className="super-badge">SUPER</div>
-      <KineticTitle lines={['Fransuzchani', 'tezroq —', 'cheklovsiz.']} />
+      <KineticTitle lines={['Koreyschani', 'tezroq —', 'cheklovsiz.']} />
       <StatsLine data={social} />
 
       {anchor && sel && (

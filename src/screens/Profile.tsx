@@ -57,7 +57,7 @@ export function Profile({ onManageAiConsent }: { onManageAiConsent: () => void }
           </button>
           <div className="pf-id">
             <input className="name-input" value={name} placeholder="Ismingiz" onChange={(e) => setName(e.target.value)} onBlur={() => update((s) => ({ ...s, name: name.trim() }))} />
-            <p className="muted">{sinceLabel} · 🇺🇿 → 🇫🇷</p>
+            <p className="muted">{sinceLabel} · 🇺🇿 → 🇰🇷</p>
             <div className="pf-chips">
               {premium && <span className="pf-chip super"><Ic name="crown" size={14} /> SUPER</span>}
               <span className="pf-chip">{`${LEAGUES[state.league.tier].icon} ${LEAGUES[state.league.tier].name} liga`}</span>

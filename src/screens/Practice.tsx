@@ -118,7 +118,7 @@ export function Practice({ onStart }: { onStart: (c: SessionConfig) => void }) {
         <button type="button" className="pr-tile" style={{ ['--c' as string]: '#9B5CFF', ['--c2' as string]: '#7FE3FF' }} disabled={disabled || !ttsSupported()} onClick={() => onStart({ kind: 'practice', mode: 'listening' })}>
           <span className="pr-tile-icon"><Ic name="headphones" size={30} /></span>
           <b>Tinglash mashqi</b>
-          <small>{ttsSupported() ? "Quloqni fransuz nutqiga o'rgating" : "Brauzeringiz ovozni qo'llamaydi"}</small>
+          <small>{ttsSupported() ? "Quloqni koreys nutqiga o'rgating" : "Brauzeringiz ovozni qo'llamaydi"}</small>
         </button>
       </div>
 

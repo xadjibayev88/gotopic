@@ -65,7 +65,7 @@ export const AI_SCOPE_OPTIONS: readonly {
   {
     scope: 'text_tutor',
     provider: 'google-agent-platform',
-    label: 'Vivi bilan matnli fransuz tili mashqi',
+    label: 'Hori bilan matnli koreys tili mashqi',
     detail: 'Yozgan xabaringiz va kerakli A1–C2 mashq konteksti yuboriladi.',
     providerLabel: 'Google Cloud Agent Platform (Gemini)',
   },
@@ -80,20 +80,20 @@ export const AI_SCOPE_OPTIONS: readonly {
     scope: 'live_session',
     provider: 'google-agent-platform',
     label: 'Jonli AI suhbat sessiyasi',
-    detail: 'Jonli (real vaqtli) ovozli suhbat: mikrofon ovozi va Vivi javoblari suhbat davomida to‘g‘ridan-to‘g‘ri Gemini Live’ga uzatiladi.',
+    detail: 'Jonli (real vaqtli) ovozli suhbat: mikrofon ovozi va Hori javoblari suhbat davomida to‘g‘ridan-to‘g‘ri Gemini Live’ga uzatiladi.',
     providerLabel: 'Google Cloud Agent Platform',
   },
   {
     scope: 'translation',
     provider: 'google-agent-platform',
-    label: 'Fransuzcha matn tarjimasi',
+    label: 'Koreyscha matn tarjimasi',
     detail: 'Faqat tarjima uchun zarur bo‘lgan matn yuboriladi.',
     providerLabel: 'Google Cloud Agent Platform (Gemini)',
   },
   {
     scope: 'memory',
     provider: 'google-agent-platform',
-    label: 'Vivi xotirasini yaratish yoki yangilash',
+    label: 'Hori xotirasini yaratish yoki yangilash',
     detail: 'Faqat siz ko‘rib, saqlashni tasdiqlagan o‘quvchi konteksti yuboriladi.',
     providerLabel: 'Google Cloud Agent Platform (Gemini)',
   },
@@ -107,8 +107,8 @@ export const AI_SCOPE_OPTIONS: readonly {
   {
     scope: 'text_tts',
     provider: 'google-agent-platform',
-    label: 'Vivi javobini ovozlashtirish',
-    detail: 'Vivi javobining matni ovoz yaratish uchun yuboriladi.',
+    label: 'Hori javobini ovozlashtirish',
+    detail: 'Hori javobining matni ovoz yaratish uchun yuboriladi.',
     providerLabel: 'Google Cloud Agent Platform (Gemini TTS)',
   },
 ];

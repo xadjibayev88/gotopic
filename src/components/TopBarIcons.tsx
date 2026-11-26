@@ -1,7 +1,7 @@
 // Yuqori panel ikonkalari — emoji o'rniga bir uslubdagi SVG'lar (ikkala mavzuda ham aniq ko'rinadi).
 // Animatsiyalar faqat transform/opacity (CSS'da), kam harakat rejimida to'xtaydi.
 
-/** Dumaloq Fransiya bayrog'i nishoni, ustida shisha yaltirog'i. */
+/** Dumaloq Koreya bayrog'i nishoni, ustida shisha yaltirog'i. */
 export function FlagIcon() {
   return (
     <svg className="tbi tbi-flag" viewBox="0 0 28 28" width="26" height="26" aria-hidden="true">
@@ -67,7 +67,7 @@ export function CupIcon({ full }: { full: boolean }) {
   );
 }
 
-/** Baliqcha (Vivi'ning «joni»): ko'k gradient, dumi qimirlaydi, har 10 soniyada suzib aylanadi; tugasa — xira. */
+/** Baliqcha (Hori'ning «joni»): ko'k gradient, dumi qimirlaydi, har 10 soniyada suzib aylanadi; tugasa — xira. */
 export function FishIcon({ full = true }: { full?: boolean }) {
   return (
     <svg className={`tbi tbi-fish ${full ? 'full' : 'empty'}`} viewBox="0 0 30 26" width="27" height="24" aria-hidden="true">

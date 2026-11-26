@@ -7,7 +7,7 @@ import { KruaLive } from './KruaLive.tsx';
 
 const render = (cue: unknown, level = 0) => renderToStaticMarkup(createElement(KruaLive, { cue: cue as ViviCue, level, size: 200 }));
 
-describe('Vivi semantic mascot renderer', () => {
+describe('Hori semantic mascot renderer', () => {
   it('renders validated semantic face, state, action, and ornament cues on the original cat', () => {
     const html = render({ state: 'listening', face: 'curious', action: 'ear_perk', ornament: 'thought_dots' });
     expect(html).toContain('vivi-cue-state-listening');

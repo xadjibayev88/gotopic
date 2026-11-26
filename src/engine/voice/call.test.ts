@@ -4,7 +4,7 @@ import type { SttResult, SttReviewReason } from './stt';
 
 const result = (text: string, reviewReasons: SttReviewReason[] = []): SttResult => ({
   text,
-  detectedLanguage: 'fr-FR',
+  detectedLanguage: 'ko-KR',
   confidence: 0.82,
   alternatives: [],
   reviewReasons,
@@ -78,25 +78,25 @@ describe('VoiceCall speech review', () => {
     const call = new VoiceCall({ ...options(), autoSend: false });
     call.snap = { ...call.snap, phase: 'user' };
 
-    await (call as unknown as { onFinal: (result: SttResult) => Promise<void> }).onFinal(result('  Salom, Vivi  ', ['confidence_missing']));
+    await (call as unknown as { onFinal: (result: SttResult) => Promise<void> }).onFinal(result('  Salom, Hori  ', ['confidence_missing']));
 
     expect(call.snap.phase).toBe('review');
-    expect(call.snap.draft).toBe('Salom, Vivi');
+    expect(call.snap.draft).toBe('Salom, Hori');
     expect(call.snap.sttResult?.reviewReasons).toEqual(['confidence_missing']);
     expect(call.snap.turns).toEqual([]);
     call.dispose();
   });
 
-  it('sends recognized speech to Vivi right away by default (auto-send)', async () => {
+  it('sends recognized speech to Hori right away by default (auto-send)', async () => {
     const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => new Response(JSON.stringify({ code: 'blocked', message: 'blocked' }), { status: 403 }));
     vi.stubGlobal('fetch', fetchMock);
     const call = new VoiceCall(options());
     const onUserTurn = vi.fn();
     call.onUserTurn = onUserTurn;
     call.snap = { ...call.snap, phase: 'user' };
-    await (call as unknown as { onFinal: (result: SttResult) => Promise<void> }).onFinal(result('Bonjour Vivi', []));
+    await (call as unknown as { onFinal: (result: SttResult) => Promise<void> }).onFinal(result('Bonjour Hori', []));
     expect(onUserTurn).toHaveBeenCalledOnce();
-    expect(call.snap.turns.at(-1)).toMatchObject({ role: 'user', text: 'Bonjour Vivi' });
+    expect(call.snap.turns.at(-1)).toMatchObject({ role: 'user', text: 'Bonjour Hori' });
     expect(String(fetchMock.mock.calls[0]?.[0])).toContain('api/tutor');
   });
 

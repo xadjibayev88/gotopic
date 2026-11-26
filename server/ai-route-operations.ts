@@ -172,9 +172,9 @@ export function createAiRouteOperations(options: { readonly geminiAudioHints?: b
     minimize: (input) => Object.freeze({
       audio: Uint8Array.from(Buffer.from(input.audio, 'base64')),
       // The provider contract requires a single explicit language; auto currently uses Uzbek.
-      languageCode: input.hint === 'fr' ? 'fr-FR' : 'uz-UZ',
+      languageCode: input.hint === 'fr' ? 'ko-KR' : 'uz-UZ',
       // Cloud STT needs only bytes + language. Gemini audio understanding also needs the container type,
-      // and Vivi's last line helps it spell names; these are forwarded only in that mode.
+      // and Hori's last line helps it spell names; these are forwarded only in that mode.
       ...(options.geminiAudioHints
         ? { mimeType: input.mime, autoLanguage: input.hint === 'auto', ...(input.context ? { context: input.context.slice(-300) } : {}) }
         : {}),
@@ -216,7 +216,7 @@ export function createAiRouteOperations(options: { readonly geminiAudioHints?: b
         languageCodes,
         alternatives,
         ...(confidence !== undefined ? { confidence } : {}),
-        ...(input.hint === 'uz' ? { expectedLanguage: 'uz-UZ' as const } : input.hint === 'fr' ? { expectedLanguage: 'fr-FR' as const } : {}),
+        ...(input.hint === 'uz' ? { expectedLanguage: 'uz-UZ' as const } : input.hint === 'fr' ? { expectedLanguage: 'ko-KR' as const } : {}),
       });
     },
   });

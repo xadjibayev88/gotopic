@@ -34,15 +34,15 @@ describe('voice-mode prompt', () => {
   });
   it('validates custom roles', () => {
     expect(typeof parseTutorRequest({ ...base, scenario: 'custom', customRole: 'qisqa' })).toBe('string');
-    const ok = parseTutorRequest({ ...base, scenario: 'custom', customRole: 'Sen Parijdagi taksi haydovchisisan, men turistman.' }) as TutorRequest;
+    const ok = parseTutorRequest({ ...base, scenario: 'custom', customRole: 'Sen Seuldagi taksi haydovchisisan, men turistman.' }) as TutorRequest;
     expect(systemInstruction(ok)).toContain('taksi haydovchisi');
   });
 });
 
 describe('voice server helpers', () => {
   it('parses ElevenLabs voices safely', () => {
-    expect(parseVoices('Vivi:AbCdEf123456, Bad:!!, Prof:ZZZZZZZZZZ')).toEqual([
-      { name: 'Vivi', id: 'AbCdEf123456' },
+    expect(parseVoices('Hori:AbCdEf123456, Bad:!!, Prof:ZZZZZZZZZZ')).toEqual([
+      { name: 'Hori', id: 'AbCdEf123456' },
       { name: 'Prof', id: 'ZZZZZZZZZZ' },
     ]);
     expect(parseVoices(undefined)).toEqual([]);
@@ -64,8 +64,8 @@ describe('voice server helpers', () => {
     const req = parseFeedbackRequest({ turns: [{ role: 'user', text: 'Bonjour' }, { role: 'tutor', text: 'Salut' }, { role: 'user', text: 'Je suis Ali' }], lang: 'uz' });
     expect(typeof req).not.toBe('string');
     expect(JSON.stringify(feedbackBody(req as never, 'm'))).toContain('responseSchema');
-    const fb = cleanFeedback({ summary: 'ok', strengths: ['a', 5, ''], growth: [{ text: 'x', example: 'e' }, {}], words: [{ fr: 'le chat', uz: 'mushuk' }, { fr: '' }], extra: 1 });
-    expect(fb).toEqual({ summary: 'ok', strengths: ['a'], growth: [{ text: 'x', example: 'e', better: '' }], words: [{ fr: 'le chat', uz: 'mushuk' }] });
+    const fb = cleanFeedback({ summary: 'ok', strengths: ['a', 5, ''], growth: [{ text: 'x', example: 'e' }, {}], words: [{ fr: 'le chat', uz: 'yo‘lbars' }, { fr: '' }], extra: 1 });
+    expect(fb).toEqual({ summary: 'ok', strengths: ['a'], growth: [{ text: 'x', example: 'e', better: '' }], words: [{ fr: 'le chat', uz: 'yo‘lbars' }] });
   });
 });
 
@@ -90,7 +90,7 @@ describe('STT result review boundary', () => {
       providerInput: operation.minimize(prepared.input),
       signal: new AbortController().signal,
       providerCall: async () => ({
-        segments: [{ languageCode: 'fr-FR', alternatives: [
+        segments: [{ languageCode: 'ko-KR', alternatives: [
           { transcript: 'Je veux un café', confidence: 0.12 },
           { transcript: 'Je veux un gâteau', confidence: 0.08 },
         ] }],
@@ -99,7 +99,7 @@ describe('STT result review boundary', () => {
 
     expect(result.body).toEqual({
       text: 'Je veux un café',
-      detectedLanguage: 'fr-FR',
+      detectedLanguage: 'ko-KR',
       confidence: 0.12,
       alternatives: ['Je veux un gâteau'],
       reviewReasons: ['alternatives_conflict', 'language_mismatch'],
@@ -117,7 +117,7 @@ describe('STT result review boundary', () => {
       signal: new AbortController().signal,
       providerCall: async () => ({ segments: [
         { languageCode: 'uz-UZ', alternatives: [{ transcript: 'Men' }] },
-        { languageCode: 'fr-FR', alternatives: [{ transcript: 'vais au marché' }] },
+        { languageCode: 'ko-KR', alternatives: [{ transcript: 'vais au marché' }] },
       ] }),
     });
 
@@ -156,7 +156,7 @@ describe('xotira', () => {
     const r = parseMemoryRequest({ memory: '- Ali', name: 'Ali', turns: [{ role: 'user', text: "Men Toshkentda dasturchiman [[shape:star]]" }] });
     expect(typeof r).not.toBe('string');
     expect(JSON.stringify(memoryBody(r as never, 'gemini-3.5-flash-lite'))).toContain('Toshkentda dasturchiman');
-    expect(cleanMemory({ memory: 'Ismi Ali\n- Dasturchi\n\n- Parijga bormoqchi' })).toBe('- Ismi Ali\n- Dasturchi\n- Parijga bormoqchi');
+    expect(cleanMemory({ memory: 'Ismi Ali\n- Dasturchi\n\n- Seulga bormoqchi' })).toBe('- Ismi Ali\n- Dasturchi\n- Seulga bormoqchi');
     expect(cleanMemory({})).toBe('');
   });
 });
@@ -169,10 +169,10 @@ describe('xotira formati', () => {
 });
 
 describe('Azure ovozi', () => {
-  it("SSML: o'zbekcha va fransuzcha qismlar o'z ovozida, belgilar tozalanadi", () => {
-    const x = azureSsml("[[shape:star]] Salom, jonim! [fr]Bonjour ![/fr] (bonjur) [laughs] Qani, ayt & takrorla.", 'uz-UZ-MadinaNeural', 'fr-FR-DeniseNeural');
+  it("SSML: o'zbekcha va koreyscha qismlar o'z ovozida, belgilar tozalanadi", () => {
+    const x = azureSsml("[[shape:star]] Salom, jonim! [fr]Bonjour ![/fr] (bonjur) [laughs] Qani, ayt & takrorla.", 'uz-UZ-MadinaNeural', 'ko-KR-DeniseNeural');
     expect(x).toContain('<voice name="uz-UZ-MadinaNeural">');
-    expect(x).toContain('<voice name="fr-FR-DeniseNeural">Bonjour !</voice>');
+    expect(x).toContain('<voice name="ko-KR-DeniseNeural">Bonjour !</voice>');
     expect(x).not.toContain('[[');
     expect(x).not.toContain('(bonjur)');
     expect(x).not.toContain('[laughs]');

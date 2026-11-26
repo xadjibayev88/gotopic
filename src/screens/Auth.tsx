@@ -62,7 +62,7 @@ const Icon = {
 type Field = 'name' | 'email' | 'pass' | null;
 
 /**
- * To'liq ekranli kirish / ro'yxatdan o'tish. Tepada jonli Vivi bilan gradient panel, pastda forma;
+ * To'liq ekranli kirish / ro'yxatdan o'tish. Tepada jonli Hori bilan gradient panel, pastda forma;
  * rejim almashganda panel sirpanib qarama-qarshi tomonga o'tadi (videodagi «sliding panel», vertikal).
  * Ochiq turganda pastki va yuqori menyular ko'rinmaydi (portal + to'liq qoplama), sahifa bir ekranga sig'adi.
  */
@@ -168,7 +168,7 @@ export function AuthScreen({ initial = 'register', onDone, onSkip, title }: { in
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!login && !agree) {
-      setError("Ro'yxatdan o'tish uchun Vivi AI va maxfiylik shartlariga rozilik bering.");
+      setError("Ro'yxatdan o'tish uchun Hori AI va maxfiylik shartlariga rozilik bering.");
       return;
     }
     setBusy(true);
@@ -179,7 +179,7 @@ export function AuthScreen({ initial = 'register', onDone, onSkip, title }: { in
     else finish();
   };
 
-  // Jonli Vivi: forma bilan birga «yashaydi».
+  // Jonli Hori: forma bilan birga «yashaydi».
   const cue: ViviCue = done
     ? { state: 'idle', face: 'proud', action: 'hop', ornament: 'sparkle' }
     : busy
@@ -270,7 +270,7 @@ export function AuthScreen({ initial = 'register', onDone, onSkip, title }: { in
             {!login && (
               <label className={`authx-consent ${agree ? 'on' : ''}`}>
                 <span>
-                  <b>Vivi AI va maxfiylik shartlariga roziman</b>
+                  <b>Hori AI va maxfiylik shartlariga roziman</b>
                   <small>Suhbat, ovoz, tarjima va xotira uchun matn/audio Google Gemini'ga yuboriladi. Profilda istalgan payt o'zgartirasiz.</small>
                 </span>
                 <input type="checkbox" checked={agree} onChange={(e) => { setAgree(e.target.checked); setError(null); }} />

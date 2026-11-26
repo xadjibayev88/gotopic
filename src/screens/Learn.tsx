@@ -75,7 +75,7 @@ export function Learn({ onStart }: { onStart: (c: SessionConfig) => void }) {
     <div className="learn lmap">
       <div className="course-end">
         <Mascot mood="sleep" size={100} />
-        <p className="muted">Voilà ! Siz C2 — eng yuqori darajaga yetdingiz. Félicitations !</p>
+        <p className="muted">Go Topic ! Siz C2 — eng yuqori darajaga yetdingiz. 축하해요!</p>
       </div>
       <AdSlot />
       {order.map(({ u, ui }) => {
@@ -103,7 +103,7 @@ export function Learn({ onStart }: { onStart: (c: SessionConfig) => void }) {
                 <button type="button" className="lunit-btn" onClick={() => setGuide(u)} aria-label="Qo'llanma">
                   <Ic name="book" size={22} />
                 </button>
-                <button type="button" className="lunit-btn" onClick={() => (location.hash = '#/tutor')} aria-label="Vivi bilan gaplashish">
+                <button type="button" className="lunit-btn" onClick={() => (location.hash = '#/tutor')} aria-label="Hori bilan gaplashish">
                   <Ic name="chat" size={22} />
                 </button>
               </div>
@@ -426,7 +426,7 @@ function BoxModal({ node, onClose }: { node: PathNode; onClose: () => void }) {
           <>
             <b className="box-prize-text">{prizeText(result)}</b>
             <button type="button" className="btn btn-primary btn-lg" onClick={(e) => { e.stopPropagation(); onClose(); }}>
-              Merci !
+              감사합니다!
             </button>
           </>
         ) : (

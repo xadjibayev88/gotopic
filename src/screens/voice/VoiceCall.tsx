@@ -26,15 +26,15 @@ const MIC_ERRORS: Record<string, string> = {
 };
 
 export const VOICE_CALL_NOTICES: Record<string, string> = {
-  weak: 'Aloqa zaif — Vivi biroz kechikib javob berishi mumkin.',
-  reconnecting: "Aloqa uzildi — qayta ulanmoqdamiz. Vivi to'xtagan joyidan davom etadi.",
-  turnFailed: 'Vivi eshitmadi — yana bir bor ayting.',
+  weak: 'Aloqa zaif — Hori biroz kechikib javob berishi mumkin.',
+  reconnecting: "Aloqa uzildi — qayta ulanmoqdamiz. Hori to'xtagan joyidan davom etadi.",
+  turnFailed: 'Hori eshitmadi — yana bir bor ayting.',
   nudgeSilence: "Ovozingiz eshitilmayaptimi? «Bosib gapirish» rejimini sinab ko'ring.",
   nudgeNoise: "Atrofingiz shovqinlimi? «Bosib gapirish» rejimini sinab ko'ring.",
   tooLong: "Replika bir daqiqagacha bo'lsin — qisqaroq gapiring.",
-  ttsQuota: 'Bugungi ovoz limiti tugadi — Vivi javobi matn ko‘rinishida qoladi.',
+  ttsQuota: 'Bugungi ovoz limiti tugadi — Hori javobi matn ko‘rinishida qoladi.',
   sttFailed: "Nutqni aniqlab bo'lmadi — qayta urinib ko'ring.",
-  upstream: "Vivi vaqtincha javob bera olmadi. Birozdan so'ng qayta urinib ko'ring.",
+  upstream: "Hori vaqtincha javob bera olmadi. Birozdan so'ng qayta urinib ko'ring.",
   rateLimited: "Juda ko'p so'rov — bir daqiqadan keyin urinib ko'ring.",
 };
 
@@ -137,20 +137,20 @@ export function VoiceCallScreen({
         : s.phase === 'review'
           ? 'Yuborishdan oldin tekshiring'
         : s.phase === 'thinking'
-          ? 'Vivi o\'ylamoqda…'
+          ? 'Hori o\'ylamoqda…'
           : s.phase === 'speaking'
-            ? 'Vivi gapirmoqda…'
+            ? 'Hori gapirmoqda…'
             : 'Sizning navbatingiz';
   const hint = game
     ? "Urish uchun Vivini bosing yoki F · Q — qurollar · gapirish uchun 🎤 yoki Space"
     : s.phase === 'speaking'
       ? ptt
         ? "Gapini bo'lish uchun Vivini bosib turing"
-        : "Gapira boshlang — Vivi jim bo'lib tinglaydi"
+        : "Gapira boshlang — Hori jim bo'lib tinglaydi"
         : s.phase === 'ready'
           ? ptt
             ? 'Gapirish uchun Vivini yoki Space\'ni bosib turing'
-            : 'Shunchaki gapiring — Vivi tinglayapti'
+            : 'Shunchaki gapiring — Hori tinglayapti'
           : s.phase === 'review'
             ? 'Matnni tekshiring, tasdiqlang yoki qayta gapiring'
           : s.phase === 'user' && ptt
@@ -197,7 +197,7 @@ export function VoiceCallScreen({
         </button>
       </header>
 
-      {s.tired && <div className="call-tired">😮‍💨 Vivi charchayapti… {fmt(s.limitMs - s.elapsedMs)} qoldi</div>}
+      {s.tired && <div className="call-tired">😮‍💨 Hori charchayapti… {fmt(s.limitMs - s.elapsedMs)} qoldi</div>}
 
       {game && <RevengeHud g={g} />}
 
@@ -206,7 +206,7 @@ export function VoiceCallScreen({
         <button
           type="button"
           className="call-avatar"
-          aria-label={game ? 'Urish uchun Vivini bosing' : ptt ? 'Gapirish uchun bosib turing' : 'Vivi'}
+          aria-label={game ? 'Urish uchun Vivini bosing' : ptt ? 'Gapirish uchun bosib turing' : 'Hori'}
           onClick={(e) => {
             if (!game) return;
             const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
@@ -348,7 +348,7 @@ export function VoiceCallScreen({
               {s.turns.length === 0 && <p className="muted">Suhbat matni shu yerda paydo bo'ladi.</p>}
               {s.turns.map((t) => (
                 <div key={t.id} className={`tline tl-${t.role}`}>
-                  <b>{t.role === 'user' ? 'Siz' : 'Vivi'}</b>
+                  <b>{t.role === 'user' ? 'Siz' : 'Hori'}</b>
                   <span>{t.role === 'tutor' ? <RichText text={displayText(t.text)} /> : t.text}</span>
                 </div>
               ))}
