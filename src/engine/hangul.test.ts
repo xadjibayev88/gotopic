@@ -2,11 +2,11 @@
 // darslardagi so'zlar va «Qaysi biri …?» savollari. Biror harf xato bo'lsa — test yiqiladi.
 import { describe, expect, it } from 'vitest';
 import { COURSE } from '../data/course';
-import { buildLesson, hidePickRomanization, makePick } from './exercises';
+import { buildLesson, hidePickRomanization, makePick, makeSentenceExercise, withoutNotes } from './exercises';
 import { evaluate } from './evaluate';
 import { CONSONANT_SPEECH, speakable, VOWEL_SPEECH } from './jamo';
 import { rng } from './random';
-import { checkAnswer } from './text';
+import { checkAnswer, tokenize } from './text';
 
 // Revised Romanization (rasmiy) bo'yicha to'g'ri qiymatlar.
 const VOWELS: Record<string, string> = { ㅏ: 'a', ㅓ: 'eo', ㅗ: 'o', ㅜ: 'u', ㅡ: 'eu', ㅣ: 'i', ㅑ: 'ya', ㅕ: 'yeo', ㅛ: 'yo', ㅠ: 'yu' };
@@ -137,6 +137,22 @@ describe('Hangul alifbosi', () => {
           }
         }
       });
+    }
+  });
+});
+
+describe("so'z-plitkalar (butun kurs)", () => {
+  it("qavsdagi izoh plitka bo'lmaydi va plitkalardan yig'ilgan javob qabul qilinadi", () => {
+    for (const u of COURSE) {
+      const pool = u.lessons.flatMap((l) => l.sentences);
+      const vocab = u.lessons.flatMap((l) => l.words);
+      for (const s of pool) {
+        const ex = makeSentenceExercise('build-fr2uz', s, pool, vocab, rng(7));
+        if (ex.kind !== 'build') throw new Error('build');
+        for (const t of ex.tokens) expect(t, `${s.fr} → ${t}`).not.toMatch(/[()]/);
+        const built = tokenize(withoutNotes(s.uz)).join(' ');
+        expect(evaluate(ex, { kind: 'tokens', text: built }).correct, `${s.fr}: «${built}»`).toBe(true);
+      }
     }
   });
 });

@@ -72,6 +72,11 @@ function distractorTokens(answerTokens: string[], pool: string[], n: number, ran
   return sample(uniq, n, rand);
 }
 
+/** «uka (eskicha)» → «uka»: qavs ichidagi izohni olib tashlaydi. */
+export function withoutNotes(s: string): string {
+  return s.replace(/\s*\([^)]*\)/g, '').trim() || s;
+}
+
 export function makePick(word: Word, pool: Word[], rand: () => number): Exercise {
   // Variantlar tarjimasi bir-biridan farqli bo'lishi shart (bir xil ma'noli so'zlar chalg'itmasin).
   const seen = new Set([word.uz]);
@@ -111,8 +116,9 @@ export function makeSentenceExercise(
   const accFr = [sentence.fr, ...(sentence.frAlt ?? [])];
   switch (kind) {
     case 'build-fr2uz': {
-      const ans = tokenize(sentence.uz);
-      const extra = distractorTokens(ans, pool.flatMap((s) => tokenize(s.uz)), Math.min(4, Math.max(2, 7 - ans.length)), rand);
+      // Qavsdagi izohlar («(eskicha)», «(ketayotgan kishiga)») so'z-plitka bo'lib chiqmasin.
+      const ans = tokenize(withoutNotes(sentence.uz));
+      const extra = distractorTokens(ans, pool.flatMap((s) => tokenize(withoutNotes(s.uz))), Math.min(4, Math.max(2, 7 - ans.length)), rand);
       return { ...base, kind: 'build', dir: 'fr2uz', prompt: sentence.fr, tokens: shuffle([...ans, ...extra], rand), accepted: accUz };
     }
     case 'build-uz2fr': {

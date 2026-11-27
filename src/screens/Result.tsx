@@ -54,7 +54,7 @@ export function Result({ reward, config, onDone }: { reward: Reward; config: Ses
           <div className="result-hero">
             <Mascot mood="cheer" size={170} className="bounce-in" />
             <h1>{reward.perfect ? 'Mukammal!' : title}</h1>
-            <p className="muted">{reward.perfect ? "Birorta ham xato qilmadingiz. C'est parfait !" : "Har bir dars sizni Seulga yaqinlashtiradi."}</p>
+            <p className="muted">{reward.perfect ? "Birorta ham xato qilmadingiz. 완벽해요!" : "Har bir dars sizni Seulga yaqinlashtiradi."}</p>
           </div>
           <div className="result-cards">
             <div className="rcard" style={{ ['--c' as string]: '#F5B400' }}>

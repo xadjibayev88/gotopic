@@ -29,7 +29,7 @@ export type SessionConfig =
   | { kind: 'jump'; level: Cefr }
   | { kind: 'practice'; mode: 'smart' | 'mistakes' | 'listening' };
 
-const PRAISE = ['Go Topic !', 'Go Topic !', 'Ajoyib!', "Zo'r!", 'Barakalla!', 'Juda yaxshi!', 'Très bien !', 'Parfait !', 'Qoyil!', 'Super!'];
+const PRAISE = ['Go Topic!', '잘했어요!', 'Ajoyib!', "Zo'r!", 'Barakalla!', 'Juda yaxshi!', '최고예요!', 'Mukammal!', 'Qoyil!', 'Super!'];
 
 function generate(cfg: SessionConfig, state: ReturnType<typeof useStore>['state']): Exercise[] {
   const tts = ttsSupported() && state.settings.listening;
