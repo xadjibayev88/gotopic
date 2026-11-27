@@ -379,7 +379,7 @@ function TextChat() {
             </button>
             {!cloudMic && (
             <button type="button" className="mic-lang" onClick={() => setMicLang(micLang === 'uz-UZ' ? 'ko-KR' : 'uz-UZ')} title="Mikrofon tili (Hori javobiga qarab o'zi almashadi)">
-              {micLang === 'uz-UZ' ? 'UZ' : 'FR'}
+              {micLang === 'uz-UZ' ? 'UZ' : 'KO'}
               <i className="auto-badge">avto</i>
             </button>
             )}

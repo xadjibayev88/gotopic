@@ -181,7 +181,8 @@ export function createAiRouteOperations(options: { readonly geminiAudioHints?: b
     }),
     estimateUsage: (input) => withUsage(0, {
       // Compressed browser audio (Opus ≈ 2–4 KB/s): bytes/2000 is a safe upper bound on seconds.
-      sttAudioSeconds: Math.min(60, Math.max(1, Math.ceil((input.audio.length * 3 / 4) / 2_000))),
+      // Jonli rejim gaplari WAV (16 kHz PCM16 = 32 KB/s) bo'lib keladi — ularni siqilgan audio deb hisoblamaymiz.
+      sttAudioSeconds: Math.min(60, Math.max(1, Math.ceil((input.audio.length * 3 / 4) / (/^audio\/(x-)?wav$/.test(input.mime) ? 32_000 : 2_000)))),
     }),
     sanitizeResult: (result, input) => {
       const raw = (result ?? {}) as { segments?: Array<{ languageCode?: unknown; alternatives?: Array<{ transcript?: unknown; confidence?: unknown }> }> };

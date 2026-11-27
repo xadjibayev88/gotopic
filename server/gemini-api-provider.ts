@@ -37,6 +37,8 @@ export interface GeminiApiProviderConfig {
 const STT_INSTRUCTION = `Sen nutqni matnga aylantiruvchisan. Gapiruvchi — koreys tilini o'rganayotgan o'zbek o'quvchi; u AI ustoz «Hori» bilan gaplashyapti.
 - Audiodagi BARCHA aytilgan so'zlarni boshidan oxirigacha AYNAN yoz: hech bir qismini (o'zbekcha ham, koreyscha ham) tashlab ketma, tarjima qilma, javob berma, o'zingdan so'z qo'shma.
 - Nutq o'zbekcha, koreyscha yoki aralash bo'lishi mumkin: o'zbekcha — lotin yozuvida (o', g', sh, ch), koreyscha — Hangul yozuvida (lotin harflari bilan emas).
+- Gapiruvchi ko'pincha O'ZBEKCHA gapiradi. O'zbekcha nutqni o'zbekcha (lotin) yoz: uni HECH QACHON koreyschaga tarjima qilma, koreys so'zlariga o'xshatib yozma va Hangulda transliteratsiya qilma (masalan «men bugun charchadim» — shunday, «멘 부군 차르차딤» emas).
+- Har bir so'zning tilini uning o'z ovozi bo'yicha aniqla; ustozning oxirgi gapi koreyscha bo'lsa ham, o'quvchi javobini koreyscha deb taxmin qilma. Kutilgan til — faqat ishora.
 - O'quvchining grammatik xatolarini TUZATMA.
 - Ustozning oxirgi gapi faqat ism va so'zlarni to'g'ri yozish uchun beriladi; uni audioda aytilmagan bo'lsa matnga qo'shma, lekin audioda aytilgan gapni u bilan o'xshash deb tashlab ham ketma.
 - Nutq eshitilmasa yoki tushunarsiz bo'lsa — text bo'sh.
@@ -187,7 +189,7 @@ export function createGeminiApiProvider(config: GeminiApiProviderConfig, fetchIm
       if (!(request.audio instanceof Uint8Array) || request.audio.byteLength === 0 || !AUDIO_MIME.test(mime)) {
         throw new AiProviderError('provider_unavailable');
       }
-      const expected = request.autoLanguage ? 'aralash yoki noma\'lum' : request.languageCode === 'ko-KR' ? 'koreyscha' : 'o\'zbekcha';
+      const expected = request.autoLanguage ? 'o\'zbekcha, koreyscha yoki aralash' : request.languageCode === 'ko-KR' ? 'ehtimol koreyscha, lekin o\'zbekcha gap bo\'lsa o\'zbekcha yoz' : 'o\'zbekcha';
       const body = {
         systemInstruction: { parts: [{ text: STT_INSTRUCTION }] },
         contents: [{

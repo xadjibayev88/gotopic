@@ -106,6 +106,16 @@ describe('STT result review boundary', () => {
     });
   });
 
+  it('bills Live WAV utterances by real seconds, not as compressed audio', () => {
+    const operation = createAiRouteOperations()['POST /api/stt'];
+    const wav = Buffer.alloc(32_000 * 5).toString('base64');
+    const webm = operation.prepare({ audio: wav, mime: 'audio/webm', hint: 'auto' });
+    const live = operation.prepare({ audio: wav, mime: 'audio/wav', hint: 'auto' });
+    if (typeof webm === 'string' || typeof live === 'string') throw new Error('prepare failed');
+    expect(live.usage.sttAudioSeconds).toBeLessThanOrEqual(6); // 5 s (+ base64 yaxlitlash)
+    expect(webm.usage.sttAudioSeconds).toBe(60);
+  });
+
   it('marks mixed Uzbek–French segments for review and does not label them as one language', async () => {
     const operation = createAiRouteOperations()['POST /api/stt'];
     const prepared = operation.prepare({ audio: Buffer.from('metadata').toString('base64'), mime: 'audio/webm', hint: 'auto' });

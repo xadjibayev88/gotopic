@@ -81,6 +81,36 @@ function toPcm16(input: Float32Array, fromRate: number): Uint8Array {
   return new Uint8Array(out.buffer);
 }
 
+/** 16 kHz mono PCM16 bo'laklaridan WAV fayl (sarlavha + ma'lumot). */
+export function pcm16Wav(chunks: Uint8Array[], bytes = chunks.reduce((n, c) => n + c.byteLength, 0)): Uint8Array {
+  const out = new Uint8Array(44 + bytes);
+  const v = new DataView(out.buffer);
+  const tag = (at: number, s: string) => { for (let i = 0; i < 4; i++) out[at + i] = s.charCodeAt(i); };
+  tag(0, 'RIFF');
+  v.setUint32(4, 36 + bytes, true);
+  tag(8, 'WAVE');
+  tag(12, 'fmt ');
+  v.setUint32(16, 16, true);
+  v.setUint16(20, 1, true); // PCM
+  v.setUint16(22, 1, true); // mono
+  v.setUint32(24, 16000, true);
+  v.setUint32(28, 32000, true);
+  v.setUint16(32, 2, true);
+  v.setUint16(34, 16, true);
+  tag(36, 'data');
+  v.setUint32(40, bytes, true);
+  let at = 44;
+  for (const c of chunks) {
+    out.set(c, at);
+    at += c.byteLength;
+  }
+  return out;
+}
+
+/** Qayta yozish uchun gap uzunligi: 0.4 s dan qisqasi — shovqin; 40 s dan uzuni server chegarasidan oshadi. */
+const UTT_MIN_BYTES = 16000 * 2 * 0.4;
+const UTT_MAX_BYTES = 16000 * 2 * 40;
+
 export class LiveSession {
   snap: LiveSnap;
   onUpdate?: (s: LiveSnap) => void;
@@ -247,6 +277,10 @@ export class LiveSession {
   private vad = { on: false, ptt: false, floor: 0.01, loud: 0, quiet: 0, len: 0, pre: [] as Uint8Array[] };
 
   private sendAudio(pcm: Uint8Array) {
+    if (this.vad.on && this.utt.bytes < UTT_MAX_BYTES) {
+      this.utt.pcm.push(pcm);
+      this.utt.bytes += pcm.byteLength;
+    }
     this.ws?.send(JSON.stringify({ realtimeInput: { audio: { data: toBase64(pcm), mimeType: 'audio/pcm;rate=16000' } } }));
   }
 
@@ -264,12 +298,20 @@ export class LiveSession {
         if (this.snap.liveTutor) this.pushTurn('tutor', `${this.snap.liveTutor}…`);
         this.set({ liveTutor: '' });
       }
+      this.utt.pcm = [];
+      this.utt.bytes = 0;
       this.ws.send(JSON.stringify({ realtimeInput: { activityStart: {} } }));
       // Gap boshi kesilib qolmasin: oxirgi ~0.4 s ni ham yuboramiz.
       for (const c of this.vad.pre) this.sendAudio(c);
       this.vad.pre = [];
     } else {
       this.ws.send(JSON.stringify({ realtimeInput: { activityEnd: {} } }));
+      const seq = ++this.utt.seq;
+      const chunks = this.utt.pcm;
+      this.utt.pcm = [];
+      this.utt.bytes = 0;
+      this.lastEndedSeq = seq;
+      void this.retranscribe(seq, chunks);
     }
     this.set({ userTalking: start });
   }
@@ -355,7 +397,7 @@ export class LiveSession {
   private lastEmit = 0;
   private heard = false;
   /** Texnik hisobot (shaxsiy ma'lumotsiz) — telefonlarda nosozlikni topish uchun. */
-  private stats = { msgs: 0, audio: 0, tools: 0, micChunks: 0, micPeak: 0, heardUser: false, errors: [] as string[], rateIn: 0, rateOut: 0, outState: '' };
+  private stats = { msgs: 0, audio: 0, tools: 0, micChunks: 0, micPeak: 0, heardUser: false, errors: [] as string[], sttFixes: 0, rateIn: 0, rateOut: 0, outState: '' };
   private guessCueOnce() {
     // Bir gapda bir marta: o'quvchi ChatGPT'ni tilga olsa — rashk (model chaqirmasa ham).
     const u = this.snap.liveUser;
@@ -367,7 +409,54 @@ export class LiveSession {
   }
 
   private pushTurn(role: 'user' | 'tutor', text: string) {
-    this.set({ turns: [...this.snap.turns, { role, text }].slice(-60) });
+    const turn = { role, text };
+    if (role === 'user' && this.lastEndedSeq > this.taggedSeq) {
+      // Bu replika oxirgi tugagan gap bilan bog'lanadi; aniq transkripsiya oldinroq kelgan bo'lsa — darhol qo'yamiz.
+      this.taggedSeq = this.lastEndedSeq;
+      const fixed = this.fixBySeq.get(this.taggedSeq);
+      if (fixed) turn.text = fixed;
+      this.fixBySeq.delete(this.taggedSeq);
+      this.turnBySeq.set(this.taggedSeq, turn);
+    }
+    this.set({ turns: [...this.snap.turns, turn].slice(-60) });
+  }
+
+  // ---------- O'quvchi gapini aniq yozish ----------
+  // Gemini Live'ning o'z transkripsiyasi o'zbekchani yaxshi bilmaydi: o'zbekcha gapni koreys (Hangul) yozuvida
+  // yoki boshqa alifboda yozib qo'yadi. Shu sabab har bir gap yozuvi /api/stt (o'zbekcha +
+  // koreyscha aralash nutqqa moslangan) orqali qayta yoziladi va suhbat yozuvidagi matn almashtiriladi.
+  private utt = { pcm: [] as Uint8Array[], bytes: 0, seq: 0 };
+  private lastEndedSeq = 0;
+  private taggedSeq = 0;
+  private turnBySeq = new Map<number, { role: 'user' | 'tutor'; text: string }>();
+  private fixBySeq = new Map<number, string>();
+
+  private async retranscribe(seq: number, chunks: Uint8Array[]) {
+    const bytes = chunks.reduce((n, c) => n + c.byteLength, 0);
+    if (bytes < UTT_MIN_BYTES) return;
+    const context = [...this.snap.turns].reverse().find((t) => t.role === 'tutor')?.text ?? this.snap.liveTutor;
+    try {
+      const r = await fetch('./api/stt', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ audio: toBase64(pcm16Wav(chunks, bytes)), mime: 'audio/wav', hint: 'auto', context: context.slice(-600) }),
+      });
+      if (!r.ok) return;
+      const body = (await r.json().catch(() => ({}))) as { text?: unknown };
+      const text = typeof body.text === 'string' ? body.text.replace(/\s+/g, ' ').trim() : '';
+      if (!text) return;
+      this.stats.sttFixes++;
+      const turn = this.turnBySeq.get(seq);
+      if (!turn) {
+        this.fixBySeq.set(seq, text);
+        return;
+      }
+      const next = { ...turn, text };
+      this.turnBySeq.set(seq, next);
+      this.set({ turns: this.snap.turns.map((t) => (t === turn ? next : t)) });
+    } catch {
+      /* Tarmoq xatosi — Gemini'ning o'z transkripsiyasi qoladi. */
+    }
   }
 
   private startMic() {
