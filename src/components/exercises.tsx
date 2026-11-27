@@ -194,7 +194,7 @@ export function BuildView({ ex, locked, onAnswer }: ViewProps<'build'> | ViewPro
   const isListen = ex.kind === 'listen';
   return (
     <div className="ex">
-      <h2 className="ex-title">{isListen ? 'Eshitganingizni yozing' : 'Gapni tarjima qiling'}</h2>
+      <h2 className="ex-title">{isListen ? 'Eshitganingizni yozing' : /\s/.test(ex.sentence.fr.trim()) ? 'Gapni tarjima qiling' : "So'zni tarjima qiling"}</h2>
       {isListen ? (
         <div className="listen-row">
           <SpeakerButton text={ex.sentence.fr} big />

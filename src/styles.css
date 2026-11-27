@@ -699,7 +699,7 @@ body::before {
   box-shadow: inset 0 1px 0 var(--glass-hi), 0 0 0 3px rgba(180, 156, 255, 0.22);
 }
 .seg { background: rgba(255, 255, 255, 0.06); border: 1px solid var(--line); }
-.token.used { background: rgba(255, 255, 255, 0.04); border-color: transparent; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.token.used { background: rgba(255, 255, 255, 0.04); color: transparent; border-color: transparent; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
 .answer-lines { border-color: rgba(255, 255, 255, 0.16); }
 .msg.msg-user .msg-bubble { background: var(--grad); color: var(--on-primary); border: none; font-weight: 600; }
 .fr-chip { background: rgba(127, 227, 255, 0.14); color: var(--teal); }

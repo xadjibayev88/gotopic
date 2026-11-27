@@ -10,9 +10,10 @@ HANGUL_VOWELS = [
 ]
 # Har bir darsda faqat o'sha darsgacha o'rgatilgan harflardan tuzilgan so'zlar beriladi (build-korean-course.py tekshiradi).
 HANGUL_SYLLABLE_WORDS_V = [
-    ("아이", "ai", "bola", "👶"), ("오이", "oi", "bodring", "🥒"), ("이", "i", "tish; ikki", "🦷"), ("우아", "ua", "nafislik", None),
-    ("아우", "au", "uka (eskicha)", None), ("우유", "uyu", "sut", "🥛"), ("여우", "yeou", "tulki", "🦊"), ("여유", "yeoyu", "bo'sh vaqt", "🛋️"),
-    ("유아", "yua", "go'dak", "👶"),
+    # Faqat kundalik, oddiy so'zlar (eskirgan/kitobiy so'zlar — masalan 아우 — ishlatilmaydi).
+    ("아이", "ai", "bola", "👶"), ("오이", "oi", "bodring", "🥒"), ("이", "i", "tish; ikki", "🦷"), ("오", "o", "besh (5)", "5️⃣"),
+    ("우유", "uyu", "sut", "🥛"), ("여우", "yeou", "tulki", "🦊"), ("여유", "yeoyu", "bo'sh vaqt", "🛋️"), ("유아", "yua", "go'dak", "👶"),
+    ("이유", "iyu", "sabab", None),
 ]
 HANGUL_CONSONANTS = [
     ("ㄱ", "g / k", "g yoki k", None), ("ㄴ", "n", "n tovushi", None), ("ㄷ", "d / t", "d yoki t", None), ("ㄹ", "r / l", "r yoki l", None),

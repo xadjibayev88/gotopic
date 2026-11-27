@@ -129,14 +129,9 @@ export const COURSE: Unit[] = [
       "ro": "i"
      },
      {
-      "fr": "우아",
-      "uz": "nafislik",
-      "ro": "ua"
-     },
-     {
-      "fr": "아우",
-      "uz": "uka (eskicha)",
-      "ro": "au"
+      "fr": "오",
+      "uz": "besh (5)",
+      "ro": "o"
      }
     ]
    },
@@ -192,14 +187,14 @@ export const COURSE: Unit[] = [
       "ro": "yua"
      },
      {
+      "fr": "이유",
+      "uz": "sabab",
+      "ro": "iyu"
+     },
+     {
       "fr": "아이",
       "uz": "bola",
       "ro": "ai"
-     },
-     {
-      "fr": "오이",
-      "uz": "bodring",
-      "ro": "oi"
      }
     ]
    }
