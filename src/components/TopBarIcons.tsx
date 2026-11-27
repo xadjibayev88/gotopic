@@ -16,15 +16,17 @@ export function FlagIcon() {
       </defs>
       <g clipPath="url(#tbi-flag-clip)">
         <rect x="0" y="0" width="28" height="28" fill="#FFFFFF" />
-        <g transform="rotate(-33.7 14 14)">
-          <path d="M8.6 14a5.4 5.4 0 0 1 10.8 0a2.7 2.7 0 0 1-5.4 0a2.7 2.7 0 0 0-5.4 0z" fill="#CD2E3A" />
-          <path d="M8.6 14a5.4 5.4 0 0 0 10.8 0a2.7 2.7 0 0 0-5.4 0a2.7 2.7 0 0 1-5.4 0z" fill="#0047A0" />
+        {/* Taegeuk: qizil tepada, ko'k pastda; S-chiziq bayroq diagonali bo'ylab (33.7°). */}
+        <g transform="rotate(33.7 14 14)">
+          <circle cx="14" cy="14" r="5" fill="#0047A0" />
+          <path d="M9 14A5 5 0 0 1 19 14A2.5 2.5 0 0 0 14 14A2.5 2.5 0 0 1 9 14Z" fill="#CD2E3A" />
         </g>
-        <g stroke="#1A1A1A" strokeWidth="1.1">
-          <path d="M4.2 7.6l2.2-1.5M4.8 8.5l2.2-1.5M5.4 9.4l2.2-1.5" />
-          <path d="M21.6 18.6l2.2-1.5M22.2 19.5l2.2-1.5M22.8 20.4l2.2-1.5" />
-          <path d="M20.4 6.1l2.2 1.5M19.8 7l.9.6M21.6 8.2l.9.6M19.2 7.9l2.2 1.5" />
-          <path d="M3.6 18l.9.6M5.4 19.2l.9.6M3 18.9l2.2 1.5M2.4 19.8l.9.6M4.2 21l.9.6" />
+        {/* Trigrammalar: ☰ chap-tepa, ☵ o'ng-tepa, ☲ chap-past, ☷ o'ng-past. */}
+        <g fill="#1A1A1A">
+          <g transform="rotate(-56.3 14 14)"><rect x="11.8" y="3.75" width="4.4" height="0.9" /><rect x="11.8" y="5.25" width="4.4" height="0.9" /><rect x="11.8" y="6.75" width="4.4" height="0.9" /></g>
+          <g transform="rotate(56.3 14 14)"><rect x="11.8" y="3.75" width="1.85" height="0.9" /><rect x="14.35" y="3.75" width="1.85" height="0.9" /><rect x="11.8" y="5.25" width="4.4" height="0.9" /><rect x="11.8" y="6.75" width="1.85" height="0.9" /><rect x="14.35" y="6.75" width="1.85" height="0.9" /></g>
+          <g transform="rotate(-123.7 14 14)"><rect x="11.8" y="3.75" width="4.4" height="0.9" /><rect x="11.8" y="5.25" width="1.85" height="0.9" /><rect x="14.35" y="5.25" width="1.85" height="0.9" /><rect x="11.8" y="6.75" width="4.4" height="0.9" /></g>
+          <g transform="rotate(123.7 14 14)"><rect x="11.8" y="3.75" width="1.85" height="0.9" /><rect x="14.35" y="3.75" width="1.85" height="0.9" /><rect x="11.8" y="5.25" width="1.85" height="0.9" /><rect x="14.35" y="5.25" width="1.85" height="0.9" /><rect x="11.8" y="6.75" width="1.85" height="0.9" /><rect x="14.35" y="6.75" width="1.85" height="0.9" /></g>
         </g>
         <ellipse cx="14" cy="7" rx="11" ry="6" fill="url(#tbi-flag-gloss)" />
       </g>
