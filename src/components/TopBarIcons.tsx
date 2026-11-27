@@ -35,7 +35,7 @@ export function FlagIcon() {
   );
 }
 
-/** Oltin tanga: chekka halqa, ichida «V», vaqti-vaqti bilan yaltiroq o'tadi. */
+/** Oltin tanga: ichida oq yo'lbars boshi, vaqti-vaqti bilan yaltiroq o'tadi. */
 export function CoinIcon() {
   return (
     <svg className="tbi tbi-coin" viewBox="0 0 26 26" width="24" height="24" aria-hidden="true">
@@ -50,8 +50,22 @@ export function CoinIcon() {
         </clipPath>
       </defs>
       <circle cx="13" cy="13" r="11" fill="url(#tbi-coin-g)" stroke="#B45309" strokeWidth="1.4" />
-      <circle cx="13" cy="13" r="7.8" fill="none" stroke="#FDE68A" strokeWidth="1.2" opacity=".9" />
-      <path d="M9.4 9.2 L13 17.2 L16.6 9.2" fill="none" stroke="#92400E" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" />
+      {/* Oq Amur yo'lbarsi boshi — Go Topic tangasi. */}
+      <g stroke="#3B3760" strokeWidth=".8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="7.7" cy="8.3" r="2.5" fill="#FBFAFF" />
+        <circle cx="18.3" cy="8.3" r="2.5" fill="#FBFAFF" />
+        <circle cx="7.7" cy="8.3" r="1.1" fill="#FFB3CC" stroke="none" />
+        <circle cx="18.3" cy="8.3" r="1.1" fill="#FFB3CC" stroke="none" />
+        <ellipse cx="13" cy="14.2" rx="7" ry="6.2" fill="#FBFAFF" />
+      </g>
+      <g fill="none" stroke="#2E2A4A" strokeWidth=".85" strokeLinecap="round">
+        <path d="M11.4 9.7h3.2M11.7 11.1h2.6M13 9.7v2.4" />
+        <path d="M6.4 13.4l1.9.6M6.6 15.6l1.8-.1M19.6 13.4l-1.9.6M19.4 15.6l-1.8-.1" />
+      </g>
+      <circle cx="10.4" cy="14" r="1" fill="#1E3A6E" />
+      <circle cx="15.6" cy="14" r="1" fill="#1E3A6E" />
+      <path d="M12 16.2h2l-1 1z" fill="#FF8FB1" />
+      <path d="M13 17.2q-.8 1-1.7.5M13 17.2q.8 1 1.7.5" fill="none" stroke="#3B3760" strokeWidth=".7" strokeLinecap="round" />
       <g clipPath="url(#tbi-coin-clip)">
         <g transform="rotate(24 13 13)">
           <rect className="tbi-coin-shine" x="-8" y="-4" width="5" height="34" fill="#fff" opacity=".7" />
