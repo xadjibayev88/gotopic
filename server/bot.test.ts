@@ -4,7 +4,7 @@ process.env.SESSION_SECRET = 'x'.repeat(40);
 import { resetDbForTests } from './db.ts';
 import { register, upsertGoogleUser } from './accounts.ts';
 import { activePlan } from './billing.ts';
-import { CONFETTI_EFFECT_ID, adminChats, createBot, createLinkCode } from './bot.ts';
+import { CONFETTI_EFFECT_ID, adminChats, createBot, createLinkCode, findTarget } from './bot.ts';
 import { startTgLogin, takeTgLogin, tgLoginStatus, TG_LOGIN_TTL } from './tglogin.ts';
 import { getUser } from './accounts.ts';
 
@@ -224,5 +224,77 @@ describe('telegram bot', () => {
     await bot.handle({ inline_query: { id: 'iq1', from: { id: 33 }, query: '사랑' } });
     const a = calls.find((c) => c.method === 'answerInlineQuery')!;
     expect(a.body.results.length).toBeGreaterThan(0);
+  });
+
+  it('admin gives Super by /super <telegram id> <days>, the user is told, /unsuper takes it back', async () => {
+    process.env.ADMIN_TELEGRAM_CHAT_ID = '900';
+    try {
+      const { calls, bot } = setup();
+      await bot.handle(msg(41, { text: '/start' }));
+      const uid = getUser(findTarget('41')!.userId)!.id;
+      // Oddiy foydalanuvchi buyruqni ishlata olmaydi va hech narsa ko'rmaydi.
+      const before = calls.length;
+      await bot.handle(msg(41, { text: '/super 41 30' }));
+      expect(calls.length).toBe(before);
+      expect(activePlan(uid).plan).toBe('free');
+
+      await bot.handle(msg(900, { text: '/super 41 30' }));
+      const p = activePlan(uid);
+      expect(p.plan).toBe('month');
+      expect(Math.round((p.expiresAt! - Date.now()) / 86_400_000)).toBe(30);
+      expect(calls.some((c) => c.method === 'sendMessage' && c.body.chat_id === '41' && /Super berildi/.test(c.body.text))).toBe(true);
+      expect(calls.at(-1)!.body.chat_id).toBe('900');
+      // Ikkinchi marta — muddat ustiga qo'shiladi.
+      await bot.handle(msg(900, { text: '/super 41 7' }));
+      expect(Math.round((activePlan(uid).expiresAt! - Date.now()) / 86_400_000)).toBe(37);
+
+      await bot.handle(msg(900, { text: '/unsuper 41' }));
+      expect(activePlan(uid).plan).toBe('free');
+      await bot.handle(msg(900, { text: '/super 99999 30' }));
+      expect(calls.at(-1)!.body.text).toContain('topilmadi');
+      await bot.handle(msg(900, { text: '/super 41 abc' }));
+      expect(calls.at(-1)!.body.text).toContain('1 dan 3650');
+      await bot.handle(msg(900, { text: '/super' }));
+      expect(calls.at(-1)!.body.text).toContain('forward');
+    } finally {
+      delete process.env.ADMIN_TELEGRAM_CHAT_ID;
+    }
+  });
+
+  it('admin forwards a user message → buttons give Super; hidden forwards explain /id', async () => {
+    process.env.ADMIN_TELEGRAM_CHAT_ID = '900';
+    try {
+      const { calls, bot } = setup();
+      await bot.handle(msg(42, { text: '/start' }));
+      const uid = findTarget('42')!.userId;
+      await bot.handle(msg(900, { text: 'salom', forward_origin: { type: 'user', sender_user: { id: 42, first_name: 'Vali' } } }));
+      const kb = JSON.stringify(calls.at(-1)!.body.reply_markup);
+      expect(kb).toContain('sg:42:30');
+      // Begona odam tugmani bosa olmaydi.
+      await bot.handle(cb(42, 'sg:42:30'));
+      expect(activePlan(uid).plan).toBe('free');
+      await bot.handle(cb(900, 'sg:42:90'));
+      expect(activePlan(uid).plan).toBe('quarter');
+      await bot.handle(cb(900, 'su:42'));
+      expect(activePlan(uid).plan).toBe('free');
+      await bot.handle(msg(900, { text: 'x', forward_origin: { type: 'hidden_user', sender_user_name: 'Kim' } }));
+      expect(calls.at(-1)!.body.text).toContain('/id');
+    } finally {
+      delete process.env.ADMIN_TELEGRAM_CHAT_ID;
+    }
+  });
+
+  it('/super finds a user by email too', async () => {
+    process.env.ADMIN_TELEGRAM_CHAT_ID = '900';
+    try {
+      const { bot } = setup();
+      const r = register('ali@mail.uz', 'parol12345', 'Ali');
+      expect(r.ok).toBe(true);
+      const uid = findTarget('ali@mail.uz')!.userId;
+      await bot.handle(msg(900, { text: '/super ALI@mail.uz 7' }));
+      expect(activePlan(uid).plan).toBe('week');
+    } finally {
+      delete process.env.ADMIN_TELEGRAM_CHAT_ID;
+    }
   });
 });
