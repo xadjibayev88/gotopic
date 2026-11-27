@@ -1,4 +1,5 @@
 import { currentLang, LANG_EVENT, LANGUAGES, type Lang } from '../i18n';
+import { VideoShelf } from '../components/VideoShelf';
 import { Ic } from '../components/Icons';
 import { HoldButton, RangeValue } from '../components/Micro';
 import { chooseLanguage } from '../i18n/choose';
@@ -224,6 +225,7 @@ export function Profile({ onManageAiConsent }: { onManageAiConsent: () => void }
         <ReviewForm />
       </div>
 
+      <VideoShelf title="Ilova haqida videolar" />
       {/* Android telefonda (ilovaning o'zidan tashqari) — APK'ni yuklab olish. Telegram ichida havola
           telefon brauzerida ochiladi, chunki Telegram WebView faylni o'zi yuklab olmaydi. */}
       {/Android/i.test(navigator.userAgent) && !window.AndroidAuth && (

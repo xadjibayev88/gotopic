@@ -1,6 +1,7 @@
 // Go Topic serves dist/ and keeps AI routes disabled until provider and shared-quota readiness are verified.
 // AI credentials are server-only; no legacy provider fallback routes are registered.
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
+import { createReadStream } from 'node:fs';
 import { readFile, stat } from 'node:fs/promises';
 import { createHash, randomBytes } from 'node:crypto';
 import { extname, join, normalize, resolve } from 'node:path';
@@ -49,6 +50,8 @@ const MIME: Record<string, string> = {
   '.ico': 'image/x-icon',
   '.woff2': 'font/woff2',
   '.apk': 'application/vnd.android.package-archive',
+  '.mp4': 'video/mp4',
+  '.jpg': 'image/jpeg',
 };
 
 // ---------- Xotiradagi limitlar (har bir yo'nalish uchun alohida) ----------
@@ -783,6 +786,32 @@ async function serveStatic(req: IncomingMessage, res: ServerResponse) {
     if ((await stat(file)).isDirectory()) file = join(file, 'index.html');
   } catch {
     file = join(ROOT, 'index.html'); // SPA fallback
+  }
+  // Video: Range so'rovlari (206) — telefonlar videoni bo'laklab yuklaydi, iPhone busiz o'ynatmaydi.
+  if (extname(file) === '.mp4') {
+    try {
+      const size = (await stat(file)).size;
+      const m = /^bytes=(\d*)-(\d*)$/.exec(String(req.headers.range ?? ''));
+      const start = m && m[1] ? Number(m[1]) : m && m[2] ? Math.max(0, size - Number(m[2])) : 0;
+      const end = m && m[1] && m[2] ? Math.min(size - 1, Number(m[2])) : size - 1;
+      if (m && (start >= size || start > end)) {
+        res.writeHead(416, { 'content-range': `bytes */${size}` });
+        return res.end();
+      }
+      res.writeHead(m ? 206 : 200, {
+        ...SECURITY,
+        'content-type': 'video/mp4',
+        'accept-ranges': 'bytes',
+        'content-length': String(end - start + 1),
+        'cache-control': 'public, max-age=86400',
+        ...(m ? { 'content-range': `bytes ${start}-${end}/${size}` } : {}),
+      });
+      if (req.method === 'HEAD') return res.end();
+      createReadStream(file, { start, end }).pipe(res);
+    } catch {
+      json(res, 404, { message: 'topilmadi' });
+    }
+    return;
   }
   try {
     const data = await readFile(file);
