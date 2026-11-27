@@ -9,7 +9,7 @@
    Super obunachilarida reklama hech qachon ko'rsatilmaydi. */
 window.SALUT_ADS = {
   admobBanner: "",
-  admobRewarded: "ca-app-pub-2780590832331724/9280581802",
+  admobRewarded: "ca-app-pub-2780590832331724/4432579222",
   admobInterstitial: "",
   admobTestAds: false,
   adsenseClient: "",
