@@ -126,6 +126,8 @@ async function prepareInterstitial() {
 export async function initAds(isPremium: boolean) {
   premium = isPremium;
   if (!isNativeApp()) return emit();
+  // Haqiqiy AdMob ID berilmagan bo'lsa — reklama ko'rsatilmaydi (sinov reklamasi va bo'sh banner joyi chiqmasin).
+  if (unit(cfg().admobBanner, TEST.banner).testing) return emit();
   if (premium) {
     if (bannerShown) await call('hideBanner').catch(() => undefined);
     bannerShown = false;
