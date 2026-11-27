@@ -41,7 +41,7 @@ jobs:
         run: |
           set -euo pipefail
           # Eski Go Topic (2.0.x, versionCode 2001) dan yuqori bo'lishi shart — Play Market yangilanishni qabul qilishi uchun.
-          props=(-PverCode="$((3000 + GITHUB_RUN_NUMBER))" -PversionName="3.0.${GITHUB_RUN_NUMBER}" -PstartUrl="${START_URL}")
+          props=(-PverCode="$((3000 + GITHUB_RUN_NUMBER))" -PversionName="3.0.${GITHUB_RUN_NUMBER}" -PstartUrl="${START_URL}" -PrealAds=true)
           # Secret berilsa — u ishlatiladi, aks holda android/gradle.properties dagi admobAppId.
           [[ -n "${SALUT_ADMOB_APP_ID:-}" ]] && props+=(-PadmobAppId="${SALUT_ADMOB_APP_ID}")
           release_ready=true
