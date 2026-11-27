@@ -3,13 +3,16 @@
 
 # --- Hangul alifbosi (birinchi ikki bo'lim) ---
 HANGUL_VOWELS = [
+    # 1-dars: ㅏ ㅓ ㅗ ㅜ ㅣ (shular bilan 아이, 오이, 이 kabi so'zlar yoziladi), 2-dars: ㅡ ㅑ ㅕ ㅛ ㅠ.
     ("ㅏ", "a", "a tovushi", "🅰️"), ("ㅓ", "eo", "ochiq «o» (eo)", None), ("ㅗ", "o", "o tovushi", None), ("ㅜ", "u", "u tovushi", None),
-    ("ㅡ", "eu", "«ы»ga yaqin (eu)", None), ("ㅣ", "i", "i tovushi", None), ("ㅑ", "ya", "ya tovushi", None), ("ㅕ", "yeo", "yo (yeo)", None),
+    ("ㅣ", "i", "i tovushi", None), ("ㅡ", "eu", "«ы»ga yaqin (eu)", None), ("ㅑ", "ya", "ya tovushi", None), ("ㅕ", "yeo", "yo (yeo)", None),
     ("ㅛ", "yo", "yo' (yo)", None), ("ㅠ", "yu", "yu tovushi", None),
 ]
+# Har bir darsda faqat o'sha darsgacha o'rgatilgan harflardan tuzilgan so'zlar beriladi (build-korean-course.py tekshiradi).
 HANGUL_SYLLABLE_WORDS_V = [
-    ("아이", "ai", "bola", "👶"), ("우유", "uyu", "sut", "🥛"), ("오이", "oi", "bodring", "🥒"), ("이", "i", "tish; ikki", "🦷"),
-    ("여우", "yeou", "tulki", "🦊"), ("우아", "ua", "nafis", None), ("아우", "au", "uka (eskicha)", None), ("여유", "yeoyu", "bo'sh vaqt", "🛋️"),
+    ("아이", "ai", "bola", "👶"), ("오이", "oi", "bodring", "🥒"), ("이", "i", "tish; ikki", "🦷"), ("우아", "ua", "nafislik", None),
+    ("아우", "au", "uka (eskicha)", None), ("우유", "uyu", "sut", "🥛"), ("여우", "yeou", "tulki", "🦊"), ("여유", "yeoyu", "bo'sh vaqt", "🛋️"),
+    ("유아", "yua", "go'dak", "👶"),
 ]
 HANGUL_CONSONANTS = [
     ("ㄱ", "g / k", "g yoki k", None), ("ㄴ", "n", "n tovushi", None), ("ㄷ", "d / t", "d yoki t", None), ("ㄹ", "r / l", "r yoki l", None),
@@ -18,9 +21,12 @@ HANGUL_CONSONANTS = [
     ("ㅍ", "p (nafasli)", "nafasli p", None), ("ㅎ", "h", "h tovushi", None),
 ]
 HANGUL_SYLLABLE_WORDS_C = [
-    ("나무", "namu", "daraxt", "🌳"), ("바다", "bada", "dengiz", "🌊"), ("모자", "moja", "bosh kiyim", "🧢"), ("하나", "hana", "bitta", "1️⃣"),
-    ("나비", "nabi", "kapalak", "🦋"), ("고기", "gogi", "go'sht", "🥩"), ("지도", "jido", "xarita", "🗺️"), ("기차", "gicha", "poyezd", "🚆"),
-    ("커피", "keopi", "qahva", "☕"), ("토마토", "tomato", "pomidor", "🍅"), ("포도", "podo", "uzum", "🍇"), ("하마", "hama", "begemot", "🦛"),
+    ("나무", "namu", "daraxt", "🌳"), ("고기", "gogi", "go'sht", "🥩"), ("머리", "meori", "bosh", None), ("누나", "nuna", "opa (o'g'il bola aytadi)", None),
+    ("어머니", "eomeoni", "ona", None), ("다리", "dari", "oyoq", "🦵"),
+    ("바다", "bada", "dengiz", "🌊"), ("모자", "moja", "bosh kiyim", "🧢"), ("나비", "nabi", "kapalak", "🦋"), ("지도", "jido", "xarita", "🗺️"),
+    ("기차", "gicha", "poyezd", "🚆"), ("사자", "saja", "sher", "🦁"),
+    ("커피", "keopi", "qahva", "☕"), ("토마토", "tomato", "pomidor", "🍅"), ("포도", "podo", "uzum", "🍇"), ("하나", "hana", "bitta", "1️⃣"),
+    ("하마", "hama", "begemot", "🦛"), ("코", "ko", "burun", "👃"),
 ]
 
 # --- Mavzular bo'yicha gaplar: (ko, romanizatsiya, uz) ---

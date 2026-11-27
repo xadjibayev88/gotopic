@@ -1,4 +1,5 @@
 // Koreyscha talaffuz (Web Speech API) va ovoz effektlari (WebAudio sintez).
+import { speakable } from './jamo';
 
 let frVoice: SpeechSynthesisVoice | null = null;
 
@@ -39,7 +40,8 @@ export function hasFrenchVoice(): boolean {
   return !!frVoice;
 }
 
-export function speak(text: string, rate = 0.9): void {
+export function speak(raw: string, rate = 0.9): void {
+  const text = speakable(raw);
   const n = nativeTts();
   if (n) return n.speak(text, 'ko-KR', rate, false);
   if (!webTts()) return;
@@ -54,7 +56,8 @@ export function speak(text: string, rate = 0.9): void {
 }
 
 /** Bir nechta koreyscha iborani ketma-ket o'qiydi. */
-export function speakQueue(parts: string[], rate = 0.9): void {
+export function speakQueue(raw: string[], rate = 0.9): void {
+  const parts = raw.map(speakable);
   const n = nativeTts();
   if (n && parts.length) return parts.forEach((p, i) => n.speak(p, 'ko-KR', rate, i > 0));
   if (!webTts() || !parts.length) return;

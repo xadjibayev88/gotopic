@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { ViviPeek } from './ViviPeek';
 import { COURSE, type Word } from '../data/course';
 import type { Exercise } from '../engine/exercises';
+import { hidePickRomanization } from '../engine/exercises';
 import type { Answer } from '../engine/evaluate';
 import { playSfx, speak, ttsSupported } from '../engine/audio';
 import { normalize } from '../engine/text';
@@ -112,8 +113,7 @@ export function PickView({ ex, locked, onAnswer }: ViewProps<'pick'>) {
     window.addEventListener('keydown', h);
     return () => window.removeEventListener('keydown', h);
   });
-  const q = ex.word.uz.toLowerCase();
-  const hideRo = ex.options.some((w) => w.ro && q.includes(w.ro.toLowerCase()));
+  const hideRo = hidePickRomanization(ex);
   return (
     <div className="ex">
       <div className="ex-badge">✨ Yangi so'z</div>

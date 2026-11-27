@@ -84,7 +84,7 @@ export const COURSE: Unit[] = [
   "lessons": [
    {
     "id": "u1l1",
-    "title": "ㅏ ㅓ ㅗ ㅜ ㅡ",
+    "title": "ㅏ ㅓ ㅗ ㅜ ㅣ",
     "words": [
      {
       "fr": "ㅏ",
@@ -107,9 +107,9 @@ export const COURSE: Unit[] = [
       "ro": "u"
      },
      {
-      "fr": "ㅡ",
-      "uz": "eu",
-      "ro": "eu"
+      "fr": "ㅣ",
+      "uz": "i",
+      "ro": "i"
      }
     ],
     "sentences": [
@@ -117,11 +117,6 @@ export const COURSE: Unit[] = [
       "fr": "아이",
       "uz": "bola",
       "ro": "ai"
-     },
-     {
-      "fr": "우유",
-      "uz": "sut",
-      "ro": "uyu"
      },
      {
       "fr": "오이",
@@ -134,20 +129,25 @@ export const COURSE: Unit[] = [
       "ro": "i"
      },
      {
-      "fr": "여우",
-      "uz": "tulki",
-      "ro": "yeou"
+      "fr": "우아",
+      "uz": "nafislik",
+      "ro": "ua"
+     },
+     {
+      "fr": "아우",
+      "uz": "uka (eskicha)",
+      "ro": "au"
      }
     ]
    },
    {
     "id": "u1l2",
-    "title": "ㅣ ㅑ ㅕ ㅛ ㅠ",
+    "title": "ㅡ ㅑ ㅕ ㅛ ㅠ",
     "words": [
      {
-      "fr": "ㅣ",
-      "uz": "i",
-      "ro": "i"
+      "fr": "ㅡ",
+      "uz": "eu",
+      "ro": "eu"
      },
      {
       "fr": "ㅑ",
@@ -172,9 +172,9 @@ export const COURSE: Unit[] = [
     ],
     "sentences": [
      {
-      "fr": "이",
-      "uz": "tish; ikki",
-      "ro": "i"
+      "fr": "우유",
+      "uz": "sut",
+      "ro": "uyu"
      },
      {
       "fr": "여우",
@@ -182,19 +182,24 @@ export const COURSE: Unit[] = [
       "ro": "yeou"
      },
      {
-      "fr": "우아",
-      "uz": "nafis",
-      "ro": "ua"
-     },
-     {
-      "fr": "아우",
-      "uz": "uka (eskicha)",
-      "ro": "au"
-     },
-     {
       "fr": "여유",
       "uz": "bo'sh vaqt",
       "ro": "yeoyu"
+     },
+     {
+      "fr": "유아",
+      "uz": "go'dak",
+      "ro": "yua"
+     },
+     {
+      "fr": "아이",
+      "uz": "bola",
+      "ro": "ai"
+     },
+     {
+      "fr": "오이",
+      "uz": "bodring",
+      "ro": "oi"
      }
     ]
    }
@@ -286,24 +291,29 @@ export const COURSE: Unit[] = [
       "ro": "namu"
      },
      {
-      "fr": "바다",
-      "uz": "dengiz",
-      "ro": "bada"
+      "fr": "고기",
+      "uz": "go'sht",
+      "ro": "gogi"
      },
      {
-      "fr": "모자",
-      "uz": "bosh kiyim",
-      "ro": "moja"
+      "fr": "머리",
+      "uz": "bosh",
+      "ro": "meori"
      },
      {
-      "fr": "하나",
-      "uz": "bitta",
-      "ro": "hana"
+      "fr": "누나",
+      "uz": "opa (o'g'il bola aytadi)",
+      "ro": "nuna"
      },
      {
-      "fr": "나비",
-      "uz": "kapalak",
-      "ro": "nabi"
+      "fr": "어머니",
+      "uz": "ona",
+      "ro": "eomeoni"
+     },
+     {
+      "fr": "다리",
+      "uz": "oyoq",
+      "ro": "dari"
      }
     ]
    },
@@ -347,19 +357,24 @@ export const COURSE: Unit[] = [
     ],
     "sentences": [
      {
-      "fr": "하나",
-      "uz": "bitta",
-      "ro": "hana"
+      "fr": "어머니",
+      "uz": "ona",
+      "ro": "eomeoni"
+     },
+     {
+      "fr": "바다",
+      "uz": "dengiz",
+      "ro": "bada"
+     },
+     {
+      "fr": "모자",
+      "uz": "bosh kiyim",
+      "ro": "moja"
      },
      {
       "fr": "나비",
       "uz": "kapalak",
       "ro": "nabi"
-     },
-     {
-      "fr": "고기",
-      "uz": "go'sht",
-      "ro": "gogi"
      },
      {
       "fr": "지도",
@@ -409,16 +424,6 @@ export const COURSE: Unit[] = [
     ],
     "sentences": [
      {
-      "fr": "지도",
-      "uz": "xarita",
-      "ro": "jido"
-     },
-     {
-      "fr": "기차",
-      "uz": "poyezd",
-      "ro": "gicha"
-     },
-     {
       "fr": "커피",
       "uz": "qahva",
       "ro": "keopi"
@@ -432,6 +437,21 @@ export const COURSE: Unit[] = [
       "fr": "포도",
       "uz": "uzum",
       "ro": "podo"
+     },
+     {
+      "fr": "하나",
+      "uz": "bitta",
+      "ro": "hana"
+     },
+     {
+      "fr": "하마",
+      "uz": "begemot",
+      "ro": "hama"
+     },
+     {
+      "fr": "코",
+      "uz": "burun",
+      "ro": "ko"
      }
     ]
    }
