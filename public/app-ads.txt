@@ -1,2 +1,1 @@
-# AdMob: o'zingizning nashriyotchi ID raqamingizni yozing, masalan:
-# google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+google.com, pub-2780590832331724, DIRECT, f08c47fec0942fa0
