@@ -65,6 +65,6 @@ Yumshoq soyalar, katta radiusli kartalar (24–40 px), shisha panellar (fon xira
 - 9.0–12.0 s: Hori AI karta to'liq ekranga o'sadi, chat pufaklari zarb bilan chiqadi, shisha mikrofon shar yonadi.
 - 12.0–15.0 s: shar Go Topic logosiga morf bo'ladi, ostida havola; oxirgi kadr birinchisiga ulanadi.
 
-## ASK ME
-- Ilova palitrasi ishlatilsinmi, yoki Go Topic showreel'idagi palitra (`#6D4AFF`, `#FF3B5C`, `#2BB8F0`) ham ruxsat etilsinmi?
-- Musiqa: har safar `media/sfx/music` dan, yoki har video uchun alohida?
+## Qarorlar (foydalanuvchi javobi)
+- Go Topic: asosan ilova palitrasi (binafsha `#B49CFF`/`#7B5CF0`, pushti `#FF8FD0`/`#E0479E`, oltin). Kerak bo'lsa showreel palitrasi ham mumkin: `#6D4AFF`, `#FF3B5C`, `#2BB8F0` (bitta videoda ikki palitrani aralashtirmang).
+- Musiqa: har video uchun alohida, video ritmi va kayfiyatiga moslab (showreel'dagi kabi: zarbda kick, sahna almashinuvida hit, cho'qqidan oldin riser). WebAudio'da sintez qilish yoki `media/sfx/music` dan tanlash mumkin; asosiy shart — kesishlar zarbga tushsin va chiroyli eshitilsin.
