@@ -168,6 +168,13 @@ export class TtsQueue {
         this.onFail?.('tts_failed');
         return null;
       }
+      if (res.status === 403) {
+        const b = (await res.json().catch(() => ({}))) as { code?: string };
+        // Rozilik yo'q (masalan, Telegram/Google orqali kirilgan, rozilik hali berilmagan) — oynani ochamiz.
+        if (b.code === 'ai_consent_required') window.dispatchEvent(new CustomEvent('ai-consent-needed'));
+        this.onFail?.('tts_failed');
+        return null;
+      }
       if (!res.ok) throw new Error(`tts ${res.status}`);
       return await res.blob();
     } catch (e) {

@@ -15,6 +15,17 @@ const REVEAL_SELECTOR = [
   '.shop-item',
 ].join(',');
 
+/**
+ * Yengil UI harakatlari (transform/opacity: ro'yxat↔kartalar o'tishi, menyu, tugmalar) — Android ilovada ham ishlaydi.
+ * Faqat qurilma sekinligi sabab yoqilgan yengil rejim yoki «prefers-reduced-motion» da o'chadi.
+ */
+export function uiMotionAllowed(): boolean {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return false;
+  const c = document.documentElement.classList;
+  if (c.contains('lite') && !c.contains('app')) return false;
+  return !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+}
+
 export function motionAllowed(): boolean {
   if (typeof window === 'undefined' || typeof document === 'undefined') return false;
   if (document.documentElement.classList.contains('lite')) return false;

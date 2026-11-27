@@ -15,7 +15,7 @@ import {
   type AiScope,
 } from '../state/ai-consent';
 
-export function AiConsentDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function AiConsentDialog({ open, onClose, preselectAll = false }: { open: boolean; onClose: () => void; preselectAll?: boolean }) {
   const { me } = useAccount();
   const { state, update } = useStore();
   const [policyVersion, setPolicyVersion] = useState(AI_CONSENT_POLICY_VERSION);
@@ -47,7 +47,8 @@ export function AiConsentDialog({ open, onClose }: { open: boolean; onClose: () 
       setOptions(scopeOptionsFor(r.body.requirements));
       setConsent(r.body.consent);
       const validCurrent = r.body.consent?.policyVersion === r.body.policyVersion;
-      setSelected(validCurrent ? r.body.consent!.grants.filter((g) => g.policyVersion === r.body.policyVersion && g.revokedAt === null).map((g) => g.scope) : []);
+      const current = validCurrent ? r.body.consent!.grants.filter((g) => g.policyVersion === r.body.policyVersion && g.revokedAt === null).map((g) => g.scope) : [];
+      setSelected(preselectAll && !current.length ? scopeOptionsFor(r.body.requirements).map((o) => o.scope) : current);
     }).catch(() => {
       if (alive) setError('Rozilik holatini yuklab bo‘lmadi.');
     }).finally(() => {

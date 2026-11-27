@@ -11,7 +11,7 @@
 //             ingichkalashib uziladi, pufak tomchidek qaytib tushadi; menyu rangi bo'limga qarab almashadi
 import { GlassRefraction, useLiquidGlassOn } from './LiquidGlass';
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
-import { motionAllowed } from '../engine/motion';
+import { uiMotionAllowed as motionAllowed } from '../engine/motion';
 
 export type TabMotion = 'drop' | 'bulge' | 'notch' | 'pill' | 'fill' | 'label' | 'bubble' | 'flip' | 'glow' | 'particle' | 'string' | 'seesaw' | 'slot';
 

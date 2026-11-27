@@ -6,7 +6,7 @@ import { maybeInterstitial } from '../engine/ads';
 import { Avatar } from '../components/Avatar';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { GroupBubbles } from '../components/GroupBubbles';
-import { motionAllowed } from '../engine/motion';
+import { uiMotionAllowed as motionAllowed } from '../engine/motion';
 import { DEMOTE, LEAGUE_PRIZE_XP, LEAGUE_SIZE, LEAGUES, leagueStandings, PROMOTE } from '../engine/game';
 import { weekStart } from '../engine/time';
 import { useStore } from '../state/store';

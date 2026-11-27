@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { countValue, motionAllowed } from '../engine/motion';
+import { countValue, uiMotionAllowed as motionAllowed } from '../engine/motion';
 
 /** Raqam o'zgarganda eski qiymatdan yangisiga «sanab» chiqadi (Count up). */
 export function CountUp({ value, ms = 700 }: { value: number; ms?: number }) {

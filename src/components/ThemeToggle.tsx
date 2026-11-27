@@ -1,7 +1,7 @@
 // Kunduzgi / tungi rejim kaliti (neomorfik). Bosilganda: kichkina odamcha paydo bo'lib, teshik tomon yuradi,
 // sakrab teshikka tushadi — teshik qorayib ochiladi, so'ng butun ilova mavzusi almashadi, quyosh ↔ oy.
 import { useEffect, useRef, useState } from 'react';
-import { motionAllowed } from '../engine/motion';
+import { uiMotionAllowed as motionAllowed } from '../engine/motion';
 
 const W = 240;
 const H = 96;
