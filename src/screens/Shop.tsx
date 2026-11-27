@@ -32,7 +32,7 @@ export function Shop() {
       <h1 className="page-title">Do'kon</h1>
       <SuperPage />
       <div className="gem-balance">
-        <CoinIcon /> <b>{state.gems}</b> {'tanga'}
+        <CoinIcon /> <b>{state.gems}</b> {'Hori'}
       </div>
 
       <h2 className="section-title">Do'kon rastasi</h2>
@@ -49,7 +49,7 @@ export function Shop() {
             color: '#0369a1',
             color2: '#38bdf8',
             canBuy: !premium && !state.unlimitedHearts && state.hearts < MAX_HEARTS && state.gems >= HEART_REFILL_COST,
-            whyNot: premium || state.unlimitedHearts || state.hearts >= MAX_HEARTS ? "Akvarium to'la" : 'Tanga yetmaydi',
+            whyNot: premium || state.unlimitedHearts || state.hearts >= MAX_HEARTS ? "Akvarium to'la" : 'Hori yetmaydi',
             buy: () => buy(buyHeartRefill, "Akvarium to'ldi! Hori xursand 🐟"),
           },
           {
@@ -63,7 +63,7 @@ export function Shop() {
             color: '#eab308',
             color2: '#fde047',
             canBuy: state.gems >= XP_BOOST_COST,
-            whyNot: 'Tanga yetmaydi',
+            whyNot: 'Hori yetmaydi',
             buy: () => buy((s) => buyXpBoost(s), '2x XP yoqildi! ⚡'),
           },
           {
@@ -77,14 +77,14 @@ export function Shop() {
             color: '#0284c7',
             color2: '#7dd3fc',
             canBuy: state.streakFreezes < MAX_FREEZES && state.gems >= FREEZE_COST,
-            whyNot: state.streakFreezes >= MAX_FREEZES ? "Soyabonlar to'liq" : 'Tanga yetmaydi',
+            whyNot: state.streakFreezes >= MAX_FREEZES ? "Soyabonlar to'liq" : 'Hori yetmaydi',
             buy: () => buy(buyFreeze, 'Soyabon tayyor!'),
           },
         ]}
       />
       {!premium && <RewardedButton />}
       {!premium && <RewardedButton kind="xp" />}
-      <p className="muted small">Tangalarni darslar, sovg'alar va turnir g'alabalari orqali ishlang.</p>
+      <p className="muted small">Horilarni darslar, sovg'alar va turnir g'alabalari orqali ishlang.</p>
       {toast && <div className="toast">{toast}</div>}
     </div>
   );

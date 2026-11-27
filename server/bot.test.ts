@@ -148,4 +148,24 @@ describe('telegram bot', () => {
     await bot.handle(msg(8, { photo: [{ file_id: 'x' }] }));
     expect(calls.at(-1)!.body.text).toContain('tarifni tanlang');
   });
+  it('plain text searches the dictionary', async () => {
+    const { calls, bot } = setup();
+    await bot.handle(msg(11, { text: '사랑' }));
+    const last = calls.at(-1)!;
+    expect(String(last.body.text)).toContain('사랑');
+    expect(String(last.body.text)).toContain('sevgi');
+    expect(JSON.stringify(last.body.reply_markup)).toContain('#/dict');
+  });
+
+  it('welcome shows the banner above the text', async () => {
+    const { calls, bot } = setup();
+    await bot.handle(msg(12, { text: '/start' }));
+    expect(JSON.stringify(calls.at(-1)!.body.link_preview_options)).toContain('bot-banner.jpg');
+  });
+
+  it('/help lists the commands', async () => {
+    const { calls, bot } = setup();
+    await bot.handle(msg(13, { text: '/help' }));
+    expect(String(calls.at(-1)!.body.text)).toContain('/lugat');
+  });
 });

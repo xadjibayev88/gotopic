@@ -314,7 +314,7 @@ const PRIZE_FACE: Record<WheelPrize['kind'], { icon: React.ReactNode }> = {
 };
 const LESSON_ICONS: IconName[] = ['chat', 'book', 'headphones', 'pencil', 'mic', 'letters', 'puzzle', 'speaker'];
 const prizeText = (p: WheelPrize) =>
-  p.kind === 'gems' ? `+${p.amount} tanga` : p.kind === 'fish' ? `+${p.amount} baliqcha` : p.kind === 'boost' ? `2x XP · ${p.minutes} daqiqa` : '+1 seriya soyaboni';
+  p.kind === 'gems' ? `+${p.amount} Hori` : p.kind === 'fish' ? `+${p.amount} baliqcha` : p.kind === 'boost' ? `2x XP · ${p.minutes} daqiqa` : '+1 seriya soyaboni';
 
 /** Oltin sirli quti (izometrik 3D SVG): korpus va qopqoq alohida — ochilganda qopqoq uchib ketadi. */
 function GoldBox({ className = 'gbox' }: { className?: string }) {
@@ -430,7 +430,7 @@ function BoxModal({ node, onClose }: { node: PathNode; onClose: () => void }) {
             </button>
           </>
         ) : (
-          <p>Ichida — tanga, baliqcha, 2x XP yoki seriya soyaboni.</p>
+          <p>Ichida — Hori, baliqcha, 2x XP yoki seriya soyaboni.</p>
         )}
       </div>
     </div>,

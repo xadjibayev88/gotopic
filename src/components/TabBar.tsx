@@ -16,10 +16,10 @@ import { motionAllowed } from '../engine/motion';
 export type TabMotion = 'drop' | 'bulge' | 'notch' | 'pill' | 'fill' | 'label' | 'bubble' | 'flip' | 'glow' | 'particle' | 'string' | 'seesaw' | 'slot';
 
 export const TAB_MOTIONS: readonly { id: TabMotion; name: string; note: string }[] = [
+  { id: 'pill', name: 'Sirpanuvchi tabletka', note: 'Tabletka cho‘zilib sirpanadi' },
   { id: 'drop', name: 'Suyuq tomchi', note: 'Ikonka tomchidek ko‘tarilib, qaytib tushadi' },
   { id: 'bulge', name: 'Suyuq bo‘rtiq', note: 'Menyu faol bo‘lim ustida bo‘rtib, oqib o‘tadi' },
   { id: 'notch', name: 'Suzuvchi shar', note: 'Shar o‘yiq ustida sakrab o‘tadi' },
-  { id: 'pill', name: 'Sirpanuvchi tabletka', note: 'Tabletka cho‘zilib sirpanadi' },
   { id: 'fill', name: 'Ikonka to‘lishi', note: 'Ikonka markazidan rangga to‘ladi' },
   { id: 'label', name: 'Ochiladigan yozuv', note: 'Faol bo‘lim yozuvi bilan kengayadi' },
   { id: 'bubble', name: 'Pufakchalar', note: 'Ikonkadan pufakchalar uchadi' },
@@ -41,7 +41,7 @@ export function readTabMotion(): TabMotion {
   } catch {
     /* saqlash bloklangan */
   }
-  return 'drop';
+  return 'pill';
 }
 
 export function saveTabMotion(m: TabMotion) {

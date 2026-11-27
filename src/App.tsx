@@ -340,7 +340,7 @@ function TopBar({ onShop, onProfile }: { onShop: () => void; onProfile: () => vo
       <button type="button" className={`stat streak ${active ? 'on' : ''}`} title="Kunlik seriya" onClick={onProfile}>
         <span className={`ico-anim ico-flame ${active ? 'on' : ''}`}><StreakFlame on={active} /></span> <b><CountUp value={state.streak} /></b>
       </button>
-      <button type="button" className="stat gems" title="Tangalar" onClick={onShop}>
+      <button type="button" className="stat gems" title="Horilar" onClick={onShop}>
         <span className="ico-anim ico-coin"><CoinIcon /></span> <b><CountUp value={state.gems} /></b>
       </button>
       <button type="button" className="stat heart" title="Baliqchalar (xato qilsangiz kamayadi)" onClick={onShop}>

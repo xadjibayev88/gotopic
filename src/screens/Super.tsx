@@ -16,7 +16,7 @@ const PERKS: [React.ReactNode, string, string][] = [
   [<Ic key="c" name="sparkle" size={22} />, 'Cheksiz xabarlar', 'Kunlik 30 ta xabar chegarasi yo\'q'],
   [<FishIcon key="d" />, 'Cheksiz baliqcha', 'Xato qilsangiz ham darsdan chiqib ketmaysiz'],
   [<Ic key="e" name="shield" size={22} />, 'Reklamasiz', 'Darslar va suhbat orasida reklama yo\'q'],
-  [<Ic key="f" name="flame" size={22} />, 'Seriyani bepul tiklash', 'Uzilgan seriyani 2 kun ichida tangasiz tiklaysiz'],
+  [<Ic key="f" name="flame" size={22} />, 'Seriyani bepul tiklash', 'Uzilgan seriyani 2 kun ichida Horisiz tiklaysiz'],
 ];
 
 const fmt = (n: number) => n.toLocaleString('ru-RU').replace(/[, ]/g, ' ');
