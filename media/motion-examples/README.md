@@ -9,5 +9,6 @@ Foydalanuvchi yoqtirgan videolar. `MOTION.md` shu kadrlardan yozilgan. Yangi nam
 | ref-3.jpg | https://www.instagram.com/reel/DfxaYaCKFfo/ | bemx.studio | Logo morfi, prompt va kursor, 3D perspektivadagi dashboard'lar, matnni belgilash |
 | ref-4.jpg | https://www.instagram.com/reel/DfZiBU0o2Cp/ | Kendel | Bo'limli progress paneli (Intro / Problem / Use case / CTA), so'zlar almashinuvi, nuqta morfi |
 | ref-5.jpg | https://www.instagram.com/reel/Deq1nUPMqtr/ | Holo | Qorong'i fonda aurora gradientlar, shisha shar, shisha tugma, egilgan 3D kalendar, chat UI |
+| ref-6.jpg | foydalanuvchi yuklagan video (oxiri: louisraille.fr) | louisraille.fr | Bitta yonuvchi nuqta har sahnada shaklga aylanadi: to'lqinlar, tugunli halqa, gul, egiluvchi gradient karta, yoylar va orbital nuqtalar, bog'langan tugmalar, cheksizlik kometasi, suyuq shakllar, logo. Oddiy so'z + urg'u so'z |
 
 Bu kadrlar boshqa mualliflarniki: faqat ichki namuna sifatida. Tashqariga tarqatmang va videolarga qo'shmang.
