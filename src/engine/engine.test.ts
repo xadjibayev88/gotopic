@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ALL_LESSONS, COURSE } from '../data/course';
-import { buildLesson, buildPractice, clozeOf, makeSentenceExercise } from './exercises';
+import { buildLesson, buildPractice, clozeOf, makeSentenceExercise, withoutNotes } from './exercises';
 import { evaluate } from './evaluate';
 import { checkAnswer, normalize, tokenize } from './text';
 import { rng } from './random';
@@ -80,7 +80,7 @@ describe('course content', () => {
         for (const kind of ['build-fr2uz', 'build-uz2fr', 'listen'] as const) {
           const ex = makeSentenceExercise(kind, s, pool, vocab, r);
           if (ex.kind !== 'build' && ex.kind !== 'listen') throw new Error('kind');
-          const target = ex.kind === 'build' && ex.dir === 'fr2uz' ? s.uz : s.fr;
+          const target = ex.kind === 'build' && ex.dir === 'fr2uz' ? withoutNotes(s.uz) : s.fr;
           const needed = tokenize(target);
           const bank = ex.tokens.slice();
           for (const t of needed) {
