@@ -1,4 +1,5 @@
 import { StrictMode } from 'react';
+import { installVisitPing } from './engine/visit';
 import { createRoot } from 'react-dom/client';
 import { App } from './App';
 import { StoreProvider } from './state/store';
@@ -14,6 +15,7 @@ import { initI18n } from './i18n';
 initTheme();
 installSheetDrag();
 installLiveTick();
+installVisitPing();
 
 // Yengil rejim: sekin qurilmalarda (kam xotira/protsessor) shisha blur o'chiriladi — ilova qotmaydi.
 try {

@@ -5,6 +5,7 @@
 import { randomBytes } from 'node:crypto';
 import { db } from './db.ts';
 import { decideReview } from './social.ts';
+import { collectStats, dashOf, dayOf, fetchPeerStats, saveDash, statsText } from './stats.ts';
 import { confirmTgLogin, tgLoginStatus } from './tglogin.ts';
 import { getUser, upsertSocialUser } from './accounts.ts';
 import { loadDictionary, searchDictionary } from './dictionary.ts';
@@ -343,6 +344,12 @@ export function createBot(tg: Tg, download: (fileId: string) => Promise<{ mime: 
     }
     if (text === '/plans' || text === '/tariflar') return send(chat, plansText(), { reply_markup: plansKb() });
     if (text === '/id' || text === '/myid') return send(chat, `Sizning chat ID: <code>${chat}</code>`);
+    if (text === '/stats' || text === '/statistika') {
+      if (!adminChats().includes(chat)) return; // faqat admin
+      const stats = statsText(collectStats(), await fetchPeerStats());
+      await send(chat, stats);
+      return;
+    }
     if (text === '/me') return send(chat, meText(userOf(from)), { reply_markup: mainKb() });
     if (text === '/help' || text === '/yordam') return send(chat, helpText(), { reply_markup: mainKb() });
     if (/^\/(lugat|dict)\b/.test(text)) return send(chat, dictText(text.replace(/^\/\S+\s*/, '')), { reply_markup: dictKb() });
@@ -466,7 +473,44 @@ export function createBot(tg: Tg, download: (fileId: string) => Promise<{ mime: 
     return sent;
   }
 
-  return { handle, notifyReceipt, notifyDecision, notifyReview, notifyAdmins };
+  /**
+   * Admin statistikasi: har bir admin chatida bitta qadalgan xabar — har chaqirilganda yangilanadi
+   * (o'zgarmagan bo'lsa tegilmaydi). Kun oxirida (23:5x Toshkent) alohida kunlik hisobot yuboriladi.
+   */
+  async function refreshDashboard(now = Date.now(), force = false) {
+    const chats = adminChats();
+    if (!chats.length) return;
+    const own = collectStats(now);
+    const peer = await fetchPeerStats();
+    const text = statsText(own, peer);
+    const clock = new Date(now + 5 * 3600_000).toISOString().slice(11, 16);
+    for (const chat of chats) {
+      try {
+        const d = dashOf(chat);
+        let mid = d?.message_id ?? null;
+        if (mid && (force || d?.text !== text)) {
+          const ok = await tg('editMessageText', { chat_id: chat, message_id: mid, text, parse_mode: 'HTML' }).then(() => true, (e: Error) => /not modified/i.test(e.message));
+          if (!ok) mid = null; // xabar o'chirilgan — qaytadan yuboramiz
+        }
+        if (!mid) {
+          const m = (await send(chat, text, { disable_notification: true })) as { message_id?: number };
+          mid = m?.message_id ?? null;
+          if (mid) await tg('pinChatMessage', { chat_id: chat, message_id: mid, disable_notification: true }).catch(() => {});
+        }
+        const today = dayOf(now);
+        let report = d?.report_day ?? null;
+        if (clock >= '23:50' && report !== today) {
+          await send(chat, statsText(own, peer, `🗓 Kunlik hisobot · ${today}`));
+          report = today;
+        }
+        saveDash(chat, { message_id: mid, text, report_day: report });
+      } catch {
+        /* keyingi safar qayta urinamiz */
+      }
+    }
+  }
+
+  return { handle, notifyReceipt, notifyDecision, notifyReview, notifyAdmins, refreshDashboard };
 }
 
 // ---------- Telegram API + polling ----------
@@ -526,6 +570,9 @@ export function startBot(token = env('TELEGRAM_BOT_TOKEN')): Bot | null {
       }
     }
   })();
+  // Admin statistikasi: ishga tushgandan 20 s keyin, so'ng har 5 daqiqada.
+  setTimeout(() => void b.refreshDashboard().catch(() => {}), 20_000);
+  setInterval(() => void b.refreshDashboard().catch(() => {}), 5 * 60_000).unref?.();
   console.log('Telegram bot ishga tushdi');
   return b;
 }
