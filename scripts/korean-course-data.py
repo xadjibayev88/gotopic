@@ -115,7 +115,7 @@ SENTENCES = {
  ("무슨 색깔을 좋아해요?", "museun saekkareul joahaeyo?", "Qaysi rangni yoqtirasiz?"),
  ("저는 파란색을 좋아해요.", "jeoneun paransaegeul joahaeyo.", "Men ko'k rangni yoqtiraman."),
  ("사과는 빨간색이에요.", "sagwaneun ppalgansaegieyo.", "Olma qizil rangda."),
- ("바나나는 노란색이에요.", "bananeun noransaegieyo.", "Banan sariq."),
+ ("바나나는 노란색이에요.", "banananeun noransaegieyo.", "Banan sariq."),
  ("흰색 셔츠를 샀어요.", "huinsaek syeocheureul sasseoyo.", "Oq ko'ylak sotib oldim."),
  ("검은색 가방이 있어요.", "geomeunsaek gabangi isseoyo.", "Qora sumkam bor."),
  ("나무는 초록색이에요.", "namuneun choroksaegieyo.", "Daraxt yashil."),
@@ -168,7 +168,7 @@ SENTENCES = {
  ("도서관에서 공부해요.", "doseogwaneseo gongbuhaeyo.", "Kutubxonada dars qilaman."),
  ("공원에서 산책해요.", "gongwoneseo sanchaekaeyo.", "Bog'da sayr qilaman."),
  ("약국이 어디에 있어요?", "yakgugi eodie isseoyo?", "Dorixona qayerda?"),
- ("우체국은 은행 옆에 있어요.", "ucheguk-eun eunhaeng yeope isseoyo.", "Pochta bank yonida."),
+ ("우체국은 은행 옆에 있어요.", "uchegugeun eunhaeng yeope isseoyo.", "Pochta bank yonida."),
  ("주말에 영화관에 가요.", "jumare yeonghwagwane gayo.", "Dam olish kuni kinoteatrga boraman."),
 ],
 "Hafta va kun": [
@@ -306,7 +306,7 @@ SENTENCES = {
  ("저는 그 계획에 반대합니다.", "jeoneun geu gyehoege bandaehamnida.", "Men bu rejaga qarshiman."),
  ("대부분의 사람들이 동의했습니다.", "daebubunui saramdeuri donguihaetseumnida.", "Ko'pchilik rozi bo'ldi."),
  ("이 방법의 장점과 단점을 말해 보세요.", "i bangbeobui jangjeomgwa danjeomeul malhae boseyo.", "Bu usulning afzallik va kamchiliklarini aytib ko'ring."),
- ("토론 후에 결론을 내렸습니다.", "toron hue gyeollon-eul naeryeotseumnida.", "Munozaradan so'ng xulosa chiqardik."),
+ ("토론 후에 결론을 내렸습니다.", "toron hue gyeolloneul naeryeotseumnida.", "Munozaradan so'ng xulosa chiqardik."),
  ("두 문화의 차이를 인정해야 합니다.", "du munhwaui chaireul injeonghaeya hamnida.", "Ikki madaniyat farqini tan olish kerak."),
  ("자신의 생각을 분명하게 표현하세요.", "jasinui saenggageul bunmyeonghage pyohyeonhaseyo.", "O'z fikringizni aniq ifodalang."),
  ("비가 와서 오히려 시원해졌어요.", "biga waseo ohiryeo siwonhaejyeosseoyo.", "Yomg'ir yog'ib, aksincha, salqin bo'ldi."),
@@ -325,9 +325,9 @@ SENTENCES = {
  ("이 연구는 새로운 가설을 제시합니다.", "i yeonguneun saeroun gaseoreul jesihamnida.", "Bu tadqiqot yangi faraz ilgari suradi."),
  ("통계에 따르면 비율이 증가했습니다.", "tonggye-e ttareumyeon biyuri jeunggahaetseumnida.", "Statistikaga ko'ra, ulush oshdi."),
  ("다른 관점에서 문제를 검토해 봅시다.", "dareun gwanjeomeseo munjereul geomtohae bopsida.", "Muammoni boshqa nuqtayi nazardan ko'rib chiqaylik."),
- ("이론만으로는 한계가 있습니다.", "iron-maneuroneun hangyega itseumnida.", "Faqat nazariya bilan cheklov bor."),
+ ("이론만으로는 한계가 있습니다.", "ironmaneuroneun hangyega itseumnida.", "Faqat nazariya bilan cheklov bor."),
  ("실험으로 가설을 입증했습니다.", "silheomeuro gaseoreul ipjeunghaetseumnida.", "Tajriba orqali farazni isbotladik."),
- ("미래 전망이 밝습니다.", "mirae jeonmangi balkseumnida.", "Kelajak istiqboli porloq."),
+ ("미래 전망이 밝습니다.", "mirae jeonmangi bakseumnida.", "Kelajak istiqboli porloq."),
  ("맥락을 이해하는 것이 중요합니다.", "maengnageul ihaehaneun geosi jungyohamnida.", "Kontekstni tushunish muhim."),
  ("최근 추세를 보면 변화가 뚜렷합니다.", "choegeun chusereul bomyeon byeonhwaga tturyeotamnida.", "So'nggi trendga qaralsa, o'zgarish aniq ko'rinadi."),
 ],
@@ -344,7 +344,7 @@ SENTENCES = {
 "Akademik nutq · T6": [
  ("이 결과는 중요한 점을 시사합니다.", "i gyeolgwaneun jungyohan jeomeul sisahamnida.", "Bu natija muhim jihatga ishora qiladi."),
  ("그 표현은 여러 의미를 내포합니다.", "geu pyohyeoneun yeoreo uimireul naepohamnida.", "Bu ifoda bir necha ma'noni o'z ichiga oladi."),
- ("우리는 이 문제를 간과해서는 안 됩니다.", "urineun i munjereul ganggwahaeseoneun an doemnida.", "Bu muammoni e'tibordan chetda qoldirmasligimiz kerak."),
+ ("우리는 이 문제를 간과해서는 안 됩니다.", "urineun i munjereul gangwahaeseoneun an doemnida.", "Bu muammoni e'tibordan chetda qoldirmasligimiz kerak."),
  ("새로운 해결책을 모색해야 합니다.", "saeroun haegyeolchaegeul mosaekaeya hamnida.", "Yangi yechim izlash kerak."),
  ("두 연구의 결과가 상반됩니다.", "du yeonguui gyeolgwaga sangbandoemnida.", "Ikki tadqiqot natijasi bir-biriga zid."),
  ("변화에는 비용이 수반됩니다.", "byeonhwaeneun biyongi subandoemnida.", "O'zgarish xarajatlarni o'zi bilan olib keladi."),
@@ -366,7 +366,7 @@ SENTENCES = {
 # TOPIK 6 uchun yangi so'zlar (eski katalogdagi T6 bo'limlari TOPIK 5 ning takrori edi).
 T6_TOPICS = {
 "Akademik nutq · T6": [
- ("시사하다", "sisahada", "ishora qilmoq"), ("내포하다", "naepohada", "o'z ichiga olmoq"), ("간과하다", "ganggwahada", "e'tibordan chetda qoldirmoq"),
+ ("시사하다", "sisahada", "ishora qilmoq"), ("내포하다", "naepohada", "o'z ichiga olmoq"), ("간과하다", "gangwahada", "e'tibordan chetda qoldirmoq"),
  ("모색하다", "mosaekada", "izlamoq, yo'l qidirmoq"), ("상반되다", "sangbandoeda", "qarama-qarshi bo'lmoq"), ("수반하다", "subanhada", "birga olib kelmoq"),
  ("야기하다", "yagihada", "keltirib chiqarmoq"), ("촉진하다", "chokjinhada", "tezlashtirmoq"), ("저해하다", "jeohaehada", "to'sqinlik qilmoq"), ("논의", "nonui", "muhokama"),
 ],
