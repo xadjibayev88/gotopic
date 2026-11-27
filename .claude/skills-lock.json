@@ -1,0 +1,215 @@
+{
+  "version": 2,
+  "skills": {
+    "animated-chart": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/animated-chart/SKILL.md",
+      "computedHash": "bf7f8644e66c3f9101d582642fb21b4c409011144741784323e7fb946c25a077"
+    },
+    "apple-launch-film": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/apple-launch-film/SKILL.md",
+      "computedHash": "9d6c49377921c1607fadf188a28d7e863f64ad83ac06962b058b076795f5f90b"
+    },
+    "brand-intake": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/brand-intake/SKILL.md",
+      "computedHash": "a4ab9773c4e82b9c7453aed3ca68442bdc705944f1a4e7c2ff89c9a0d394a848"
+    },
+    "launch-video": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/launch-video/SKILL.md",
+      "computedHash": "0122a7e03c22a51693ac2c59269d3a4337dbb4ee2f6bdc9625cb6b1087c2a12e"
+    },
+    "loop-cover": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/loop-cover/SKILL.md",
+      "computedHash": "2fcd6dc8dd4f8efa63bd2b068ba0d31b311c30ef2fa8b4caa09ca95d6b5ef384"
+    },
+    "milestone-reveal": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/milestone-reveal/SKILL.md",
+      "computedHash": "99f107102ac218f40c294015c437ac68524416c8b6d962c9dba9dda4d9bf98a9"
+    },
+    "model-showdown": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/model-showdown/SKILL.md",
+      "computedHash": "c4c32be9c9816dff005c203dfa95c423df2aae70188800b4e6cfa1ee8dd6add4"
+    },
+    "motion-brief-writer": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/motion-brief-writer/SKILL.md",
+      "computedHash": "b2e846aaa2624bf95202ee290ba8a07eafadc4438911f382ce0f48d018236c13"
+    },
+    "motion-effects": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/motion-effects/SKILL.md",
+      "computedHash": "665f2911af78d794d32cd18c2c775b76ff12699fbbb05d7954eb21bb4f2b2b33"
+    },
+    "motion-prompt-writer": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/motion-prompt-writer/SKILL.md",
+      "computedHash": "a984c4625eea48c3b3ec779b8418f3b1f72b60b912474c5e6b93948d6217b306"
+    },
+    "newsletter-promo": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/newsletter-promo/SKILL.md",
+      "computedHash": "ab4f48303759b75528b0fbd09ba021bc01843b00561b1d5a75d2d69f6a0e0e19"
+    },
+    "reel-export": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/reel-export/SKILL.md",
+      "computedHash": "b1dc112e84eefb44000a2661ddb9d63b96ef0b6d26d0f3d6cc8e4c83de2d425d"
+    },
+    "reference-to-motion": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/reference-to-motion/SKILL.md",
+      "computedHash": "e090335adae1b0233d00fe2e341c19b0a02a18579af7b61765164655de45934f"
+    },
+    "remotion-best-practices": {
+      "source": "remotion-dev/skills",
+      "commit": "a3f4098a2afd0e13f6a6f8c8760e275f75457ea9",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-best-practices/SKILL.md",
+      "computedHash": "269ff3a2eef0fcbb17e01ee5dbf1488438156e60091703f65932185fca239728"
+    },
+    "remotion-captions": {
+      "source": "remotion-dev/skills",
+      "commit": "a3f4098a2afd0e13f6a6f8c8760e275f75457ea9",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-captions/SKILL.md",
+      "computedHash": "25753a6f91013f5f9141109173a5adb2313613dcd6a99ba6e47c1f1350d831c5"
+    },
+    "remotion-create": {
+      "source": "remotion-dev/skills",
+      "commit": "a3f4098a2afd0e13f6a6f8c8760e275f75457ea9",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-create/SKILL.md",
+      "computedHash": "c0efb53c12e6cd08b364179bac63f786d954be3a966972c3aa48a8994394bb94"
+    },
+    "remotion-docs": {
+      "source": "remotion-dev/skills",
+      "commit": "a3f4098a2afd0e13f6a6f8c8760e275f75457ea9",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-docs/SKILL.md",
+      "computedHash": "fc7ce0e9b7d1b847484f48fd9305e44463e2995b7d8a19aefef0fa81a12c93d9"
+    },
+    "remotion-elements": {
+      "source": "remotion-dev/skills",
+      "commit": "a3f4098a2afd0e13f6a6f8c8760e275f75457ea9",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-elements/SKILL.md",
+      "computedHash": "d5b32cd2c6085cde92750f0fc972288207e41adebfa755d23d18d98d5c7ebd5d"
+    },
+    "remotion-interactivity": {
+      "source": "remotion-dev/skills",
+      "commit": "a3f4098a2afd0e13f6a6f8c8760e275f75457ea9",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-interactivity/SKILL.md",
+      "computedHash": "29e92af8b1ba4ca89e939f5a8f52e5d257c69b1cc68ceb4576f9764d214176e2"
+    },
+    "remotion-license": {
+      "source": "remotion-dev/skills",
+      "commit": "a3f4098a2afd0e13f6a6f8c8760e275f75457ea9",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-license/SKILL.md",
+      "computedHash": "ebce324360283256ea60c30ed4251e8a72a6005f3f232ef6682706531c25a54d"
+    },
+    "remotion-maps": {
+      "source": "remotion-dev/skills",
+      "commit": "a3f4098a2afd0e13f6a6f8c8760e275f75457ea9",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-maps/SKILL.md",
+      "computedHash": "5d52ed6c043488eb570d3f925ea356de812d3d5214b27fdad68477e0c944441f"
+    },
+    "remotion-markup": {
+      "source": "remotion-dev/skills",
+      "commit": "a3f4098a2afd0e13f6a6f8c8760e275f75457ea9",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-markup/SKILL.md",
+      "computedHash": "7203452651b1edaafd61c74b3f350ea6ba2b6b03be6ea3d38fe1a0c998b313c6"
+    },
+    "remotion-motion-graphics": {
+      "source": "haidrrrry/claude-remotion-skill",
+      "commit": "1dcbe5e3fc6cf970bd10d3cc05f0a8a5d19d0383",
+      "sourceType": "github",
+      "skillPath": "remotion-motion-graphics/SKILL.md",
+      "computedHash": "c7799765a90eb5cb3e75b6568e8692863ef2b601625cd13058c901d04a694b4e"
+    },
+    "remotion-multimedia": {
+      "source": "remotion-dev/skills",
+      "commit": "a3f4098a2afd0e13f6a6f8c8760e275f75457ea9",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-multimedia/SKILL.md",
+      "computedHash": "85fed69a46d8b49f2bb5e668f8884d3f7800e35253310013fdf276fe0db8dcbf"
+    },
+    "remotion-render": {
+      "source": "remotion-dev/skills",
+      "commit": "a3f4098a2afd0e13f6a6f8c8760e275f75457ea9",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-render/SKILL.md",
+      "computedHash": "7d25456c4bef616ed1abe735febb8a061408bee4eca6df0ac118b436db4c6707"
+    },
+    "remotion-saas": {
+      "source": "remotion-dev/skills",
+      "commit": "a3f4098a2afd0e13f6a6f8c8760e275f75457ea9",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-saas/SKILL.md",
+      "computedHash": "0cff6e20ac032e4aa2550aaec40f4bbaea0d24b27a6a3c8ee2f074c60a0cb9be"
+    },
+    "remotion-studio": {
+      "source": "remotion-dev/skills",
+      "commit": "a3f4098a2afd0e13f6a6f8c8760e275f75457ea9",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-studio/SKILL.md",
+      "computedHash": "4cc6a4cb0670acbf0b7ff48c7435f45e904d459cda05d91ec050fda975d95980"
+    },
+    "remotion-upgrade": {
+      "source": "remotion-dev/skills",
+      "commit": "a3f4098a2afd0e13f6a6f8c8760e275f75457ea9",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-upgrade/SKILL.md",
+      "computedHash": "ef70077c9c394e442e832f712cc919733220cd7e81fb1ab76052ead5a1aa65ca"
+    },
+    "title-sequence-3d": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/title-sequence-3d/SKILL.md",
+      "computedHash": "c22dae16fed38d03886e1e060f26fa5e70b0b33d318477a9394f9a63d090ec2a"
+    },
+    "vox-explainer": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/vox-explainer/SKILL.md",
+      "computedHash": "9f7033b698ad90313818325583b9bdf6db824fe1f385210d4a1b73db7c704676"
+    }
+  }
+}
