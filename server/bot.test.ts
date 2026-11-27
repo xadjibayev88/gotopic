@@ -140,7 +140,7 @@ describe('telegram bot', () => {
   it('welcome message has the app button and the Super offer', async () => {
     const { calls, bot } = setup();
     await bot.handle(msg(9, { text: '/start' }));
-    const last = calls.at(-1)!;
+    const last = calls.find((c) => String(c.body.text).includes('Assalomu alaykum'))!;
     expect(last.body.text).toContain('Assalomu alaykum');
     expect(JSON.stringify(last.body.reply_markup)).toContain('web_app');
   });
@@ -162,7 +162,7 @@ describe('telegram bot', () => {
   it('welcome shows the banner above the text', async () => {
     const { calls, bot } = setup();
     await bot.handle(msg(12, { text: '/start' }));
-    expect(JSON.stringify(calls.at(-1)!.body.link_preview_options)).toContain('bot-banner.jpg');
+    expect(JSON.stringify(calls.find((c) => c.body.link_preview_options)!.body.link_preview_options)).toContain('bot-banner.jpg');
   });
 
   it('/help lists the commands', async () => {
@@ -196,5 +196,33 @@ describe('telegram bot', () => {
     expect(tgLoginStatus(old)).toBe('expired');
     await bot.handle(cb(22, `tgl:${old}`));
     expect(takeTgLogin(old)).toBeNull();
+  });
+
+  it('/start gives every user the bottom menu; only the admin gets «📊 Statistika»', async () => {
+    process.env.ADMIN_TELEGRAM_CHAT_ID = '777';
+    const { calls, bot } = setup();
+    await bot.handle(msg(31, { text: '/start' }));
+    const userMenu = JSON.stringify(calls.at(-1)!.body.reply_markup);
+    expect(userMenu).toContain('Super tariflar');
+    expect(userMenu).toContain('web_app');
+    expect(userMenu).not.toContain('Statistika');
+    await bot.handle(msg(777, { text: '/start' }));
+    expect(JSON.stringify(calls.at(-1)!.body.reply_markup)).toContain('Statistika');
+    delete process.env.ADMIN_TELEGRAM_CHAT_ID;
+  });
+
+  it('menu buttons answer like commands', async () => {
+    const { calls, bot } = setup();
+    await bot.handle(msg(32, { text: '💎 Super tariflar' }));
+    expect(String(calls.at(-1)!.body.text)).toContain('Super');
+    await bot.handle(msg(32, { text: '❓ Yordam' }));
+    expect(String(calls.at(-1)!.body.text)).toContain('yordam');
+  });
+
+  it('inline mode answers with results', async () => {
+    const { calls, bot } = setup();
+    await bot.handle({ inline_query: { id: 'iq1', from: { id: 33 }, query: '사랑' } });
+    const a = calls.find((c) => c.method === 'answerInlineQuery')!;
+    expect(a.body.results.length).toBeGreaterThan(0);
   });
 });
