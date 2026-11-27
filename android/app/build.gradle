@@ -3,6 +3,8 @@ plugins { id 'com.android.application' }
 def buildVersionCode = (project.findProperty('verCode') ?: '1').toString().toInteger()
 def buildVersionName = (project.findProperty('versionName') ?: '1.0.0').toString()
 def startUrl = (project.findProperty('startUrl') ?: 'https://gotopic.up.railway.app/').toString()
+// Ilova ID: Play Market'dagi eski ilova — uz.hangeulmaktabi.app; saytdan yuklanadigan APK — -PappId=uz.gotopic.app
+def appId = (project.findProperty('appId') ?: 'uz.hangeulmaktabi.app').toString()
 def admobAppId = (project.findProperty('admobAppId') ?: '').toString()
 if (admobAppId.isEmpty()) admobAppId = 'ca-app-pub-3940256099942544~3347511713' // Google sinov ID'si
 def releaseSigningValues = [
@@ -19,7 +21,7 @@ android {
 
     defaultConfig {
         // Play Market'dagi Go Topic ilovasining ID'si (eski ilova shu ID bilan yangilanadi). Kod paketi (namespace) ichki.
-        applicationId 'uz.hangeulmaktabi.app'
+        applicationId appId
         minSdk 24
         targetSdk 35
         versionCode buildVersionCode

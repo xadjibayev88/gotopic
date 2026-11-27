@@ -46,6 +46,7 @@ const MIME: Record<string, string> = {
   '.png': 'image/png',
   '.ico': 'image/x-icon',
   '.woff2': 'font/woff2',
+  '.apk': 'application/vnd.android.package-archive',
 };
 
 // ---------- Xotiradagi limitlar (har bir yo'nalish uchun alohida) ----------
@@ -749,6 +750,7 @@ async function serveStatic(req: IncomingMessage, res: ServerResponse) {
       ...(isHtml ? { 'content-security-policy': cspFor(data.toString('utf8')) } : {}),
       'content-type': MIME[extname(file)] ?? 'application/octet-stream',
       'cache-control': file.includes('/assets/') ? 'public, max-age=31536000, immutable' : 'no-cache',
+      ...(extname(file) === '.apk' ? { 'content-disposition': 'attachment; filename="GoTopic.apk"' } : {}),
     });
     res.end(data);
   } catch {
