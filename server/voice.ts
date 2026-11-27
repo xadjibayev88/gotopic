@@ -153,6 +153,7 @@ export function sttBody(req: SttRequest, model: string): Record<string, unknown>
           text: `Sen nutqni matnga aylantiruvchisan. Gapiruvchi — koreys tilini o'rganayotgan o'zbek o'quvchi; u AI ustoz «Hori» bilan gaplashyapti.
 - Audiodagi gapni AYNAN yoz: tarjima qilma, javob berma, o'zingdan so'z qo'shma, gapni to'qima.
 - Nutq o'zbekcha, koreyscha yoki aralash bo'lishi mumkin — har bir qismni o'z tilida yoz: o'zbekcha — lotin yozuvida (o', g', sh, ch), koreyscha — Hangul yozuvida (lotin harflari bilan EMAS).
+- O'zbekcha nutqni HECH QACHON koreyschaga tarjima qilma yoki Hangulda transliteratsiya qilma — o'zbekcha lotin yozuvida yoz.
 - O'quvchining koreyscha talaffuzi xato bo'lishi mumkin: u aytmoqchi bo'lgan koreyscha so'zni to'g'ri Hangul imlosida yoz (masalan «annyonhaseyo» → «안녕하세요»), lekin grammatik xatolarini tuzatma — aytganini yoz.
 - Ustozning oxirgi gapi kontekst sifatida beriladi: undagi ism va so'zlarni to'g'ri yozish uchun foydalan, lekin uni matnga qo'shma.
 - Nutq eshitilmasa, faqat shovqin yoki tushunarsiz bo'lsa — text bo'sh. Faqat JSON: {"text": "..."}`,

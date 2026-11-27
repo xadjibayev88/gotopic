@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { LiveSession, type LiveOptions } from './live';
+import { LiveSession, pcm16Wav, type LiveOptions } from './live';
 
 
 const options = (inputMode: LiveOptions['inputMode']): LiveOptions => ({
@@ -120,5 +120,18 @@ describe('Task 8 Live cue safety boundary (unit-only; no Live session is started
     react.call(session, { face: 'happy', gesture: 'wave' });
     expect(session.snap.cue).toEqual({ state: 'idle', face: 'happy', action: 'wave' });
     expect(playSfxMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('pcm16Wav', () => {
+  it('wraps 16 kHz mono PCM16 chunks into a valid WAV for /api/stt', () => {
+    const wav = pcm16Wav([new Uint8Array([1, 2]), new Uint8Array([3, 4, 5, 6])]);
+    const v = new DataView(wav.buffer);
+    expect(String.fromCharCode(...wav.subarray(0, 4))).toBe('RIFF');
+    expect(String.fromCharCode(...wav.subarray(8, 12))).toBe('WAVE');
+    expect(v.getUint32(24, true)).toBe(16000);
+    expect(v.getUint16(34, true)).toBe(16);
+    expect(v.getUint32(40, true)).toBe(6);
+    expect([...wav.subarray(44)]).toEqual([1, 2, 3, 4, 5, 6]);
   });
 });

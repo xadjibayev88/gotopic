@@ -59,4 +59,16 @@ describe('CloudStt typed response contract (mock transport)', () => {
     expect(onFinal).not.toHaveBeenCalled();
     expect(onError).toHaveBeenCalledWith('failed', 'STT natijasi notoʻgʻri formatda');
   });
+
+  it('always lets the server detect the language, even when the mic is on Korean', async () => {
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ text: 'men tushunmadim', detectedLanguage: 'uz-UZ', alternatives: [], reviewReasons: [] }), { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+    const stt = new CloudStt(() => null);
+    const internal = stt as unknown as { chunks: Blob[]; startedAt: number; finish: (mime: string, lang: string) => Promise<void> };
+    internal.chunks = [new Blob([new Uint8Array(1600)], { type: 'audio/webm' })];
+    internal.startedAt = Date.now() - 1000;
+    await internal.finish('audio/webm', 'ko-KR');
+    const sent = JSON.parse(String((fetchMock.mock.calls[0] as unknown as [string, RequestInit])[1].body));
+    expect(sent.hint).toBe('auto');
+  });
 });

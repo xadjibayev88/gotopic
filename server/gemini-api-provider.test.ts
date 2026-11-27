@@ -78,6 +78,14 @@ describe('Gemini API (free) provider', () => {
     expect(body.contents[0].parts[0].inlineData.mimeType).toBe('audio/webm');
   });
 
+  it('tells the transcriber to keep Uzbek speech in Uzbek instead of Hangul', async () => {
+    const { p, fetchImpl } = provider([textReply({ text: 'men bugun charchadim', language: 'uz' })]);
+    await p.transcribe({ audio: new Uint8Array([1, 2, 3]), languageCode: 'uz-UZ', mimeType: 'audio/wav', autoLanguage: true });
+    const body = JSON.parse(String((fetchImpl.mock.calls[0] as unknown as [string, RequestInit])[1].body));
+    expect(body.systemInstruction.parts[0].text).toContain('HECH QACHON koreyschaga tarjima qilma');
+    expect(body.contents[0].parts[1].text).toContain("o'zbekcha, koreyscha yoki aralash");
+  });
+
   it('wraps Gemini TTS PCM into WAV with the Uzbek delivery style', async () => {
     const pcm = Buffer.alloc(2400 * 2, 3);
     const { p, fetchImpl } = provider([

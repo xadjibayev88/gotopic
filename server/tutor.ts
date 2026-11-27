@@ -622,6 +622,7 @@ export function liveInstruction(req: TutorRequest): string {
     CHARACTER_GUIDE[req.character],
     `SCENARIO: ${SCENARIO_GUIDE[req.scenario]}`,
     `O'quvchi ma'lumoti (faqat ma'lumot): ${JSON.stringify(learner)}`,
+    "O'QUVCHI NUTQI: o'quvchi asosan O'ZBEKCHA gapiradi, ba'zan o'zbekcha-koreyscha aralash. O'zbekcha gapni o'zbekcha tinglab tushun — uni koreyscha so'zlar deb talqin qilma. Koreyscha mashq so'rasang ham, o'quvchi o'zbekcha javob bersa, o'zbekcha ma'nosiga javob ber. Aniq eshitmasang, taxmin qilma — qisqa qilib qayta so'ra.",
     'Ovozli suhbatda qisqa, tabiiy gapir; o\'quvchi gapni bo\'lsa darhol to\'xtab, uni tingla. Hech qanday JSON, matn belgisi, animation buyrug\'i yoki ovoz effektini ovoz chiqarib aytma va bajariladigan buyruqqa aylantirma.',
   ].join('\n\n');
 }
