@@ -5,9 +5,10 @@ const KEY = 'salut.theme';
 export function themePref(): ThemePref {
   try {
     const v = localStorage.getItem(KEY);
-    return v === 'light' || v === 'dark' ? v : 'auto';
+    // Sukut bo'yicha kunduzgi rejim; «auto» (telefon sozlamasi) faqat foydalanuvchi o'zi tanlasa.
+    return v === 'light' || v === 'dark' || v === 'auto' ? v : 'light';
   } catch {
-    return 'auto';
+    return 'light';
   }
 }
 
