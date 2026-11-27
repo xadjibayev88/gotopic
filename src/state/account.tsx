@@ -1,5 +1,6 @@
 // Hisob holati: foydalanuvchi, obuna (Super), Google sozlamasi va progressni server bilan sinxronlash.
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
+import { tgInitData, tgWebApp } from '../engine/telegram';
 import { initialState, type GameState } from '../engine/game';
 import { useStore } from './store';
 
@@ -102,13 +103,23 @@ export function AccountProvider({ children }: { children: ReactNode }) {
     void (async () => {
       await refresh();
       // Telegram ichida (Mini App) ochilgan bo'lsa — Telegram hisobi bilan avtomatik kirish.
-      const tg = (window as unknown as { Telegram?: { WebApp?: { initData?: string; ready?: () => void; expand?: () => void } } }).Telegram?.WebApp;
-      if (!tg?.initData) return;
-      tg.ready?.();
-      tg.expand?.();
+      const initData = tgInitData();
+      if (!initData) return;
+      // Telegram skripti yuklangach — «tayyor» va to'liq ekran (kutib o'tirmaymiz).
+      const sdk = () => {
+        const tg = tgWebApp();
+        if (!tg?.ready) return false;
+        tg.ready();
+        tg.expand?.();
+        return true;
+      };
+      if (!sdk()) {
+        let n = 0;
+        const t = window.setInterval(() => (sdk() || ++n > 40) && clearInterval(t), 250);
+      }
       const me0 = await api<Me>('me');
       if (me0.ok && !me0.body.user) {
-        const r = await api('auth/telegram', { method: 'POST', body: JSON.stringify({ initData: tg.initData }) });
+        const r = await api('auth/telegram', { method: 'POST', body: JSON.stringify({ initData }) });
         if (r.ok) await refresh();
       }
     })();

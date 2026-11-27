@@ -22,7 +22,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=Unbounded:wght@600;700;800&display=swap" rel="stylesheet" />
     <script>
       // Telegram Mini App ichida ochilganda — Telegram SDK (avtomatik kirish uchun). Oddiy saytda yuklanmaydi.
-      if (/tgWebApp/.test(location.hash + location.search)) document.write('<script src="https://telegram.org/js/telegram-web-app.js"><\/script>');
+      // Skript bloklamasdan (async) yuklanadi — telegram.org sekin bo'lsa ham sahifa darhol ochiladi.
+      // initData URL'dan darhol olinadi (avtomatik kirish uchun skriptni kutish shart emas).
+      (function () {
+        var h = location.hash + '&' + location.search.slice(1);
+        if (!/tgWebApp/.test(h)) return;
+        try {
+          var m = /[#&?]tgWebAppData=([^&]*)/.exec(h);
+          if (m) window.__tgInitData = decodeURIComponent(m[1]);
+        } catch (e) {}
+        var s = document.createElement('script');
+        s.src = 'https://telegram.org/js/telegram-web-app.js';
+        s.async = true;
+        document.head.appendChild(s);
+      })();
     </script>
   </head>
   <body>

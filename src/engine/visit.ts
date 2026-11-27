@@ -18,7 +18,7 @@ function deviceId(): string {
 
 function source(): 'web' | 'app' | 'tg' {
   const w = window as Window & { AndroidAuth?: unknown; AndroidAdMob?: unknown; Telegram?: { WebApp?: { initData?: string } } };
-  if (w.Telegram?.WebApp?.initData) return 'tg';
+  if (w.Telegram?.WebApp?.initData || (window as Window & { __tgInitData?: string }).__tgInitData) return 'tg';
   if (w.AndroidAuth || w.AndroidAdMob || /; wv\)/.test(navigator.userAgent)) return 'app';
   return 'web';
 }

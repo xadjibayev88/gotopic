@@ -9,6 +9,8 @@ import android.os.Build;
 import android.webkit.WebSettings;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
+import java.util.Locale;
 import android.os.CancellationSignal;
 import android.view.Gravity;
 import android.view.ViewGroup;
@@ -91,6 +93,9 @@ public final class MainActivity extends Activity {
     private boolean trusted() { return webView != null && isAppUrl(webView.getUrl()); }
     /** Ko'prik metodlari fon oqimida ishlaydi — sahifa manzili UI oqimida shu bayroqqa yoziladi. */
     private volatile boolean pageTrusted = false;
+    /** WebView'da Web Speech API yo'q — so'z talaffuzi telefonning o'z TTS dvigateli orqali (AndroidTts ko'prigi). */
+    private TextToSpeech tts;
+    private volatile boolean ttsReady = false;
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -163,6 +168,8 @@ public final class MainActivity extends Activity {
         });
         webView.addJavascriptInterface(new AdMobBridge(), "AndroidAdMob");
         webView.addJavascriptInterface(new AuthBridge(), "AndroidAuth");
+        webView.addJavascriptInterface(new TtsBridge(), "AndroidTts");
+        tts = new TextToSpeech(this, status -> ttsReady = status == TextToSpeech.SUCCESS);
         root.addView(webView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         webView.loadUrl(BuildConfig.START_URL);
     }
@@ -175,6 +182,21 @@ public final class MainActivity extends Activity {
     private String adId(String requested, boolean testing, String testId) { return testing || isDebugBuild() || requested == null || requested.trim().isEmpty() ? testId : requested; }
 
     // ------------------------------------------------------------------ AdMob
+    private final class TtsBridge {
+        @JavascriptInterface public boolean available() { return ttsReady; }
+        @JavascriptInterface public void speak(String text, String lang, float rate, boolean queue) {
+            if (!pageTrusted || !ttsReady || text == null) return;
+            String t = text.length() > 600 ? text.substring(0, 600) : text;
+            runOnUiThread(() -> {
+                Locale loc = Locale.forLanguageTag(lang == null || lang.isEmpty() ? "ko-KR" : lang);
+                if (tts.isLanguageAvailable(loc) >= TextToSpeech.LANG_AVAILABLE) tts.setLanguage(loc);
+                tts.setSpeechRate(Math.max(0.4f, Math.min(1.6f, rate)));
+                tts.speak(t, queue ? TextToSpeech.QUEUE_ADD : TextToSpeech.QUEUE_FLUSH, null, "u" + System.nanoTime());
+            });
+        }
+        @JavascriptInterface public void stop() { runOnUiThread(() -> { if (tts != null) tts.stop(); }); }
+    }
+
     private final class AdMobBridge {
         @JavascriptInterface public void initialize(String requestId, boolean testing) {
             if (!pageTrusted) return;
@@ -294,5 +316,5 @@ public final class MainActivity extends Activity {
 
     @Override protected void onPause() { CookieManager.getInstance().flush(); super.onPause(); }
     @Override public void onBackPressed() { if (webView != null && webView.canGoBack()) webView.goBack(); else super.onBackPressed(); }
-    @Override protected void onDestroy() { if (banner != null) banner.destroy(); if (webView != null) webView.destroy(); super.onDestroy(); }
+    @Override protected void onDestroy() { if (tts != null) tts.shutdown(); if (banner != null) banner.destroy(); if (webView != null) webView.destroy(); super.onDestroy(); }
 }

@@ -2,12 +2,19 @@
 
 let frVoice: SpeechSynthesisVoice | null = null;
 
-export function ttsSupported(): boolean {
+type NativeTts = { available(): boolean; speak(text: string, lang: string, rate: number, queue: boolean): void; stop(): void };
+/** Android ilova (WebView) — telefonning TTS dvigateli ko'prik orqali (WebView'da speechSynthesis yo'q). */
+const nativeTts = (): NativeTts | null => (typeof window !== 'undefined' ? ((window as unknown as { AndroidTts?: NativeTts }).AndroidTts ?? null) : null);
+function webTts(): boolean {
   return typeof window !== 'undefined' && 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined';
 }
 
+export function ttsSupported(): boolean {
+  return !!nativeTts() || webTts();
+}
+
 function pickVoice() {
-  if (!ttsSupported()) return;
+  if (!webTts()) return;
   const voices = window.speechSynthesis.getVoices();
   const fr = voices.filter((v) => v.lang?.toLowerCase().startsWith('ko'));
   // Yuqori sifatli (Google / Enhanced / Natural) ovozlarni afzal ko'ramiz.
@@ -28,7 +35,9 @@ export function hasFrenchVoice(): boolean {
 }
 
 export function speak(text: string, rate = 0.9): void {
-  if (!ttsSupported()) return;
+  const n = nativeTts();
+  if (n) return n.speak(text, 'ko-KR', rate, false);
+  if (!webTts()) return;
   const synth = window.speechSynthesis;
   synth.cancel();
   const u = new SpeechSynthesisUtterance(text);
@@ -41,7 +50,9 @@ export function speak(text: string, rate = 0.9): void {
 
 /** Bir nechta koreyscha iborani ketma-ket o'qiydi. */
 export function speakQueue(parts: string[], rate = 0.9): void {
-  if (!ttsSupported() || !parts.length) return;
+  const n = nativeTts();
+  if (n && parts.length) return parts.forEach((p, i) => n.speak(p, 'ko-KR', rate, i > 0));
+  if (!webTts() || !parts.length) return;
   const synth = window.speechSynthesis;
   synth.cancel();
   for (const p of parts) {
@@ -54,7 +65,8 @@ export function speakQueue(parts: string[], rate = 0.9): void {
 }
 
 export function stopSpeaking(): void {
-  if (ttsSupported()) window.speechSynthesis.cancel();
+  nativeTts()?.stop();
+  if (webTts()) window.speechSynthesis.cancel();
 }
 
 // ---------- Effektlar ----------

@@ -129,7 +129,7 @@ export function Dictionary() {
           const isOpen = open === e.id;
           return (
             <li key={e.id} className={`dict-item ${isOpen ? 'open' : ''}`}>
-              <button type="button" className="dict-main" onClick={() => setOpen(isOpen ? null : e.id)} aria-expanded={isOpen}>
+              <button type="button" className="dict-main" onClick={() => { if (!isOpen && ttsSupported()) speak(e.word, state.settings.ttsRate); setOpen(isOpen ? null : e.id); }} aria-expanded={isOpen}>
                 <span className="dict-word" lang="ko">
                   {e.word}
                 </span>

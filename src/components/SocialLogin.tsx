@@ -1,6 +1,7 @@
 // Facebook, Apple va Telegram orqali kirish. Har bir tugma faqat server sozlangan bo'lsa ko'rinadi.
 import { useEffect, useRef, useState } from 'react';
 import { useAccount } from '../state/account';
+import { tgInitData } from '../engine/telegram';
 
 type FB = { init: (o: Record<string, unknown>) => void; login: (cb: (r: { authResponse?: { accessToken?: string } }) => void, o?: Record<string, unknown>) => void };
 type AppleAuth = { auth: { init: (o: Record<string, unknown>) => void; signIn: () => Promise<{ authorization?: { id_token?: string }; user?: { name?: { firstName?: string } } }> } };
@@ -39,7 +40,7 @@ export function SocialLogin({ onDone, onError }: { onDone: () => void; onError: 
   const { me, signInSocial } = useAccount();
   const cfg = me.auth;
   const [busy, setBusy] = useState<string | null>(null);
-  const tgWebApp = typeof window !== 'undefined' && !!window.Telegram?.WebApp?.initData;
+  const tgWebApp = typeof window !== 'undefined' && !!tgInitData();
 
   const finish = async (provider: 'facebook' | 'apple' | 'telegram', payload: Record<string, unknown>) => {
     setBusy(provider);
@@ -164,7 +165,7 @@ export function SocialLogin({ onDone, onError }: { onDone: () => void; onError: 
           type="button"
           className="btn btn-social tg"
           disabled={!!busy}
-          onClick={() => (tgWebApp ? void finish('telegram', { initData: window.Telegram!.WebApp!.initData }) : void telegram())}
+          onClick={() => (tgWebApp ? void finish('telegram', { initData: tgInitData() }) : void telegram())}
         >
           <svg className="si" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="currentColor"><path d="M21.4 4.3 18.3 19c-.2 1-.9 1.3-1.8.8l-4.8-3.6-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.3-.1-.5-.6-.2l-11 6.9-4.7-1.5c-1-.3-1-1 .2-1.5l18.5-7.1c.9-.3 1.6.2 1.4 1.4z" /></svg>
           {tgWait ? "Telegram'da tasdiqlang…" : busy === 'telegram' ? 'Kuting…' : 'Telegram bilan davom etish'}
