@@ -6,6 +6,7 @@ import { randomBytes } from 'node:crypto';
 import { db } from './db.ts';
 import { decideReview } from './social.ts';
 import { getUser, upsertSocialUser } from './accounts.ts';
+import { loadDictionary, searchDictionary } from './dictionary.ts';
 import { cardBrand, groupCardNumber } from '../src/shared/card.ts';
 import { PLANS, activePlan, toUsd, usdRate, createCardOrder, createOrder, decideOrder, oldPriceUzs, onGrant, plansPayload, priceUzs, providers, visiblePlans, type PlanId } from './billing.ts';
 
@@ -80,9 +81,44 @@ const mainKb = () => ({
   inline_keyboard: [
     [{ text: '🚀 Ilovaga kirish (Bepul)', web_app: { url: appUrl() } }],
     [{ text: `💎 Super obuna olish (${som(priceUzs('month'))} so'm)`, callback_data: 'plans' }],
-    [{ text: '👤 Mening obunam', callback_data: 'me' }],
+    [{ text: "📖 Lug'at: so'z qidirish", callback_data: 'dict' }, { text: '👤 Mening obunam', callback_data: 'me' }],
   ],
 });
+
+const POS_UZ: Record<string, string> = { noun: 'ot', verb: "fe'l", adj: 'sifat', adv: 'ravish', pron: 'olmosh', intj: 'undov', det: 'aniqlovchi', num: 'son', counter: "hisob so'zi" };
+
+/** Botdagi lug'at: koreyscha, o'zbekcha yoki inglizcha so'z → 30 000 so'zlik lug'atdan 6 ta eng mos natija. */
+export function dictText(q: string): string {
+  const query = q.trim().slice(0, 60);
+  if (!query) return "📖 <b>Lug'at</b> — 30 000 koreyscha so'z\n\nSo'zni shunchaki yozib yuboring: <code>사랑</code>, <code>sevgi</code> yoki <code>love</code>.";
+  let r;
+  try {
+    r = searchDictionary(loadDictionary(), query);
+  } catch {
+    return "⚠️ Lug'at hozircha yuklanmadi. Birozdan keyin qayta urinib ko'ring.";
+  }
+  if (!r.total) return `🔎 «${esc(query)}» bo'yicha hech narsa topilmadi.\n\nKoreyscha (Hangul), o'zbekcha yoki inglizcha yozib ko'ring.`;
+  const rows = r.items.slice(0, 6).map((e) => {
+    const mean = (e.uz || e.en).split(';').slice(0, 2).join(';').trim().slice(0, 120);
+    return `🇰🇷 <b>${esc(e.word)}</b>${e.pos ? ` <i>${esc(POS_UZ[e.pos] ?? e.pos)}</i>` : ''}\n     ${esc(mean)}`;
+  });
+  return [`📖 <b>${esc(query)}</b> — ${r.total} ta natija`, '', ...rows, '', r.total > 6 ? "Hammasini ilovadagi «Lug'at» bo'limida ko'ring 👇" : "Talaffuzni ilovada tinglang 👇"].join('\n');
+}
+
+const dictKb = () => ({ inline_keyboard: [[{ text: "📖 Lug'atni ilovada ochish", web_app: { url: `${appUrl()}/#/dict` } }], [{ text: '⬅️ Asosiy menyu', callback_data: 'home' }]] });
+
+function helpText(): string {
+  return [
+    '🐯 <b>Go Topic bot — yordam</b>',
+    '',
+    "🚀 /start — asosiy menyu va ilovaga kirish",
+    "📖 /lugat — lug'at (yoki shunchaki koreyscha/o'zbekcha so'z yozing)",
+    '💎 /plans — Super tariflari va to\'lov',
+    '👤 /me — obunangiz holati',
+    '',
+    "💳 To'lov: tarifni tanlang → kartaga o'tkazing → chek rasmini shu yerga yuboring. Admin tekshirgach Super o'zi yoqiladi.",
+  ].join('\n');
+}
 
 /** Kutib olish xabari: og'riqli nuqtalar → yechim → narx → ikki tugma. */
 function welcomeText(name: string): string {
@@ -110,7 +146,7 @@ function welcomeText(name: string): string {
     "20 kishilik guruhlarda XP yig'ing: Kurtak ligasidan Afsonagacha ko'tariling, kunlik seriyani uzmang 🔥",
     "",
     "🐯 <b>4. Hori AI — jonli ustoz (Super)</b>",
-    "Hori bilan istalgan mavzuda ovozli va matnli gaplashasiz, Gemini Live'da real vaqtda. U xatolaringizni hazil bilan (ba'zan qattiq 😼) to'g'rilaydi.",
+    "Hori bilan istalgan mavzuda ovozli va matnli gaplashasiz, Gemini Live'da real vaqtda. U xatolaringizni hazil bilan (ba'zan qattiq 🐯) to'g'rilaydi.",
     "",
     "🎭 <b>5. Har xil xarakterlar</b>",
     "Romantik Hori 💘, qattiqqo'l Professor, hazilkash yoki 18+ «bezori» Hori — kim bilan o'rganishni o'zingiz tanlaysiz.",
@@ -286,12 +322,18 @@ export function createBot(tg: Tg, download: (fileId: string) => Promise<{ mime: 
       const name = [from.first_name, from.last_name].filter(Boolean).join(' ') || "do'stim";
       if (linked) await send(chat, "✅ Ilovadagi hisobingiz botga bog'landi.");
       if (arg.startsWith('pay_') || arg === 'plans') return send(chat, plansText(), { reply_markup: plansKb() });
-      await send(chat, welcomeText(name), { reply_markup: mainKb() });
+      // Banner xabar tepasida katta rasm sifatida (link preview) — bitta chiroyli xabar.
+      await tg('sendMessage', {
+        chat_id: chat, text: welcomeText(name), parse_mode: 'HTML', reply_markup: mainKb(),
+        link_preview_options: { url: `${appUrl()}/bot-banner.jpg`, prefer_large_media: true, show_above_text: true },
+      }).catch(() => send(chat, welcomeText(name), { reply_markup: mainKb() }));
       return;
     }
     if (text === '/plans' || text === '/tariflar') return send(chat, plansText(), { reply_markup: plansKb() });
     if (text === '/id' || text === '/myid') return send(chat, `Sizning chat ID: <code>${chat}</code>`);
     if (text === '/me') return send(chat, meText(userOf(from)), { reply_markup: mainKb() });
+    if (text === '/help' || text === '/yordam') return send(chat, helpText(), { reply_markup: mainKb() });
+    if (/^\/(lugat|dict)\b/.test(text)) return send(chat, dictText(text.replace(/^\/\S+\s*/, '')), { reply_markup: dictKb() });
 
     const file = msg.photo?.length ? { id: msg.photo[msg.photo.length - 1].file_id, mime: 'image/jpeg' } : msg.document ? { id: msg.document.file_id, mime: msg.document.mime_type || '' } : null;
     if (file) {
@@ -318,6 +360,8 @@ export function createBot(tg: Tg, download: (fileId: string) => Promise<{ mime: 
       await notifyReceipt(r.id, r.plan, r.amountUzs, `${who}${st.kind === 'visa' ? ' · VISA' : ''}`, receipt);
       return;
     }
+    // Oddiy matn — lug'atdan qidiramiz (so'z yoki qisqa ibora).
+    if (text && !text.startsWith('/') && text.length <= 60) return send(chat, dictText(text), { reply_markup: dictKb() });
     return send(chat, 'Quyidagi tugmalardan foydalaning 👇', { reply_markup: mainKb() });
   }
 
@@ -329,6 +373,7 @@ export function createBot(tg: Tg, download: (fileId: string) => Promise<{ mime: 
     if (data === 'plans') return ack(), send(chat, plansText(), { reply_markup: plansKb() });
     if (data === 'home') return ack(), send(chat, 'Asosiy menyu 👇', { reply_markup: mainKb() });
     if (data === 'me') return ack(), send(chat, meText(userOf(q.from)), { reply_markup: mainKb() });
+    if (data === 'dict') return ack(), send(chat, dictText(''), { reply_markup: dictKb() });
     if (data.startsWith('plan:')) {
       const plan = data.slice(5) as PlanId;
       if (!(plan in PLANS)) return ack();
@@ -444,8 +489,9 @@ export function startBot(token = env('TELEGRAM_BOT_TOKEN')): Bot | null {
     const url = appUrl();
     await tg('setChatMenuButton', { menu_button: { type: 'web_app', text: 'Go Topic App 🚀', web_app: { url } } }).catch(() => {});
     await tg('setMyShortDescription', { short_description: "Go Topic — koreys tilini o'yin tariqasida o'rganing 🇰🇷 TOPIK 1–6. Hori AI ustoz — Super'da 🐯" }).catch(() => {});
-    await tg('setMyDescription', { description: "🇰🇷 Go Topic — koreys tilini o'zbek tilida o'rganing.\n\n🗺 O'yin tariqasida darslar TOPIK 1→6 — bepul\n📖 30 000 so'zlik lug'at va TOPIK mashqlari\n🏆 Haftalik turnir va kunlik seriya\n🐯 Hori AI va Gemini Live — Super obunada\n💎 Super: 1 hafta, 1 oy yoki 3 oy — Payme, Click, karta yoki Visa\n\nBoshlash uchun «Start» ni bosing 👇" }).catch(() => {});
-    await tg('setMyCommands', { commands: [{ command: 'start', description: 'Boshlash' }, { command: 'plans', description: '💎 Super tariflari' }, { command: 'me', description: 'Mening obunam' }] }).catch(() => {});
+    const methods = [providers().includes('payme') && 'Payme', providers().includes('click') && 'Click', providers().includes('card') && 'Uzcard/Humo', providers().includes('visa') && 'Visa'].filter(Boolean).join(', ') || 'karta';
+    await tg('setMyDescription', { description: `🇰🇷 Go Topic — koreys tilini o'zbek tilida o'rganing.\n\n🗺 O'yin tariqasida darslar: Hangul'dan TOPIK 6 gacha — bepul\n📖 30 000 so'zlik lug'at — so'zni shu botga yozing\n📝 TOPIK mashqlari: grammatika, o'qish, tinglash\n🏆 Haftalik turnir va kunlik seriya\n🐯 Hori AI ustoz va Gemini Live — Super'da\n💎 To'lov: ${methods}\n\nBoshlash uchun «Start» ni bosing 👇` }).catch(() => {});
+    await tg('setMyCommands', { commands: [{ command: 'start', description: '🚀 Boshlash va ilovaga kirish' }, { command: 'lugat', description: "📖 Lug'at: so'z qidirish" }, { command: 'plans', description: '💎 Super tariflari' }, { command: 'me', description: '👤 Mening obunam' }, { command: 'help', description: '❓ Yordam' }] }).catch(() => {});
     let offset = 0;
     for (;;) {
       try {

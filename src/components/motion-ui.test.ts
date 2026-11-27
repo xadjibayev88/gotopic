@@ -18,7 +18,7 @@ describe('liquid bulge shape', () => {
   });
 
   it('offers every style from both tab bar videos, with Liquid Bulge first', () => {
-    expect(TAB_MOTIONS.map((m) => m.id)).toEqual(['drop', 'bulge', 'notch', 'pill', 'fill', 'label', 'bubble', 'string', 'glow', 'flip', 'particle', 'seesaw', 'slot']);
+    expect(TAB_MOTIONS.map((m) => m.id)).toEqual(['pill', 'drop', 'bulge', 'notch', 'fill', 'label', 'bubble', 'string', 'glow', 'flip', 'particle', 'seesaw', 'slot']);
   });
 });
 

@@ -82,7 +82,7 @@ export function ShopRail({ items }: { items: RailItem[] }) {
         <span className="rail-rope" aria-hidden="true" />
         <div className="rail-track" ref={track}>
           {items.map((it, i) => (
-            <button key={it.id} type="button" className={`hanger ${it.canBuy ? '' : 'dim'}`} style={{ '--hi': i } as CSSProperties} onClick={() => setOpen(i)} aria-label={`${it.name} — ${it.price} tanga`}>
+            <button key={it.id} type="button" className={`hanger ${it.canBuy ? '' : 'dim'}`} style={{ '--hi': i } as CSSProperties} onClick={() => setOpen(i)} aria-label={`${it.name} — ${it.price} Hori`}>
               <span className="hanger-swing">
                 <Hook />
                 <span className="hang-card" style={{ '--lc': it.color, '--lc2': it.color2 } as CSSProperties}>

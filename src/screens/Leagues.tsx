@@ -136,7 +136,7 @@ export function Leagues() {
         className="quests-folder"
         icon={<Ic name="target" size={22} />}
         title="Kunlik vazifalar"
-        summary={`${quests.done}/${quests.total} bajarildi · hammasiga +${quests.bonus} 🪙`}
+        summary={`${quests.done}/${quests.total} bajarildi · hammasiga +${quests.bonus} Hori`}
       >
         <QuestsCard compact />
       </Folder>

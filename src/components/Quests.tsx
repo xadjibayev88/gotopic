@@ -19,7 +19,7 @@ export function QuestsCard({ compact = false }: { compact?: boolean }) {
     if (!r.gems) return;
     update(() => r.state);
     playSfx('chest', state.settings.sound);
-    setToast(`+${r.gems} tanga 🪙`);
+    setToast(`+${r.gems} Hori 🐯`);
     setTimeout(() => setToast(null), 1600);
   };
 
@@ -48,7 +48,7 @@ export function QuestsCard({ compact = false }: { compact?: boolean }) {
             {claimed ? (
               <span className="quest-ok">✓</span>
             ) : (
-              <button type="button" className="quest-claim" disabled={!done} onClick={() => claim(q.id)} aria-label={`Sovg'ani olish: ${q.reward} tanga`}>
+              <button type="button" className="quest-claim" disabled={!done} onClick={() => claim(q.id)} aria-label={`Sovg'ani olish: ${q.reward} Hori`}>
                 <Ic name="gift" size={15} /> {q.reward}
               </button>
             )}
@@ -57,7 +57,7 @@ export function QuestsCard({ compact = false }: { compact?: boolean }) {
       })}
       {!d.claimed.includes('all') && (
         <button type="button" className="quest-bonus" disabled={!allDone} onClick={() => claim('all')}>
-          {allDone ? `🏆 Hammasi bajarildi — +${QUESTS_BONUS} tanga olish` : `🏆 Uchalasini bajarsangiz — +${QUESTS_BONUS} tanga`}
+          {allDone ? `🏆 Hammasi bajarildi — +${QUESTS_BONUS} Hori olish` : `🏆 Uchalasini bajarsangiz — +${QUESTS_BONUS} Hori`}
         </button>
       )}
       {toast && <div className="toast">{toast}</div>}
