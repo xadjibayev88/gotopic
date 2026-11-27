@@ -15,7 +15,7 @@ type From = { id: number; first_name?: string; last_name?: string; username?: st
 const env = (k: string) => (process.env[k] ?? '').trim();
 const som = (n: number) => n.toLocaleString('ru-RU').replace(/ /g, ' ');
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-const appUrl = () => env('PUBLIC_URL') || 'https://voila-fr.up.railway.app';
+const appUrl = () => env('PUBLIC_URL') || 'https://gotopic.up.railway.app';
 
 // ---------- Hisob bog'lash ----------
 
