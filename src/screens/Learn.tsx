@@ -70,6 +70,15 @@ export function Learn({ onStart }: { onStart: (c: SessionConfig) => void }) {
     window.scrollTo({ top: target, behavior: smooth ? 'smooth' : ('instant' as ScrollBehavior) });
   };
 
+  // Pastki menyuda «Darslar» qayta bosilganda — joriy darsga.
+  const jumpRef = useRef(jumpDown);
+  jumpRef.current = jumpDown;
+  useEffect(() => {
+    const on = () => jumpRef.current();
+    window.addEventListener('learn:focus', on);
+    return () => window.removeEventListener('learn:focus', on);
+  }, []);
+
   const order = COURSE.map((u, ui) => ({ u, ui })).reverse();
   return (
     <div className="learn lmap">
