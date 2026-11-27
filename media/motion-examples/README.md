@@ -14,5 +14,6 @@ Foydalanuvchi yoqtirgan videolar. `MOTION.md` shu kadrlardan yozilgan. Yangi nam
 | ref-8.jpg | foydalanuvchi yuklagan video (Novra is Hiring) | Novra | Strelka, orbita chiziqlari va yorliqlar, 3D savat, chapda ibora + strelka + o'ngda almashinuvchi faol ro'yxat, vaqt chizig'i |
 | ref-9.jpg | foydalanuvchi yuklagan video («Every frame counts») | — | 3D hajmli matn va qizil shar, hisoblagichli katta matn, giroskop halqalar tunneli, olti burchak tunnel, kublar maydonidagi halqa, yulduzcha logo |
 | ref-10.jpg | foydalanuvchi yuklagan video («Motion — a reel in fifteen seconds») | — | O harfi o'rnida shar, halqalar, kublar to'lqini, rang bilan bo'lingan kadr, oqib turuvchi so'z lentalari, STRETCH / SPIN / BOUNCE / SNAP — har so'z o'z harakati bilan, spiral zarrachalar, yakuniy nom |
+| ref-11.jpg | foydalanuvchi yuklagan video (15 s showreel, oxiri «CLAUDE — Showreel 2026») | — | HUD ramka va timecode; nishon → pill → «2», «1»; zarbma-zarb katta so'zlar, O harfi doiraga aylanib kadrni yutadi; rangli nuqtalar to'ri shakl o'zgartiradi; zarrachalar shari nomga yig'iladi; shisha sharlar katta so'z atrofida; UI dashboard (foiz sanaladi, toggle, kursor); chiziqlar ustida so'z, yarimton halqalar; harflar yoy bo'ylab uchib nom yig'iladi |
 
 Bu kadrlar boshqa mualliflarniki: faqat ichki namuna sifatida. Tashqariga tarqatmang va videolarga qo'shmang.
