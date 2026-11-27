@@ -32,7 +32,21 @@ const HINTS: Map<string, string> = (() => {
   return m;
 })();
 
-function hintFor(tokens: string[], i: number): { text: string; span: number } | null {
+/**
+ * Bir xil yoziladigan, lekin gapda boshqa ma'noda keladigan so'zlar: otdan oldin 이 — «bu» (ikki emas),
+ * 새 — «yangi» (qush emas), sanoq so'zi oldida 네 — «to'rtta» (ha emas).
+ */
+const BEFORE_NOUN: Record<string, string> = { 이: 'bu', 그: "o'sha", 새: 'yangi', 네: "to'rtta", 두: 'ikkita', 세: 'uchta', 한: 'bitta' };
+const COUNTERS = /^(권|개|명|시|잔|마리|살|번|층|장|병|대|달|주|시간)/;
+
+export function hintFor(tokens: string[], i: number, raw: string[] = tokens): { text: string; span: number } | null {
+  const t = tokens[i];
+  const next = tokens[i + 1];
+  // Tinish belgisi bilan tugagan so'z («네,») — mustaqil so'z, keyingisiga bog'lanmaydi.
+  const standalone = !next || raw[i] !== t;
+  if (!standalone && BEFORE_NOUN[t] && !(t === '이' && next === '더하기')) {
+    if (t === '이' || t === '그' || t === '새' || COUNTERS.test(next)) return { text: BEFORE_NOUN[t], span: 1 };
+  }
   for (let span = Math.min(3, tokens.length - i); span >= 1; span--) {
     const key = normalize(tokens.slice(i, i + span).join(' '));
     const h = HINTS.get(key);
@@ -48,7 +62,7 @@ export function HintSentence({ text, speakable = true }: { text: string; speakab
   const groups: { start: number; span: number; hint: string | null }[] = [];
   for (let i = 0; i < tokens.length; ) {
     const clean = tokens.map((t) => t.replace(/[.,!?;:«»]/g, ''));
-    const h = hintFor(clean, i);
+    const h = hintFor(clean, i, tokens);
     groups.push({ start: i, span: h?.span ?? 1, hint: h?.text ?? null });
     i += h?.span ?? 1;
   }

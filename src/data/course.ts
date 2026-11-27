@@ -573,7 +573,7 @@ export const COURSE: Unit[] = [
    },
    {
     "id": "u3l2",
-    "title": "Xayr, xayr",
+    "title": "Xayr, tanishganimdan xursandman",
     "words": [
      {
       "fr": "안녕히 가세요",
@@ -1961,7 +1961,7 @@ export const COURSE: Unit[] = [
      {
       "fr": "색깔",
       "uz": "rang",
-      "ro": "saekkkal",
+      "ro": "saekkal",
       "emoji": "🎨"
      },
      {
@@ -2014,7 +2014,7 @@ export const COURSE: Unit[] = [
      {
       "fr": "바나나는 노란색이에요.",
       "uz": "Banan sariq.",
-      "ro": "bananeun noransaegieyo."
+      "ro": "banananeun noransaegieyo."
      },
      {
       "fr": "흰색 셔츠를 샀어요.",
@@ -2068,7 +2068,7 @@ export const COURSE: Unit[] = [
      {
       "fr": "바나나는 노란색이에요.",
       "uz": "Banan sariq.",
-      "ro": "bananeun noransaegieyo."
+      "ro": "banananeun noransaegieyo."
      },
      {
       "fr": "흰색 셔츠를 샀어요.",
@@ -2281,55 +2281,37 @@ export const COURSE: Unit[] = [
   "lessons": [
    {
     "id": "u13l1",
-    "title": "Qulupnay, apelsin",
+    "title": "Meva, sabzavot",
     "words": [
      {
-      "fr": "딸기",
-      "uz": "qulupnay",
-      "ro": "ttalgi",
+      "fr": "과일",
+      "uz": "meva",
+      "ro": "gwail",
       "emoji": "🍓"
      },
      {
-      "fr": "오렌지",
-      "uz": "apelsin",
-      "ro": "orenji",
-      "emoji": "🍊"
+      "fr": "채소",
+      "uz": "sabzavot",
+      "ro": "chaeso",
+      "emoji": "🥗"
      },
      {
-      "fr": "감자",
-      "uz": "kartoshka",
-      "ro": "gamja",
-      "emoji": "🥔"
+      "fr": "바나나",
+      "uz": "banan",
+      "ro": "banana",
+      "emoji": "🍌"
      },
      {
-      "fr": "양파",
-      "uz": "piyoz",
-      "ro": "yangpa",
-      "emoji": "🧅"
+      "fr": "포도",
+      "uz": "uzum",
+      "ro": "podo",
+      "emoji": "🍇"
      },
      {
-      "fr": "당근",
-      "uz": "sabzi",
-      "ro": "danggeun",
-      "emoji": "🥕"
-     },
-     {
-      "fr": "토마토",
-      "uz": "pomidor",
-      "ro": "tomato",
-      "emoji": "🍅"
-     },
-     {
-      "fr": "오이",
-      "uz": "bodring",
-      "ro": "oi",
-      "emoji": "🥒"
-     },
-     {
-      "fr": "마늘",
-      "uz": "sarimsoq",
-      "ro": "maneul",
-      "emoji": "🧄"
+      "fr": "수박",
+      "uz": "tarvuz",
+      "ro": "subak",
+      "emoji": "🍉"
      }
     ],
     "sentences": [
@@ -2468,58 +2450,37 @@ export const COURSE: Unit[] = [
   "lessons": [
    {
     "id": "u14l1",
-    "title": "Og'iz, quloq",
+    "title": "Tana, bosh",
     "words": [
      {
-      "fr": "입",
-      "uz": "og'iz",
-      "ro": "ip",
-      "emoji": "👄"
+      "fr": "몸",
+      "uz": "tana",
+      "ro": "mom",
+      "emoji": "🧍"
      },
      {
-      "fr": "귀",
-      "uz": "quloq",
-      "ro": "gwi",
-      "emoji": "👂"
+      "fr": "머리",
+      "uz": "bosh",
+      "ro": "meori",
+      "emoji": "🧠"
      },
      {
-      "fr": "목",
-      "uz": "bo'yin",
-      "ro": "mok",
-      "emoji": "🦒"
+      "fr": "얼굴",
+      "uz": "yuz",
+      "ro": "eolgul",
+      "emoji": "🙂"
      },
      {
-      "fr": "어깨",
-      "uz": "yelka",
-      "ro": "eokkae",
-      "emoji": "💪"
+      "fr": "눈",
+      "uz": "ko'z",
+      "ro": "nun",
+      "emoji": "👁️"
      },
      {
-      "fr": "손",
-      "uz": "qo'l (kaft)",
-      "ro": "son",
-      "emoji": "✋",
-      "alt": [
-       "qo'l"
-      ]
-     },
-     {
-      "fr": "다리",
-      "uz": "oyoq",
-      "ro": "dari",
-      "emoji": "🦵"
-     },
-     {
-      "fr": "발",
-      "uz": "oyoq panjasi",
-      "ro": "bal",
-      "emoji": "🦶"
-     },
-     {
-      "fr": "허리",
-      "uz": "bel",
-      "ro": "heori",
-      "emoji": "🧘"
+      "fr": "코",
+      "uz": "burun",
+      "ro": "ko",
+      "emoji": "👃"
      }
     ],
     "sentences": [
@@ -3292,7 +3253,7 @@ export const COURSE: Unit[] = [
      {
       "fr": "우체국은 은행 옆에 있어요.",
       "uz": "Pochta bank yonida.",
-      "ro": "ucheguk-eun eunhaeng yeope isseoyo."
+      "ro": "uchegugeun eunhaeng yeope isseoyo."
      },
      {
       "fr": "주말에 영화관에 가요.",
@@ -4354,7 +4315,7 @@ export const COURSE: Unit[] = [
      },
      {
       "fr": "받다",
-      "uz": "qabul qilib olmoq",
+      "uz": "olmoq",
       "ro": "batda",
       "emoji": "📥"
      },
@@ -4423,7 +4384,7 @@ export const COURSE: Unit[] = [
      },
      {
       "fr": "모르다",
-      "uz": "bilmaslik",
+      "uz": "bilmamoq",
       "ro": "moreuda",
       "emoji": "🤷"
      },
@@ -5717,7 +5678,7 @@ export const COURSE: Unit[] = [
      {
       "fr": "토론 후에 결론을 내렸습니다.",
       "uz": "Munozaradan so'ng xulosa chiqardik.",
-      "ro": "toron hue gyeollon-eul naeryeotseumnida."
+      "ro": "toron hue gyeolloneul naeryeotseumnida."
      }
     ]
    },
@@ -5760,7 +5721,7 @@ export const COURSE: Unit[] = [
      {
       "fr": "토론 후에 결론을 내렸습니다.",
       "uz": "Munozaradan so'ng xulosa chiqardik.",
-      "ro": "toron hue gyeollon-eul naeryeotseumnida."
+      "ro": "toron hue gyeolloneul naeryeotseumnida."
      },
      {
       "fr": "두 문화의 차이를 인정해야 합니다.",
@@ -6192,7 +6153,7 @@ export const COURSE: Unit[] = [
      {
       "fr": "이론만으로는 한계가 있습니다.",
       "uz": "Faqat nazariya bilan cheklov bor.",
-      "ro": "iron-maneuroneun hangyega itseumnida."
+      "ro": "ironmaneuroneun hangyega itseumnida."
      },
      {
       "fr": "실험으로 가설을 입증했습니다.",
@@ -6246,7 +6207,7 @@ export const COURSE: Unit[] = [
      {
       "fr": "이론만으로는 한계가 있습니다.",
       "uz": "Faqat nazariya bilan cheklov bor.",
-      "ro": "iron-maneuroneun hangyega itseumnida."
+      "ro": "ironmaneuroneun hangyega itseumnida."
      },
      {
       "fr": "실험으로 가설을 입증했습니다.",
@@ -6256,7 +6217,7 @@ export const COURSE: Unit[] = [
      {
       "fr": "미래 전망이 밝습니다.",
       "uz": "Kelajak istiqboli porloq.",
-      "ro": "mirae jeonmangi balkseumnida."
+      "ro": "mirae jeonmangi bakseumnida."
      },
      {
       "fr": "맥락을 이해하는 것이 중요합니다.",
@@ -6577,7 +6538,7 @@ export const COURSE: Unit[] = [
      {
       "fr": "간과하다",
       "uz": "e'tibordan chetda qoldirmoq",
-      "ro": "ganggwahada"
+      "ro": "gangwahada"
      },
      {
       "fr": "모색하다",
@@ -6608,7 +6569,7 @@ export const COURSE: Unit[] = [
      {
       "fr": "우리는 이 문제를 간과해서는 안 됩니다.",
       "uz": "Bu muammoni e'tibordan chetda qoldirmasligimiz kerak.",
-      "ro": "urineun i munjereul ganggwahaeseoneun an doemnida."
+      "ro": "urineun i munjereul gangwahaeseoneun an doemnida."
      },
      {
       "fr": "새로운 해결책을 모색해야 합니다.",

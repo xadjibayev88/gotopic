@@ -156,3 +156,19 @@ describe("so'z-plitkalar (butun kurs)", () => {
     }
   });
 });
+
+describe("darslar sahifasi (butun kurs)", () => {
+  it("bir bo'limda so'z takrorlanmaydi va dars nomlari har xil", () => {
+    for (const u of COURSE) {
+      const frs = u.lessons.flatMap((l) => l.words.map((w) => w.fr));
+      expect(new Set(frs).size, `${u.title}: takroriy so'z`).toBe(frs.length);
+      const titles = u.lessons.map((l) => l.title);
+      expect(new Set(titles).size, `${u.title}: bir xil dars nomlari ${titles.join(' / ')}`).toBe(titles.length);
+      for (const t of titles) {
+        const parts = t.toLowerCase().split(', ');
+        expect(new Set(parts).size, `${u.title}: «${t}»`).toBe(parts.length);
+      }
+      for (const l of u.lessons) expect(l.words.length, l.id).toBeGreaterThanOrEqual(4);
+    }
+  });
+});
