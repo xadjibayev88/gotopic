@@ -2,7 +2,7 @@
 // to'ladi; yetarli tortilsa qo'yib yuborishda progress sinxronlanadi, so'ng «Yangilandi» xabari chiqadi.
 // Faqat sensorli ekranda va sahifa eng tepada bo'lganda ishlaydi; brauzerning o'z «tortib yangilash»i o'chiriladi.
 import { useEffect, useRef, useState } from 'react';
-import { motionAllowed } from '../engine/motion';
+import { uiMotionAllowed as motionAllowed } from '../engine/motion';
 
 const THRESHOLD = 72; // shuncha tortilsa — yangilanadi
 const MAX = 120;

@@ -3,7 +3,7 @@ import { grantAllAiConsent } from '../state/ai-consent';
 import { useEffect, useRef, useState } from 'react';
 import { useAccount } from '../state/account';
 import { SocialLogin } from '../components/SocialLogin';
-import { motionAllowed } from '../engine/motion';
+import { uiMotionAllowed as motionAllowed } from '../engine/motion';
 import { createPortal } from 'react-dom';
 import { KruaLive } from '../components/KruaLive';
 import { Ic } from '../components/Icons';

@@ -183,6 +183,15 @@ export function App() {
   const [session, setSession] = useState<SessionConfig | null>(null);
   const [blocked, setBlocked] = useState(false);
   const [aiConsentOpen, setAiConsentOpen] = useState(false);
+  const [aiConsentNeeded, setAiConsentNeeded] = useState(false);
+  useEffect(() => {
+    const on = () => {
+      setAiConsentNeeded(true);
+      setAiConsentOpen(true);
+    };
+    window.addEventListener('ai-consent-needed', on);
+    return () => window.removeEventListener('ai-consent-needed', on);
+  }, []);
   const openAiConsent = useCallback(() => setAiConsentOpen(true), []);
 
   useEffect(() => {
@@ -313,7 +322,7 @@ export function App() {
           </div>
         </div>
       )}
-      <AiConsentDialog open={aiConsentOpen} onClose={() => setAiConsentOpen(false)} />
+      <AiConsentDialog open={aiConsentOpen} preselectAll={aiConsentNeeded} onClose={() => (setAiConsentOpen(false), setAiConsentNeeded(false))} />
     </div>
   );
 }

@@ -4,7 +4,7 @@
 //  • ro'yxat birinchi marta ochilganda birinchi qator chapga ikki marta «ko'z qisib» imkoniyatni ko'rsatadi.
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Ic } from './Icons';
-import { motionAllowed } from '../engine/motion';
+import { uiMotionAllowed as motionAllowed } from '../engine/motion';
 
 // Qator kengligining 22% i yetadi; tez siltanganda (flick) bundan ham kam masofa kifoya.
 const DELETE_AT = 0.22;

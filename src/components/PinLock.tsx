@@ -4,7 +4,7 @@
 //  «Muvaffaqiyatli» belgisi. Xato kodda kataklar qizarib silkinadi.
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
-import { motionAllowed } from '../engine/motion';
+import { uiMotionAllowed as motionAllowed } from '../engine/motion';
 import { PIN_LENGTH } from '../engine/applock';
 import { Mascot } from './Mascot';
 

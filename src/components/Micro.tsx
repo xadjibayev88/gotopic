@@ -1,7 +1,7 @@
 // Mikro-interaksiyalar («UI primitives» uslubida): bosib turib o'chirish, «Saqlandi» xatcho'pi,
 // qiymati aylanib ko'rinadigan slayder. Faqat transform/opacity — qotmaydi.
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
-import { motionAllowed } from '../engine/motion';
+import { uiMotionAllowed as motionAllowed } from '../engine/motion';
 
 /** Xavfli amal: bosib turilsa ichi qizil bilan to'ladi; oxirigacha ushlansa — bajariladi, qo'yib yuborilsa — qaytadi. */
 export function HoldButton({
