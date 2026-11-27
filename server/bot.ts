@@ -260,6 +260,10 @@ function meText(userId: string): string {
   return `👤 ${esc(u?.name || 'Foydalanuvchi')}\nObuna: <b>💎 Super</b>\nAmal qiladi: <b>${new Date(p.expiresAt!).toLocaleDateString('ru-RU', { timeZone: 'Asia/Tashkent' })}</b> gacha`;
 }
 
+/** Faqat admin chatida ko'rinadigan doimiy pastki tugma. */
+export const ADMIN_STATS_BUTTON = '📊 Statistika';
+const adminKb = () => ({ keyboard: [[{ text: ADMIN_STATS_BUTTON }]], resize_keyboard: true, is_persistent: true });
+
 // ---------- Bot mantiqi ----------
 
 export function createBot(tg: Tg, download: (fileId: string) => Promise<{ mime: string; data: Buffer } | null>) {
@@ -340,14 +344,16 @@ export function createBot(tg: Tg, download: (fileId: string) => Promise<{ mime: 
         chat_id: chat, text: welcomeText(name), parse_mode: 'HTML', reply_markup: mainKb(),
         link_preview_options: { url: `${appUrl()}/bot-banner.jpg`, prefer_large_media: true, show_above_text: true },
       }).catch(() => send(chat, welcomeText(name), { reply_markup: mainKb() }));
+      if (adminChats().includes(chat)) await send(chat, '🔐 Admin: statistikani ko\'rish uchun pastdagi «📊 Statistika» tugmasini bosing.', { reply_markup: adminKb() });
       return;
     }
     if (text === '/plans' || text === '/tariflar') return send(chat, plansText(), { reply_markup: plansKb() });
     if (text === '/id' || text === '/myid') return send(chat, `Sizning chat ID: <code>${chat}</code>`);
-    if (text === '/stats' || text === '/statistika') {
-      if (!adminChats().includes(chat)) return; // faqat admin
+    if (text === '/stats' || text === '/statistika' || text === ADMIN_STATS_BUTTON) {
+      if (!adminChats().includes(chat)) return; // faqat admin — boshqalarga hech narsa ko'rinmaydi
+      void tg('sendChatAction', { chat_id: chat, action: 'typing' }).catch(() => {});
       const stats = statsText(collectStats(), await fetchPeerStats());
-      await send(chat, stats);
+      await send(chat, stats, { reply_markup: adminKb() });
       return;
     }
     if (text === '/me') return send(chat, meText(userOf(from)), { reply_markup: mainKb() });
@@ -556,6 +562,11 @@ export function startBot(token = env('TELEGRAM_BOT_TOKEN')): Bot | null {
     const pay = providers().includes('visa') ? (methods.length ? `${methods.join(', ')} yoki Visa` : 'Visa') : methods.join(' yoki ') || 'karta';
     await tg('setMyDescription', { description: `🇰🇷 GoTopic — koreys tilini o'zbek tilida o'rganing.\n\n🗺 O'yin tariqasida darslar TOPIK 1→6 — bepul\n📖 30 000 so'zlik lug'at — so'zni shu botga yozing\n📝 TOPIK mashqlari: grammatika, o'qish, tinglash\n🏆 Haftalik turnir va kunlik seriya\n🐯 Hori AI va Gemini Live — Super obunada\n💎 Super: 1 hafta, 1 oy yoki 3 oy — ${pay}\n\nBoshlash uchun «Start» ni bosing 👇` }).catch(() => {});
     await tg('setMyCommands', { commands: [{ command: 'start', description: '🚀 Boshlash va ilovaga kirish' }, { command: 'lugat', description: "📖 Lug'at: so'z qidirish" }, { command: 'plans', description: '💎 Super tariflari' }, { command: 'me', description: '👤 Mening obunam' }, { command: 'help', description: '❓ Yordam' }] }).catch(() => {});
+    // Admin chatida qo'shimcha /stats buyrug'i va doimiy «📊 Statistika» tugmasi (boshqalar ko'rmaydi).
+    for (const chat of adminChats()) {
+      await tg('setMyCommands', { commands: [...[{ command: 'start', description: '🚀 Boshlash va ilovaga kirish' }, { command: 'lugat', description: "📖 Lug'at: so'z qidirish" }, { command: 'plans', description: '💎 Super tariflari' }, { command: 'me', description: '👤 Mening obunam' }, { command: 'help', description: '❓ Yordam' }], { command: 'stats', description: '📊 Statistika (admin)' }], scope: { type: 'chat', chat_id: chat } }).catch(() => {});
+      if (!dashOf(chat)?.message_id) await tg('sendMessage', { chat_id: chat, text: '🔐 Admin paneli: «📊 Statistika» tugmasini bosing — hozirgi statistika keladi.', reply_markup: { keyboard: [[{ text: '📊 Statistika' }]], resize_keyboard: true, is_persistent: true } }).catch(() => {});
+    }
     let offset = 0;
     for (;;) {
       try {

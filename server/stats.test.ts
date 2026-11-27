@@ -65,4 +65,16 @@ describe('admin statistics', () => {
     await bot.handle({ message: { chat: { id: 900, type: 'private' }, from: { id: 900, first_name: 'Boss' }, text: '/stats' } });
     expect(String(calls.at(-1)!.body.text)).toContain('Jonli statistika');
   });
+
+  it('«📊 Statistika» button works only for the admin', async () => {
+    const calls: { method: string; body: Record<string, any> }[] = [];
+    const tg = async (method: string, body: Record<string, unknown>) => (calls.push({ method, body: body as Record<string, any> }), { message_id: 1 });
+    const bot = createBot(tg, async () => null);
+    await bot.handle({ message: { chat: { id: 7, type: 'private' }, from: { id: 7, first_name: 'X' }, text: '📊 Statistika' } });
+    expect(calls.filter((c) => c.method === 'sendMessage')).toHaveLength(0);
+    await bot.handle({ message: { chat: { id: 900, type: 'private' }, from: { id: 900, first_name: 'Boss' }, text: '📊 Statistika' } });
+    const last = calls.filter((c) => c.method === 'sendMessage').at(-1)!;
+    expect(String(last.body.text)).toContain('Jonli statistika');
+    expect(JSON.stringify(last.body.reply_markup)).toContain('📊 Statistika');
+  });
 });

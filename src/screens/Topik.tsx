@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { GRAM_CATS, GRAMMAR, LISTENING, READING, type GramItem, type TopikText } from '../data/topik';
 import { useStore } from '../state/store';
 import { grantXp } from '../engine/game';
-import { playSfx, ttsSupported } from '../engine/audio';
+import { playSfx, speakQueue, ttsSupported } from '../engine/audio';
 import { Ic } from '../components/Icons';
 import { Mascot } from '../components/Mascot';
 
@@ -185,6 +185,8 @@ function Texts({ items, listen }: { items: TopikText[]; listen: boolean }) {
     if (!ttsSupported()) return;
     // Dialogda ikki ovoz — tezlik bilan farqlaymiz (brauzerda bitta koreyscha ovoz bo'lishi mumkin).
     const lines = t.lines.map((l) => l.ko);
+    // Android ilovada (WebView) speechSynthesis yo'q — telefon TTS ko'prigi orqali ketma-ket o'qiymiz.
+    if (!('speechSynthesis' in window)) return speakQueue(lines, 0.9 * state.settings.ttsRate);
     let k = 0;
     const next = () => {
       if (k >= lines.length) return;
