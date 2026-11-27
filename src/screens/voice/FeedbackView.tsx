@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Ic } from '../../components/Icons';
 import { SaveMark } from '../../components/Micro';
 import { compareStats, loadHistory, saveSession, type Feedback, type SessionRecord } from '../../engine/voice/prefs';
-import { speak } from '../../engine/audio';
+import { aiSpeak } from '../../engine/voice/aiSpeak';
 import { useStore } from '../../state/store';
 import { KruaLive } from '../../components/KruaLive';
 import type { ExplainLang } from '../../data/characters';
@@ -134,7 +134,7 @@ export function FeedbackView({ record, lang, onBack, onAgain, onExam }: { record
                       <div className="fb-fix">
                         <s>{g.example}</s>
                         {g.better && (
-                          <button type="button" className="fr-chip" onClick={() => speak(g.better, state.settings.ttsRate)}>
+                          <button type="button" className="fr-chip" onClick={() => aiSpeak([g.better])}>
                             {g.better} <span className="fr-chip-icon"><Ic name="speaker" size={14} /></span>
                           </button>
                         )}
@@ -151,7 +151,7 @@ export function FeedbackView({ record, lang, onBack, onAgain, onExam }: { record
               <div className="fb-words">
                 {fb.words.map((w) => (
                   <div key={w.fr} className="fb-word">
-                    <button type="button" className="fb-word-fr" onClick={() => speak(w.fr, state.settings.ttsRate)}>
+                    <button type="button" className="fb-word-fr" onClick={() => aiSpeak([w.fr])}>
                       <Ic name="speaker" size={14} /> {w.fr}
                     </button>
                     <span className="muted">{w.uz}</span>

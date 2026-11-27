@@ -666,12 +666,14 @@ describe('AI route consent/quota middleware', () => {
     expect(main).toContain("tts: ttsReady ? 'elevenlabs' : 'text'");
     expect(main).toContain('live: liveReady()');
     expect(initialState(0).settings.tutorVoice).toBe(true);
-    expect(tutor).toContain('if (state.settings.tutorVoice) speakQueue(frenchParts(reply.text), state.settings.ttsRate);');
+    expect(tutor).toContain('if (state.settings.tutorVoice) aiSpeak(frenchParts(reply.text), voiceQuota);');
+    expect(tutor).not.toContain('speakQueue');
     expect(tutor).toContain('tutorVoice: !s.settings.tutorVoice');
     expect(privacy).toContain('server AI va STT o‘chiq');
     expect(privacy).toContain('server TTS inson tomonidan tekshirilmagan va runtime’da faqat matn rejimida');
     expect(privacy).toContain('Matnli tutor javobidagi koreyscha qismlarni avtomatik o‘qish sozlamasi yangi profil uchun sukut bo‘yicha yoqilgan');
-    expect(privacy).toContain('Matn tanlangan brauzer/qurilma SpeechSynthesis dvigateliga berilib');
+    expect(privacy).toContain('server TTS orqali Hori AI ovozida ovozlashtiriladi');
+    expect(privacy).toContain('Hori AI uchun brauzer/qurilma SpeechSynthesis (telefon ovozi) ishlatilmaydi');
     expect(privacy).toContain('Server TTS o‘chiq, sozlanmagan yoki xatoga uchraganida, server oqimida brauzer SpeechSynthesis’ga yashirin fallback qilinmaydi');
     expect(privacy).toContain('Live ham o‘chiq');
     for (const legacy of ['GEMINI_API_KEY', 'FALLBACK_LLM', 'azureTts(', 'elevenLabsTts(', 'auth_tokens']) {
