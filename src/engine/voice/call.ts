@@ -117,7 +117,7 @@ export class VoiceCall {
   private startedAt = 0;
   private timer = 0;
   private turnTimer = 0;
-  private noticeTimer = 0;
+  private noticeTimer: ReturnType<typeof setTimeout> | undefined;
   private bargeIns: number[] = [];
   private finishing = false;
   private lastLevelEmit = 0;
@@ -187,7 +187,7 @@ export class VoiceCall {
   private notice(n: Notice, text = '', ms = 4500) {
     clearTimeout(this.noticeTimer);
     this.set({ notice: n, noticeText: text });
-    if (n) this.noticeTimer = window.setTimeout(() => this.set({ notice: null, noticeText: '' }), ms);
+    if (n) this.noticeTimer = globalThis.setTimeout(() => this.set({ notice: null, noticeText: '' }), ms);
   }
 
   // ---------- Boshlash ----------
