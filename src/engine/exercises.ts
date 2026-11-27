@@ -80,6 +80,15 @@ export function makePick(word: Word, pool: Word[], rand: () => number): Exercise
   return { id: nextId(), kind: 'pick', word, options: shuffle([word, ...others], rand), wordRefs: [word.fr], ref: `w:${word.fr}` };
 }
 
+/**
+ * «Qaysi biri «o»?» kabi savolda variantlar ostidagi o'qilish (ro) javobni oshkor qiladimi.
+ * Oshkor qilsa — hech bir kartada ko'rsatilmaydi (faqat bittasida yashirilsa, o'sha karta javobni bildirib qo'yadi).
+ */
+export function hidePickRomanization(ex: { word: Word; options: Word[] }): boolean {
+  const q = ex.word.uz.toLowerCase();
+  return ex.options.some((w) => !!w.ro && q.includes(w.ro.toLowerCase()));
+}
+
 export function makeMatch(words: Word[], rand: () => number): Exercise {
   const uniq: Word[] = [];
   for (const w of shuffle(words, rand)) {
@@ -182,7 +191,9 @@ export function buildLesson(lesson: Lesson, unit: Unit, opts: GenOptions = {}): 
   const tts = opts.tts ?? false;
   const level = opts.level ?? 0;
   const unitWords = unit.lessons.flatMap((l) => l.words);
-  const unitSentences = unit.lessons.flatMap((l) => l.sentences);
+  // Alifbo bo'limida chalg'ituvchi so'zlar ham faqat shu darsgacha o'rgatilgan harflardan bo'lsin.
+  const upTo = unit.title.startsWith('Hangul') ? unit.lessons.slice(0, unit.lessons.indexOf(lesson) + 1 || undefined) : unit.lessons;
+  const unitSentences = upTo.flatMap((l) => l.sentences);
   const pickPool = lesson.words.length >= 4 ? lesson.words : unitWords;
 
   const words = shuffle(lesson.words, rand);

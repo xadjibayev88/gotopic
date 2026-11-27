@@ -21,7 +21,7 @@ export function evaluate(ex: Exercise, a: Answer): Evaluation {
   switch (ex.kind) {
     case 'pick': {
       const ok = a.kind === 'pick' && a.fr === ex.word.fr;
-      return { correct: ok, verdict: ok ? 'correct' : 'wrong', solution: `${ex.word.fr} — ${ex.word.uz}` };
+      return { correct: ok, verdict: ok ? 'correct' : 'wrong', solution: `${ex.word.fr} — «${ex.word.uz}»` };
     }
     case 'match':
       return { correct: true, verdict: 'correct', solution: '' };

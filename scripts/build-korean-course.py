@@ -53,14 +53,38 @@ def chunk(words):
 
 units = []
 
+CHO = list('ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ')
+JUNG = list('ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ')
+JONG = [''] + list('ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ')
+HANGUL_VOWEL_LETTERS = [v[0] for v in D['HANGUL_VOWELS']]
+
+def jamo(text):
+    """Bo'g'inlarni harflarga ajratadi: 나무 → ㄴ ㅏ ㅁ ㅜ."""
+    out = []
+    for c in text:
+        o = ord(c) - 0xAC00
+        if 0 <= o < 11172:
+            out += [CHO[o // 588], JUNG[o % 588 // 28]] + ([JONG[o % 28]] if o % 28 else [])
+    return out
+
 def add_unit(title, level, words, sentences, guide, desc):
     uid = f"u{len(units) + 1}"
     lessons = []
     parts = chunk(words)
+    known = {'ㅇ'} | (set(HANGUL_VOWEL_LETTERS) if title == 'Hangul: undoshlar' else set())
     for i, ws in enumerate(parts):
         n = len(sentences)
         start = (i * 3) % n
         sents = [sentences[(start + j) % n] for j in range(min(5, n))]
+        if title.startswith('Hangul'):
+            # Alifbo darslari: faqat shu darsgacha o'rgatilgan harflardan iborat so'zlar; yangi harflilari birinchi.
+            new = {w['fr'] for w in ws}
+            known |= new
+            ok = [s for s in sentences if set(jamo(s['fr'])) <= known]
+            ok.sort(key=lambda s: not (set(jamo(s['fr'])) & new))
+            sents = ok[:6]
+            if len(sents) < 3:
+                raise SystemExit(f"{title} {i + 1}-dars: o'rgatilgan harflardan so'z yetarli emas")
         title_l = ' '.join(w['fr'] for w in ws) if title.startswith('Hangul') else ', '.join(short(w['uz']) for w in ws[:2]).capitalize()
         lessons.append({'id': f"{uid}l{i + 1}", 'title': title_l, 'words': ws, 'sentences': sents})
     units.append({'id': uid, 'level': level, 'title': title, 'description': desc, 'color': COLORS[len(units) % len(COLORS)],

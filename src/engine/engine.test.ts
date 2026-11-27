@@ -51,6 +51,14 @@ describe('text', () => {
   it('accepts alternatives', () => {
     expect(checkAnswer('Ismim Ali', ['Mening ismim Ali.', 'Ismim Ali.']).verdict).toBe('correct');
   });
+  it('accepts any meaning of a multi-meaning answer ("tish; ikki")', () => {
+    expect(checkAnswer('Ikki', ['tish; ikki']).verdict).toBe('correct');
+    expect(checkAnswer('tish', ['tish; ikki']).verdict).toBe('correct');
+    expect(checkAnswer('tish ikki', ['tish; ikki']).verdict).toBe('correct');
+    expect(checkAnswer('ng', ['– / ng']).verdict).toBe('correct');
+    expect(checkAnswer('ikki', ['ikki (2)']).verdict).toBe('correct');
+    expect(checkAnswer('uch', ['tish; ikki']).verdict).toBe('wrong');
+  });
 });
 
 describe('course content', () => {

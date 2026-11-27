@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { ViviPeek } from './ViviPeek';
 import { COURSE, type Word } from '../data/course';
 import type { Exercise } from '../engine/exercises';
+import { hidePickRomanization } from '../engine/exercises';
 import type { Answer } from '../engine/evaluate';
 import { playSfx, speak, ttsSupported } from '../engine/audio';
 import { normalize } from '../engine/text';
@@ -112,6 +113,7 @@ export function PickView({ ex, locked, onAnswer }: ViewProps<'pick'>) {
     window.addEventListener('keydown', h);
     return () => window.removeEventListener('keydown', h);
   });
+  const hideRo = hidePickRomanization(ex);
   return (
     <div className="ex">
       <div className="ex-badge">✨ Yangi so'z</div>
@@ -132,8 +134,9 @@ export function PickView({ ex, locked, onAnswer }: ViewProps<'pick'>) {
                 {w.fr}
               </span>
             )}
-            {/* O'qilishi javobni oshkor qilsa (Hangul harflari) — ko'rsatilmaydi. */}
-            {w.ro && !ex.word.uz.toLowerCase().includes(w.ro.toLowerCase()) && <span className="pick-ro">{w.ro}</span>}
+            {/* O'qilishi javobni oshkor qilsa (Hangul harflari) — hech bir kartada ko'rsatilmaydi,
+                aks holda yozuvsiz qolgan karta to'g'ri javobni bildirib qo'yadi. */}
+            {w.ro && !hideRo && <span className="pick-ro">{w.ro}</span>}
             <span className="kbd">{i + 1}</span>
           </button>
         ))}
