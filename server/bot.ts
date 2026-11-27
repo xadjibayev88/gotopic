@@ -5,6 +5,7 @@
 import { randomBytes } from 'node:crypto';
 import { db } from './db.ts';
 import { decideReview } from './social.ts';
+import { confirmTgLogin, tgLoginStatus } from './tglogin.ts';
 import { getUser, upsertSocialUser } from './accounts.ts';
 import { loadDictionary, searchDictionary } from './dictionary.ts';
 import { cardBrand, groupCardNumber } from '../src/shared/card.ts';
@@ -315,6 +316,17 @@ export function createBot(tg: Tg, download: (fileId: string) => Promise<{ mime: 
 
     if (text.startsWith('/start')) {
       const arg = text.split(/\s+/)[1] ?? '';
+      if (arg.startsWith('login_')) {
+        const code = arg.slice(6);
+        if (tgLoginStatus(code) !== 'pending') return send(chat, "⌛ Kirish havolasi eskirgan. Saytda «Telegram bilan davom etish» tugmasini qayta bosing.");
+        return send(chat, [
+          `🔐 <b>Saytga kirish</b>`,
+          '',
+          `${esc(from.first_name || "Do'stim")}, saytga shu Telegram hisobingiz bilan kirasiz. Tasdiqlang 👇`,
+          '',
+          "<i>⚠️ Agar hozir saytda tugmani o'zingiz bosmagan bo'lsangiz — tasdiqlamang.</i>",
+        ].join('\n'), { reply_markup: { inline_keyboard: [[{ text: '✅ Tasdiqlash va kirish', callback_data: `tgl:${code}` }]] } });
+      }
       let uid: string | null = null;
       if (arg.startsWith('pay_')) uid = linkByCode(arg.slice(4), String(from.id));
       const linked = !!uid;
@@ -374,6 +386,13 @@ export function createBot(tg: Tg, download: (fileId: string) => Promise<{ mime: 
     if (data === 'home') return ack(), send(chat, 'Asosiy menyu 👇', { reply_markup: mainKb() });
     if (data === 'me') return ack(), send(chat, meText(userOf(q.from)), { reply_markup: mainKb() });
     if (data === 'dict') return ack(), send(chat, dictText(''), { reply_markup: dictKb() });
+    if (data.startsWith('tgl:')) {
+      const ok = confirmTgLogin(data.slice(4), userOf(q.from));
+      await ack(ok ? 'Tayyor!' : 'Havola eskirgan', !ok);
+      const text = ok ? "✅ <b>Kirdingiz!</b>\n\nBrauzerga qayting — sayt o'zi ochiladi." : "⌛ Kirish havolasi eskirgan. Saytda tugmani qayta bosing.";
+      if (q.message) await tg('editMessageText', { chat_id: q.message.chat.id, message_id: q.message.message_id, text, parse_mode: 'HTML', reply_markup: { inline_keyboard: [] } }).catch(() => send(chat, text));
+      return;
+    }
     if (data.startsWith('plan:')) {
       const plan = data.slice(5) as PlanId;
       if (!(plan in PLANS)) return ack();

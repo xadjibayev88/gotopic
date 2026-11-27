@@ -5,6 +5,8 @@ import { resetDbForTests } from './db.ts';
 import { register, upsertGoogleUser } from './accounts.ts';
 import { activePlan } from './billing.ts';
 import { CONFETTI_EFFECT_ID, adminChats, createBot, createLinkCode } from './bot.ts';
+import { startTgLogin, takeTgLogin, tgLoginStatus, TG_LOGIN_TTL } from './tglogin.ts';
+import { getUser } from './accounts.ts';
 
 type Call = { method: string; body: Record<string, any> };
 
@@ -167,5 +169,32 @@ describe('telegram bot', () => {
     const { calls, bot } = setup();
     await bot.handle(msg(13, { text: '/help' }));
     expect(String(calls.at(-1)!.body.text)).toContain('/lugat');
+  });
+
+  it('Telegram login: /start login_ asks to confirm, the button signs the site in once', async () => {
+    const { calls, bot } = setup();
+    const code = startTgLogin();
+    await bot.handle(msg(21, { text: `/start login_${code}` }));
+    expect(tgLoginStatus(code)).toBe('pending');
+    const ask = calls.at(-1)!;
+    expect(String(ask.body.text)).toContain('Saytga kirish');
+    expect(JSON.stringify(ask.body.reply_markup)).toContain(`tgl:${code}`);
+    await bot.handle(cb(21, `tgl:${code}`));
+    expect(tgLoginStatus(code)).toBe('ok');
+    const uid = takeTgLogin(code);
+    expect(uid && getUser(uid)?.name).toBe('Boss');
+    // Bir martalik: ikkinchi marta ishlamaydi.
+    expect(takeTgLogin(code)).toBeNull();
+    expect(tgLoginStatus(code)).toBe('expired');
+  });
+
+  it('Telegram login: unknown or expired codes are refused', async () => {
+    const { calls, bot } = setup();
+    await bot.handle(msg(22, { text: '/start login_nope' }));
+    expect(String(calls.at(-1)!.body.text)).toContain('eskirgan');
+    const old = startTgLogin(Date.now() - TG_LOGIN_TTL - 1000);
+    expect(tgLoginStatus(old)).toBe('expired');
+    await bot.handle(cb(22, `tgl:${old}`));
+    expect(takeTgLogin(old)).toBeNull();
   });
 });

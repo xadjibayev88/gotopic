@@ -1,6 +1,5 @@
 // Facebook, Apple va Telegram orqali kirish. Har bir tugma faqat server sozlangan bo'lsa ko'rinadi.
-import { currentLang } from '../i18n';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAccount } from '../state/account';
 
 type FB = { init: (o: Record<string, unknown>) => void; login: (cb: (r: { authResponse?: { accessToken?: string } }) => void, o?: Record<string, unknown>) => void };
@@ -50,23 +49,67 @@ export function SocialLogin({ onDone, onError }: { onDone: () => void; onError: 
     else onDone();
   };
 
-  // Telegram (sayt): rasmiy Telegram.Login.auth — popup orqali; vidjetning data-onauth'i eval talab qiladi
-  // va saytning CSP'si (unsafe-eval yo'q) uni bloklaydi, shuning uchun o'z tugmamiz.
-  const telegram = async () => {
-    const botId = cfg?.telegramBotId;
-    if (!botId) return onError('Telegram orqali kirish sozlanmagan');
-    try {
-      setBusy('telegram');
-      await loadScript('https://telegram.org/js/telegram-widget.js?22');
-      window.Telegram!.Login!.auth({ bot_id: botId, request_access: 'write', lang: currentLang() }, (user) => {
-        if (user && typeof user === 'object') void finish('telegram', { data: user });
-        else setBusy(null);
-      });
-    } catch {
-      setBusy(null);
-      onError("Telegram yuklanmadi — boshqa usul bilan kiring");
-    }
+  // Telegram (sayt/brauzer): bosilganda Telegram ilovasi ochiladi (t.me/<bot>?start=login_<kod>), botda
+  // «Tasdiqlash» bosiladi — sayt fonda kutib turadi va o'zi kiradi. Popup va telefon raqami so'ralmaydi.
+  const [tgWait, setTgWait] = useState<{ code: string; bot: string } | null>(null);
+  const prefetched = useRef<Promise<{ code: string; bot: string } | null> | null>(null);
+  const newCode = () =>
+    fetch('./api/auth/telegram/start', { method: 'POST', credentials: 'include' })
+      .then((r) => (r.ok ? (r.json() as Promise<{ code: string; bot: string }>) : null))
+      .catch(() => null);
+  // Kodni oldindan olamiz — bosilganda Telegram darhol ochiladi (brauzer tashqi ilovani faqat bosish paytida ochadi).
+  useEffect(() => {
+    if (cfg?.telegramBot && !tgWebApp && !prefetched.current) prefetched.current = newCode();
+  }, [cfg?.telegramBot, tgWebApp]); // eslint-disable-line react-hooks/exhaustive-deps
+  const tgLink = (w: { code: string; bot: string }) => `https://t.me/${w.bot}?start=login_${w.code}`;
+  const openTelegram = (w: { code: string; bot: string }) => {
+    // tg:// — o'rnatilgan Telegram ilovasini sahifani tark etmasdan ochadi; ochilmasa pastdagi havola bor.
+    location.href = `tg://resolve?domain=${w.bot}&start=login_${w.code}`;
   };
+  const telegram = async () => {
+    setBusy('telegram');
+    let w = await (prefetched.current ?? newCode());
+    prefetched.current = null;
+    if (!w) w = await newCode();
+    if (!w) {
+      setBusy(null);
+      return onError("Telegram bilan kirish hozir ishlamayapti — boshqa usul bilan kiring");
+    }
+    setTgWait(w);
+    openTelegram(w);
+  };
+  useEffect(() => {
+    if (!tgWait) return;
+    let stop = false;
+    const started = Date.now();
+    const check = async () => {
+      if (stop) return;
+      const r = await fetch(`./api/auth/telegram/check?code=${encodeURIComponent(tgWait.code)}`, { credentials: 'include' })
+        .then((x) => (x.ok ? (x.json() as Promise<{ status: string }>) : null))
+        .catch(() => null);
+      if (stop || !r) return;
+      if (r.status === 'ok') {
+        stop = true;
+        setTgWait(null);
+        await finish('telegram', { loginCode: tgWait.code });
+      } else if (r.status === 'expired' || Date.now() - started > 10 * 60_000) {
+        stop = true;
+        setTgWait(null);
+        setBusy(null);
+        onError('Kirish vaqti tugadi — tugmani qayta bosing');
+      }
+    };
+    const id = window.setInterval(check, 2000);
+    const onShow = () => !document.hidden && void check();
+    document.addEventListener('visibilitychange', onShow);
+    window.addEventListener('focus', onShow);
+    return () => {
+      stop = true;
+      clearInterval(id);
+      document.removeEventListener('visibilitychange', onShow);
+      window.removeEventListener('focus', onShow);
+    };
+  }, [tgWait]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!cfg || (!cfg.facebookAppId && !cfg.appleClientId && !cfg.telegramBot)) return null;
 
@@ -120,12 +163,28 @@ export function SocialLogin({ onDone, onError }: { onDone: () => void; onError: 
         <button
           type="button"
           className="btn btn-social tg"
-          disabled={!!busy || (!tgWebApp && !cfg.telegramBotId)}
+          disabled={!!busy}
           onClick={() => (tgWebApp ? void finish('telegram', { initData: window.Telegram!.WebApp!.initData }) : void telegram())}
         >
           <svg className="si" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="currentColor"><path d="M21.4 4.3 18.3 19c-.2 1-.9 1.3-1.8.8l-4.8-3.6-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.3-.1-.5-.6-.2l-11 6.9-4.7-1.5c-1-.3-1-1 .2-1.5l18.5-7.1c.9-.3 1.6.2 1.4 1.4z" /></svg>
-          {busy === 'telegram' ? 'Kuting…' : 'Telegram bilan davom etish'}
+          {tgWait ? "Telegram'da tasdiqlang…" : busy === 'telegram' ? 'Kuting…' : 'Telegram bilan davom etish'}
         </button>
+      )}
+      {tgWait && (
+        <div className="tg-wait" role="status">
+          <span className="tg-wait-dot" aria-hidden="true" />
+          <p>
+            Telegram'da <b>Start</b> → <b>✅ Tasdiqlash</b> ni bosing va shu yerga qayting — avtomatik kirasiz.
+          </p>
+          <div className="tg-wait-row">
+            <a href={tgLink(tgWait)} target="_blank" rel="noreferrer">
+              Telegram ochilmadimi?
+            </a>
+            <button type="button" className="btn-link" onClick={() => (setTgWait(null), setBusy(null))}>
+              Bekor qilish
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
