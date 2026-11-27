@@ -24,6 +24,7 @@ import { createGeminiApiProvider } from './gemini-api-provider.ts';
 import { createAiKeyAlerter } from './ai-alerts.ts';
 import { createLiveTokenRoute, mintGeminiLiveToken } from './live-route.ts';
 import { liveInstruction, parseTutorRequest } from './tutor.ts';
+import { adsConfigScript, appAdsTxt, createKeyCache, verifySsv } from './admob-ssv.ts';
 import { registerClientLogRoute, type RouteTable } from './client-log.ts';
 import { loadDictionary, searchDictionary } from './dictionary.ts';
 
@@ -196,8 +197,12 @@ function freeLeft(req: IncomingMessage): number | null {
 const REWARD_VIVI_MIN = num('REWARD_VIVI_MINUTES', 2);
 const REWARD_VIVI_PER_DAY = num('REWARD_VIVI_PER_DAY', 3);
 const adBonus = new Map<string, { day: string; claims: number }>();
-const rewardNonces = new Map<string, { key: string; at: number }>();
+const rewardNonces = new Map<string, { key: string; at: number; ssv?: boolean }>();
 const REWARD_MIN_WATCH_MS = num('REWARD_MIN_WATCH_SECONDS', 15) * 1000;
+// REWARD_REQUIRE_SSV=1 — mukofot faqat Google SSV tasdiqlagandan keyin (AdMob'da SSV callback URL sozlangan bo'lsa).
+const REWARD_REQUIRE_SSV = env.REWARD_REQUIRE_SSV === '1';
+const ssvKeys = createKeyCache();
+const ssvSeen = new Map<string, number>();
 function bonusMin(req: IncomingMessage): number {
   const r = adBonus.get(quotaKey(req));
   return r && r.day === tashkentDay() ? r.claims * REWARD_VIVI_MIN : 0;
@@ -290,6 +295,24 @@ const routeHandlers: RouteTable = Object.freeze(registerClientLogRoute({
     json(res, 200, { nonce });
   },
 
+  // AdMob SSV callback: AdMob → Ad units → Rewarded → "Server-side verification" URL: https://<domen>/api/admob/ssv
+  'GET /api/admob/ssv': async (req, res) => {
+    const raw = (req.url ?? '').split('?')[1] ?? '';
+    // AdMob konsoli URL'ni tekshirganda parametrsiz so'rov yuboradi — 200 qaytariladi.
+    if (!raw.includes('signature=')) return json(res, 200, { ok: true });
+    const keyId = new URLSearchParams(raw.slice(raw.indexOf('&signature=') + 1)).get('key_id') ?? '';
+    const key = await ssvKeys(keyId);
+    const r = verifySsv(raw, () => key);
+    if (!r.ok) return json(res, 403, { ok: false, reason: r.reason });
+    const tx = r.transactionId ?? '';
+    if (tx && ssvSeen.has(tx)) return json(res, 200, { ok: true, duplicate: true });
+    if (tx) ssvSeen.set(tx, Date.now());
+    if (ssvSeen.size > 50_000) for (const [k, at] of ssvSeen) if (Date.now() - at > 86_400_000) ssvSeen.delete(k);
+    const n = r.customData ? rewardNonces.get(r.customData) : undefined;
+    if (n) n.ssv = true;
+    json(res, 200, { ok: true });
+  },
+
   // Reklama (rewarded video) oxirigacha ko'rilgach: Hori bilan qo'shimcha daqiqalar.
   'POST /api/reward/vivi': async (req, res) => {
     if (!originOk(req)) return json(res, 403, { message: 'Ruxsat etilmagan manba' });
@@ -299,7 +322,9 @@ const routeHandlers: RouteTable = Object.freeze(registerClientLogRoute({
     const n = typeof nb.nonce === 'string' ? rewardNonces.get(nb.nonce) : undefined;
     if (typeof nb.nonce === 'string') rewardNonces.delete(nb.nonce);
     const age = n ? Date.now() - n.at : -1;
-    if (!n || n.key !== quotaKey(req) || age < REWARD_MIN_WATCH_MS || age > 10 * 60_000) return json(res, 403, { code: 'reward_invalid', message: "Reklama oxirigacha ko'rilmadi" });
+    // Google SSV tasdiqlagan bo'lsa — darhol; aks holda (sayt / SSV sozlanmagan) — kamida REWARD_MIN_WATCH_SECONDS o'tgan bo'lishi kerak.
+    const watched = !!n && (n.ssv === true || (!REWARD_REQUIRE_SSV && age >= REWARD_MIN_WATCH_MS));
+    if (!n || n.key !== quotaKey(req) || !watched || age > 10 * 60_000) return json(res, 403, { code: 'reward_invalid', message: "Reklama oxirigacha ko'rilmadi" });
     if (bonusClaimsLeft(req) <= 0) return json(res, 429, { code: 'limit', message: "Bugungi reklama mukofotlari tugadi — ertaga yana ko'ring" });
     const k = quotaKey(req);
     const day = tashkentDay();
@@ -806,6 +831,12 @@ const server = createServer((req, res) => {
   }
   if (path.startsWith('/api/')) return json(res, 404, { message: 'topilmadi' });
   if (req.method !== 'GET' && req.method !== 'HEAD') return json(res, 405, { message: 'method' });
+  // Reklama ID'lari Railway Variables'dan (ADMOB_*): berilmasa — public/ads-config.js va public/app-ads.txt ishlaydi.
+  const adsText = path === '/ads-config.js' ? adsConfigScript(env, 'SALUT_ADS') : path === '/app-ads.txt' ? appAdsTxt(env) : null;
+  if (adsText !== null) {
+    res.writeHead(200, { ...SECURITY, 'content-type': path.endsWith('.js') ? MIME['.js'] : 'text/plain; charset=utf-8', 'cache-control': 'no-cache' });
+    return void res.end(adsText);
+  }
   void serveStatic(req, res);
 });
 server.keepAliveTimeout = 65_000;
