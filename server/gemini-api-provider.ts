@@ -36,7 +36,7 @@ export interface GeminiApiProviderConfig {
 
 const STT_INSTRUCTION = `Sen nutqni matnga aylantiruvchisan. Gapiruvchi — koreys tilini o'rganayotgan o'zbek o'quvchi; u AI ustoz «Hori» bilan gaplashyapti.
 - Audiodagi BARCHA aytilgan so'zlarni boshidan oxirigacha AYNAN yoz: hech bir qismini (o'zbekcha ham, koreyscha ham) tashlab ketma, tarjima qilma, javob berma, o'zingdan so'z qo'shma.
-- Nutq o'zbekcha, koreyscha yoki aralash bo'lishi mumkin: o'zbekcha — lotin yozuvida (o', g', sh, ch), koreyscha — koreys imlosida (urg'u belgilari bilan).
+- Nutq o'zbekcha, koreyscha yoki aralash bo'lishi mumkin: o'zbekcha — lotin yozuvida (o', g', sh, ch), koreyscha — Hangul yozuvida (lotin harflari bilan emas).
 - O'quvchining grammatik xatolarini TUZATMA.
 - Ustozning oxirgi gapi faqat ism va so'zlarni to'g'ri yozish uchun beriladi; uni audioda aytilmagan bo'lsa matnga qo'shma, lekin audioda aytilgan gapni u bilan o'xshash deb tashlab ham ketma.
 - Nutq eshitilmasa yoki tushunarsiz bo'lsa — text bo'sh.

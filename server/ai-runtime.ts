@@ -6,8 +6,17 @@ import type { GoogleCloudProviderConfig } from './google-cloud-provider.ts';
 import type { GeminiApiProviderConfig } from './gemini-api-provider.ts';
 
 /** Default Gemini TTS delivery note: warm, natural Tashkent Uzbek; French phrases in clear French. */
+/**
+ * Ovoz uslubi ko'rsatmasi sukut bo'yicha YUBORILMAYDI: Gemini TTS uzun ko'rsatmani ham ovoz chiqarib o'qib
+ * yuborardi (javobdan oldin 10–20 s inglizcha gap). Faqat VIVI_TTS_STYLE berilsa (va 'off' bo'lmasa) qo'shiladi.
+ */
+function ttsStyle(env: NodeJS.ProcessEnv): string | undefined {
+  const v = (env.VIVI_TTS_STYLE ?? '').trim();
+  return v && v !== 'off' ? v : undefined;
+}
+
 export const DEFAULT_TTS_STYLE =
-  "Read the following as Hori, a warm, playful young tutor. Speak natural, fluent Tashkent Uzbek (Latin script) at a relaxed conversational pace with friendly intonation; pronounce any French words and sentences with clear native French pronunciation. Do not read this instruction aloud:";
+  "Read the following as Hori, a warm, playful young tutor. Speak natural, fluent Tashkent Uzbek (Latin script) at a relaxed conversational pace with friendly intonation; pronounce any Korean words and sentences with clear native Korean pronunciation. Do not read this instruction aloud:";
 
 function exactTrue(value: string | undefined): boolean {
   return value === 'true';
@@ -33,7 +42,7 @@ export function googleProviderConfigFromEnv(env: NodeJS.ProcessEnv): GoogleCloud
       model: env.VIVI_TTS_MODEL ?? 'gemini-3.8-flash-tts',
       location: env.VIVI_TTS_LOCATION ?? 'global',
       voice: env.VIVI_TTS_VOICE ?? 'Leda',
-      style: env.VIVI_TTS_STYLE === 'off' ? undefined : env.VIVI_TTS_STYLE || DEFAULT_TTS_STYLE,
+      style: ttsStyle(env),
       verified: exactTrue(env.VIVI_TTS_VERIFIED),
     }),
   });
@@ -55,7 +64,7 @@ export function geminiApiProviderConfigFromEnv(env: NodeJS.ProcessEnv): GeminiAp
     // flash-tts first: in a live Uzbek test it was natural and tight (7 s) while lite padded long pauses (25 s).
     ttsModels: list(env.VIVI_TTS_MODELS, ['gemini-3.8-flash-tts', 'gemini-3.8-flash-lite-tts']),
     voice: env.VIVI_TTS_VOICE ?? env.GEMINI_TTS_VOICE ?? 'Leda',
-    style: env.VIVI_TTS_STYLE === 'off' ? undefined : env.VIVI_TTS_STYLE || DEFAULT_TTS_STYLE,
+    style: ttsStyle(env),
   });
 }
 

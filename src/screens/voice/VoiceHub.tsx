@@ -560,7 +560,7 @@ export function VoiceHub() {
                   <select value={prefs.micLang} onChange={(e) => setPrefs({ micLang: e.target.value as VoicePrefs['micLang'] })}>
                     <option value="auto">Avtomatik (Hori javobiga qarab)</option>
                     <option value="uz-UZ">O'zbekcha</option>
-                    <option value="ko-KR">Français</option>
+                    <option value="ko-KR">한국어 (koreyscha)</option>
                     <option value="ru-RU">Русский</option>
                     <option value="en-US">English</option>
                   </select>

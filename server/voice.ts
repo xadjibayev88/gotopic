@@ -436,7 +436,7 @@ export function translateBody(req: TranslateRequest, model: string): Record<stri
     systemInstruction: {
       parts: [
         {
-          text: "Koreyscha so'z yoki iborani o'zbek tiliga (lotin yozuvida) qisqa va aniq tarjima qil. Agar ibora so'zma-so'z emas, ma'nosi bilan tarjima qilinsa — ma'nosini ber. Kontekst faqat ma'noni aniqlash uchun. Talaffuzni o'zbek harflarida yoz (masalan «bonjur»). Faqat JSON: {\"uz\": \"tarjima\", \"say\": \"talaffuz\"}",
+          text: "Koreyscha so'z yoki iborani o'zbek tiliga (lotin yozuvida) qisqa va aniq tarjima qil. Agar ibora so'zma-so'z emas, ma'nosi bilan tarjima qilinsa — ma'nosini ber. Kontekst faqat ma'noni aniqlash uchun. Talaffuzni o'zbek harflarida yoz (masalan «annyonghaseyo»). Faqat JSON: {\"uz\": \"tarjima\", \"say\": \"talaffuz\"}",
         },
       ],
     },
