@@ -6,6 +6,8 @@ export interface AdsConfig {
   admobBanner?: string;
   admobRewarded?: string;
   admobInterstitial?: string;
+  /** true — haqiqiy ID bo'lmagan birliklar o'rniga Google'ning SINOV reklamasi (tekshirish uchun, daromad bermaydi). */
+  admobTestAds?: boolean;
   adsenseClient?: string;
   adsenseSlot?: string;
   /** Saytda mukofotli video (AdSense Ad Placement API). AdSense'da «Ad placements» yoqilgan bo'lishi kerak. */
@@ -19,6 +21,8 @@ type Bridge = {
   resumeBanner(id: string): void;
   prepareRewardVideoAd(id: string, unit: string, testing: boolean): void;
   showRewardVideoAd(id: string): void;
+  /** Yangi APK: keyingi mukofotli reklamaga SSV custom_data (server chiptasi) biriktiradi. */
+  setRewardedSsv?(customData: string, userId: string): void;
   prepareInterstitial?(id: string, unit: string, testing: boolean): void;
   showInterstitial?(id: string): void;
 };
@@ -45,6 +49,8 @@ const TEST = {
 const UNIT = /^ca-app-pub-\d{10,20}\/\d{6,20}$/;
 const cfg = (): AdsConfig => window.SALUT_ADS ?? {};
 const unit = (v: string | undefined, test: string) => (v && UNIT.test(v.trim()) ? { id: v.trim(), testing: false } : { id: test, testing: true });
+/** Birlik ishlatiladimi: haqiqiy ID berilgan yoki sinov rejimi yoqilgan. */
+const enabled = (v: string | undefined) => !!(v && UNIT.test(v.trim())) || cfg().admobTestAds === true;
 
 let seq = 0;
 const pending = new Map<string, { resolve: (v: unknown) => void; reject: (e: Error) => void }>();
@@ -126,8 +132,9 @@ async function prepareInterstitial() {
 export async function initAds(isPremium: boolean) {
   premium = isPremium;
   if (!isNativeApp()) return emit();
-  // Haqiqiy AdMob ID berilmagan bo'lsa — reklama ko'rsatilmaydi (sinov reklamasi va bo'sh banner joyi chiqmasin).
-  if (unit(cfg().admobBanner, TEST.banner).testing) return emit();
+  // Har bir birlik alohida: faqat ID berilganlari ishlaydi (masalan, faqat mukofotli video, bannersiz).
+  const c = cfg();
+  if (!enabled(c.admobBanner) && !enabled(c.admobRewarded) && !enabled(c.admobInterstitial)) return emit();
   if (premium) {
     if (bannerShown) await call('hideBanner').catch(() => undefined);
     bannerShown = false;
@@ -135,16 +142,15 @@ export async function initAds(isPremium: boolean) {
   }
   if (!initialized) {
     initialized = true;
-    const b = unit(cfg().admobBanner, TEST.banner);
-    await call('initialize', b.testing).catch(() => undefined);
-    setTimeout(() => void prepareRewarded(), 2500);
-    setTimeout(() => void prepareInterstitial(), 5000);
+    await call('initialize', false).catch(() => undefined);
+    if (enabled(c.admobRewarded)) setTimeout(() => void prepareRewarded(), 1500);
+    if (enabled(c.admobInterstitial)) setTimeout(() => void prepareInterstitial(), 5000);
   }
-  if (!immersive) await showBanner();
+  if (!immersive && enabled(c.admobBanner)) await showBanner();
 }
 
 async function showBanner() {
-  if (premium || !isNativeApp()) return;
+  if (premium || !isNativeApp() || !enabled(cfg().admobBanner)) return;
   const b = unit(cfg().admobBanner, TEST.banner);
   await call(bannerShown ? 'resumeBanner' : 'showBanner', ...(bannerShown ? [] : [b.id, b.testing])).catch(() => undefined);
   bannerShown = true;
@@ -179,8 +185,10 @@ export function webRewardedAvailable(): boolean {
   return !isNativeApp() && !premium && !!adsenseClient() && cfg().adsenseRewarded === true;
 }
 
+const nativeRewardedAvailable = () => isNativeApp() && enabled(cfg().admobRewarded);
+
 export function rewardedState(k: RewardKind = 'coffee') {
-  return { available: (isNativeApp() || webRewardedAvailable()) && !premium, ready: isNativeApp() ? rewardedReady : true, left: Math.max(0, REWARD_DAILY_LIMIT - usedToday(k)) };
+  return { available: (nativeRewardedAvailable() || webRewardedAvailable()) && !premium, ready: isNativeApp() ? rewardedReady : true, left: Math.max(0, REWARD_DAILY_LIMIT - usedToday(k)) };
 }
 
 /** Saytda: AdSense mukofotli video (adBreak type: 'reward'). */
@@ -213,9 +221,9 @@ function showWebRewarded(): Promise<{ ok: boolean; reason?: 'no_ad' | 'not_finis
   });
 }
 
-/** Video oxirigacha ko'rilsa true. Android — AdMob, sayt — AdSense. */
-export async function showRewarded(kind: RewardKind = 'coffee'): Promise<{ ok: boolean; reason?: 'limit' | 'no_ad' | 'not_finished' }> {
-  if (premium || (!isNativeApp() && !webRewardedAvailable())) return { ok: false, reason: 'no_ad' };
+/** Video oxirigacha ko'rilsa true. Android — AdMob, sayt — AdSense. ssv — server chiptasi (Google SSV orqali tasdiqlanadi). */
+export async function showRewarded(kind: RewardKind = 'coffee', ssv?: string): Promise<{ ok: boolean; reason?: 'limit' | 'no_ad' | 'not_finished' }> {
+  if (premium || (!nativeRewardedAvailable() && !webRewardedAvailable())) return { ok: false, reason: 'no_ad' };
   if (kind !== 'vivi' && usedToday(kind) >= REWARD_DAILY_LIMIT) return { ok: false, reason: 'limit' };
   let granted = false;
   if (!isNativeApp()) {
@@ -230,6 +238,11 @@ export async function showRewarded(kind: RewardKind = 'coffee'): Promise<{ ok: b
       if (!rewardedReady) await prepareRewarded();
       if (!rewardedReady) return { ok: false, reason: 'no_ad' };
       rewardedReady = false;
+      try {
+        window.AndroidAdMob?.setRewardedSsv?.(ssv ?? '', '');
+      } catch {
+        /* eski APK — SSV'siz */
+      }
       await call('showRewardVideoAd');
     } catch {
       if (!granted) return { ok: false, reason: 'no_ad' };

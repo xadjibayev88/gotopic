@@ -45,6 +45,7 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
+import com.google.android.gms.ads.rewarded.ServerSideVerificationOptions;
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 
@@ -68,6 +69,9 @@ public final class MainActivity extends Activity {
     private WebView webView;
     private AdView banner;
     private RewardedAd rewardedAd;
+    // Keyingi mukofotli reklama uchun SSV ma'lumoti (server chiptasi) — Google uni serverga imzolab yuboradi.
+    private String ssvCustomData = "";
+    private String ssvUserId = "";
     private InterstitialAd interstitialAd;
     private PermissionRequest pendingPermission;
     private final Executor ui = command -> runOnUiThread(command);
@@ -231,12 +235,24 @@ public final class MainActivity extends Activity {
             }));
         }
 
+        @JavascriptInterface public void setRewardedSsv(String customData, String userId) {
+            if (!pageTrusted) return;
+            ssvCustomData = customData == null ? "" : customData;
+            ssvUserId = userId == null ? "" : userId;
+        }
+
         @JavascriptInterface public void showRewardVideoAd(String requestId) {
             if (!pageTrusted) return;
             runOnUiThread(() -> {
                 RewardedAd ad = rewardedAd;
                 if (ad == null) { reject(requestId, "Rewarded ad is not ready"); return; }
                 rewardedAd = null;
+                if (!ssvCustomData.isEmpty() || !ssvUserId.isEmpty()) {
+                    ad.setServerSideVerificationOptions(new ServerSideVerificationOptions.Builder()
+                            .setCustomData(ssvCustomData).setUserId(ssvUserId).build());
+                }
+                ssvCustomData = "";
+                ssvUserId = "";
                 ad.setFullScreenContentCallback(new FullScreenContentCallback() {
                     @Override public void onAdDismissedFullScreenContent() { resolve(requestId, "true"); }
                     @Override public void onAdFailedToShowFullScreenContent(@NonNull AdError error) { reject(requestId, error.getMessage()); }

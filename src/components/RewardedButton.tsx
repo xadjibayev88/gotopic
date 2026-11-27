@@ -43,7 +43,7 @@ export function RewardedButton({ compact = false, onGranted, kind = 'coffee', vi
       }
       nonce = st.body.nonce;
     }
-    const r = await showRewarded(kind);
+    const r = await showRewarded(kind, nonce || undefined);
     if (r.ok && kind === 'vivi') {
       const wait = 15_500 - (Date.now() - startedAt);
       if (wait > 0) await new Promise((res) => setTimeout(res, wait));
@@ -68,7 +68,7 @@ export function RewardedButton({ compact = false, onGranted, kind = 'coffee', vi
       <div className="shop-icon">{t.icon}</div>
       <div className="shop-body">
         <b>{t.title}</b>
-        <small>{msg ?? t.sub(left)}</small>
+        <small>{msg ?? (full ? "Akvarium to'la — baliqcha kamayganda qayting" : t.sub(left))}</small>
       </div>
       <button type="button" className="btn btn-gem" disabled={busy || full || left <= 0} onClick={run}>
         {busy ? '…' : full ? "To'la" : 'Ko\'rish'}
