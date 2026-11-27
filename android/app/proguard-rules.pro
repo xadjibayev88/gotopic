@@ -2,6 +2,7 @@
 # JS ko'priklari (window.AndroidAdMob, window.AndroidAuth) nomlari saqlanadi, aks holda sayt ularni chaqira olmaydi.
 -keepclassmembers class uz.salut.app.MainActivity$AdMobBridge { @android.webkit.JavascriptInterface <methods>; }
 -keepclassmembers class uz.salut.app.MainActivity$AuthBridge { @android.webkit.JavascriptInterface <methods>; }
+-keepclassmembers class uz.salut.app.MainActivity$TtsBridge { @android.webkit.JavascriptInterface <methods>; }
 -keepattributes JavascriptInterface
 -keepattributes *Annotation*
 # Google Play xizmatlari va Credential Manager
