@@ -183,7 +183,7 @@ public final class MainActivity extends Activity {
     private void resolve(String id, String value) { js("window.__gtAdResolve&&window.__gtAdResolve(" + quote(id) + "," + (value == null ? "true" : value) + ")"); }
     private void reject(String id, String message) { js("window.__gtAdReject&&window.__gtAdReject(" + quote(id) + "," + quote(message) + ")"); }
     private boolean isDebugBuild() { return (getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0; }
-    private String adId(String requested, boolean testing, String testId) { return testing || isDebugBuild() || requested == null || requested.trim().isEmpty() ? testId : requested; }
+    private String adId(String requested, boolean testing, String testId) { return testing || (isDebugBuild() && !BuildConfig.REAL_ADS) || requested == null || requested.trim().isEmpty() ? testId : requested; }
 
     // ------------------------------------------------------------------ AdMob
     private final class TtsBridge {
