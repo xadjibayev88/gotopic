@@ -1,4 +1,5 @@
 // "Biz haqimizda": ilova haqida, ijtimoiy tarmoqlar va do'stlarga ulashish.
+import { VideoShelf } from '../components/VideoShelf';
 import { useState } from 'react';
 import { Mascot } from '../components/Mascot';
 
@@ -48,6 +49,8 @@ export function About() {
         <h1>Go Topic</h1>
         <p className="muted">Koreys tilini o'zbek tilida — qiziqarli, tez va samarali.</p>
       </div>
+
+      <VideoShelf title="Ilova haqida videolar" />
 
       <section className="about-card">
         <h2>Biz haqimizda</h2>

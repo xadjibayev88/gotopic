@@ -1,4 +1,5 @@
 import { currentLang, LANG_EVENT, LANGUAGES, type Lang } from '../i18n';
+import { VideoShelf } from '../components/VideoShelf';
 import { Ic } from '../components/Icons';
 import { HoldButton, RangeValue } from '../components/Micro';
 import { chooseLanguage } from '../i18n/choose';
@@ -223,6 +224,7 @@ export function Profile({ onManageAiConsent }: { onManageAiConsent: () => void }
         <ReviewForm />
       </div>
 
+      <VideoShelf title="Ilova haqida videolar" />
       {/* Android telefonda (ilovaning o'zida va Telegram ichida emas) — APK'ni yuklab olish. */}
       {/Android/i.test(navigator.userAgent) && !window.AndroidAuth && !window.Telegram?.WebApp?.initData && (
         <a className="btn btn-ghost btn-lg about-link" href="./download/GoTopic.apk" download>
