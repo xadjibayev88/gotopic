@@ -223,6 +223,12 @@ export function Profile({ onManageAiConsent }: { onManageAiConsent: () => void }
         <ReviewForm />
       </div>
 
+      {/* Android telefonda (ilovaning o'zida va Telegram ichida emas) — APK'ni yuklab olish. */}
+      {/Android/i.test(navigator.userAgent) && !window.AndroidAuth && !window.Telegram?.WebApp?.initData && (
+        <a className="btn btn-ghost btn-lg about-link" href="./download/GoTopic.apk" download>
+          <Ic name="gift" size={18} /> Android ilovasini yuklab olish (APK)
+        </a>
+      )}
       <a className="btn btn-ghost btn-lg about-link" href="#/about">
         <Ic name="info" size={18} /> Biz haqimizda · ijtimoiy tarmoqlar · ulashish
       </a>
