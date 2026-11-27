@@ -159,15 +159,14 @@ export function VoiceHub() {
   const sampleQ = useRef<TtsQueue | null>(null);
   useEffect(() => () => sampleQ.current?.dispose(), []);
   const sample = (text: string) => {
-    if (!config) return;
+    if (!config || config.tts === 'text') return; // AI ovozi yo'q — telefon ovozini ishlatmaymiz
     if (sampleSt === 'loading' || sampleSt === 'playing') {
       sampleQ.current?.stop();
       setSampleSt('idle');
       return;
     }
     sampleQ.current?.dispose();
-    // Ovoz sozlanmagan bo'lsa — brauzer ovozi bilan bo'lsa ham eshittiramiz.
-    const q = new TtsQueue(config.tts === 'text' ? 'browser' : config.tts);
+    const q = new TtsQueue(config.tts);
     sampleQ.current = q;
     q.voiceId = prefs.voiceId || config.voices[0]?.id || '';
     q.explainLang = prefs.lang;

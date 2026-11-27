@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { ViviPeek } from '../components/ViviPeek';
 import { Ic } from '../components/Icons';
 import { applyChatTurn } from '../engine/game';
-import { playSfx, speakQueue, stopSpeaking, ttsSupported } from '../engine/audio';
+import { playSfx } from '../engine/audio';
+import { aiSpeak, stopAiSpeak } from '../engine/voice/aiSpeak';
 import { askTutor, updateMemory, frenchParts, learnerContext, parseRich, SCENARIOS, TutorError, tutorFailureMessage, type ChatMessage, type Scenario } from '../engine/tutor';
 import { useStore } from '../state/store';
 import { Mascot } from '../components/Mascot';
@@ -87,6 +88,12 @@ function TextChat() {
   const [micError, setMicError] = useState<string | null>(null);
   const cloudRef = useRef<{ stt: CloudStt; stream: MediaStream } | null>(null);
   const [xpToast, setXpToast] = useState<number | null>(null);
+  const [voiceOut, setVoiceOut] = useState(false);
+  // Bugungi AI ovoz limiti tugasa — telefon ovoziga o'tmaymiz, faqat ogohlantiramiz.
+  const voiceQuota = () => {
+    setVoiceOut(true);
+    window.setTimeout(() => setVoiceOut(false), 4000);
+  };
   const abortRef = useRef<AbortController | null>(null);
   const recRef = useRef<SR | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
@@ -105,7 +112,7 @@ function TextChat() {
     () => () => {
       abortRef.current?.abort();
       recRef.current?.stop();
-      stopSpeaking();
+      stopAiSpeak();
     },
     [],
   );
@@ -116,7 +123,7 @@ function TextChat() {
     const text = textRaw.trim();
     if (!text || busy || memoryReview) return;
     recRef.current?.stop();
-    stopSpeaking();
+    stopAiSpeak();
     const userMsg: ChatMessage = { id: uid(), role: 'user', text, ts: Date.now() };
     const history = [greeting, ...messages].filter((m) => !m.error).slice(-12).map((m) => ({ role: m.role, text: m.text }));
     setMessages((m) => [...m, userMsg]);
@@ -151,7 +158,7 @@ function TextChat() {
       // Mikrofon tili avtomatik: Hori koreyscha javob kutsa — FR, aks holda UZ.
       const want = answerLang(reply.text);
       if (want) setMicLang(want === 'fr' ? 'ko-KR' : 'uz-UZ');
-      if (state.settings.tutorVoice) speakQueue(frenchParts(reply.text), state.settings.ttsRate);
+      if (state.settings.tutorVoice) aiSpeak(frenchParts(reply.text), voiceQuota);
       const r = applyChatTurn(state);
       update(() => r.state);
       if (r.xp) {
@@ -221,7 +228,7 @@ function TextChat() {
       setMicError(m ?? "Ovozni matnga aylantirib bo'lmadi — qayta urinib ko'ring.");
     };
     cloudRef.current = { stt, stream };
-    stopSpeaking();
+    stopAiSpeak();
     stt.start(micLang);
     setMicError(null);
     setListening(true);
@@ -252,7 +259,7 @@ function TextChat() {
     rec.onend = () => setListening(false);
     rec.onerror = () => setListening(false);
     recRef.current = rec;
-    stopSpeaking();
+    stopAiSpeak();
     rec.start();
     setListening(true);
   }
@@ -314,8 +321,8 @@ function TextChat() {
             {m.role === 'tutor' && <div className="msg-avatar"><Mascot size={30} mood="happy" /></div>}
             <div className="msg-bubble">
               {m.role === 'tutor' ? <RichText text={m.text} /> : m.text}
-              {m.role === 'tutor' && !m.error && frenchParts(m.text).length > 0 && ttsSupported() && (
-                <button type="button" className="msg-play" onClick={() => speakQueue(frenchParts(m.text), state.settings.ttsRate)} title="Koreyscha qismlarni tinglash">
+              {m.role === 'tutor' && !m.error && frenchParts(m.text).length > 0 && (
+                <button type="button" className="msg-play" onClick={() => aiSpeak(frenchParts(m.text), voiceQuota)} title="Koreyscha qismlarni tinglash">
                   <Ic name="play" size={12} /> koreyscha
                 </button>
               )}
@@ -404,6 +411,11 @@ function TextChat() {
         )}
       </form>
       {xpToast && <div className="xp-toast">+{xpToast} XP</div>}
+      {voiceOut && (
+        <p className="mic-error" role="status" onClick={() => setVoiceOut(false)}>
+          Bugungi ovoz limiti tugadi — Hori javobi matn ko'rinishida qoladi.
+        </p>
+      )}
       {micError && (
         <p className="mic-error" role="alert" onClick={() => setMicError(null)}>
           {micError}

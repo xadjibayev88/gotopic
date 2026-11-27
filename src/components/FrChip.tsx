@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Ic } from './Icons';
 import { createPortal } from 'react-dom';
 import { ALL_LESSONS } from '../data/course';
-import { speak, ttsSupported } from '../engine/audio';
+import { aiSpeak } from '../engine/voice/aiSpeak';
 
 const norm = (s: string) =>
   s
@@ -59,7 +59,7 @@ async function translate(text: string, context: string): Promise<{ uz: string; s
   }
 }
 
-export function FrChip({ text, context, rate }: { text: string; context: string; rate: number }) {
+export function FrChip({ text, context }: { text: string; context: string; rate?: number }) {
   const [open, setOpen] = useState(false);
   // Pufak body'da (portal) fixed joylashadi: chat oynasi (contain: paint) uni kesmaydi, ekrandan chiqmaydi.
   const [pos, setPos] = useState<{ left: number; top: number; below: boolean; arrow: number } | null>(null);
@@ -103,7 +103,7 @@ export function FrChip({ text, context, rate }: { text: string; context: string;
   }, [open, tr]);
 
   const tap = async () => {
-    speak(text, rate);
+    aiSpeak([text]);
     setPos(null);
     setOpen((o) => !o);
     if (tr && tr !== 'error') return;
@@ -116,7 +116,7 @@ export function FrChip({ text, context, rate }: { text: string; context: string;
     <span className="fr-chip-wrap" ref={ref}>
       <button type="button" className={`fr-chip ${open ? 'open' : ''}`} onClick={() => void tap()} title="Tarjima va talaffuz">
         {text}
-        {ttsSupported() && <span className="fr-chip-icon"><Ic name="speaker" size={14} /></span>}
+        <span className="fr-chip-icon"><Ic name="speaker" size={14} /></span>
       </button>
       {open && createPortal(
         <span
