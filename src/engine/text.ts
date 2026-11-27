@@ -51,9 +51,33 @@ export interface CheckResult {
  * - faqat urg'u belgilari farq qiladi → accent (to'g'ri deb hisoblanadi)
  * - bitta harf xatosi (uzun javoblarda) → typo (to'g'ri deb hisoblanadi)
  */
-export function checkAnswer(input: string, accepted: string[]): CheckResult {
+/**
+ * Bir nechta ma'noli javoblarni ("tish; ikki", "b / p") alohida variantlarga ajratadi
+ * va qavsdagi izohlarsiz ("ikki (2)" → "ikki") variantni ham qo'shadi.
+ * Butun matn ham qabul qilinadi.
+ */
+export function expandAccepted(accepted: string[]): string[] {
+  const out: string[] = [];
+  const add = (v: string) => {
+    const t = v.trim();
+    if (t && !out.includes(t)) out.push(t);
+  };
+  for (const a of accepted) {
+    add(a);
+    const parts = a.split(/\s*[;／/]\s*/);
+    for (const p of parts.length > 1 ? parts : []) add(p);
+    for (const p of [a, ...(parts.length > 1 ? parts : [])]) {
+      const bare = p.replace(/\s*\([^)]*\)\s*/g, ' ');
+      if (bare.trim() !== p.trim()) add(bare);
+    }
+  }
+  return out;
+}
+
+export function checkAnswer(input: string, acceptedRaw: string[]): CheckResult {
   const n = normalize(input);
-  const best = accepted[0];
+  const best = acceptedRaw[0];
+  const accepted = expandAccepted(acceptedRaw);
   if (!n) return { verdict: 'wrong', best };
   for (const a of accepted) if (normalize(a) === n) return { verdict: 'correct', best: a };
   const nn = stripAccents(n);

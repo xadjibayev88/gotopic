@@ -112,6 +112,8 @@ export function PickView({ ex, locked, onAnswer }: ViewProps<'pick'>) {
     window.addEventListener('keydown', h);
     return () => window.removeEventListener('keydown', h);
   });
+  const q = ex.word.uz.toLowerCase();
+  const hideRo = ex.options.some((w) => w.ro && q.includes(w.ro.toLowerCase()));
   return (
     <div className="ex">
       <div className="ex-badge">✨ Yangi so'z</div>
@@ -132,8 +134,9 @@ export function PickView({ ex, locked, onAnswer }: ViewProps<'pick'>) {
                 {w.fr}
               </span>
             )}
-            {/* O'qilishi javobni oshkor qilsa (Hangul harflari) — ko'rsatilmaydi. */}
-            {w.ro && !ex.word.uz.toLowerCase().includes(w.ro.toLowerCase()) && <span className="pick-ro">{w.ro}</span>}
+            {/* O'qilishi javobni oshkor qilsa (Hangul harflari) — hech bir kartada ko'rsatilmaydi,
+                aks holda yozuvsiz qolgan karta to'g'ri javobni bildirib qo'yadi. */}
+            {w.ro && !hideRo && <span className="pick-ro">{w.ro}</span>}
             <span className="kbd">{i + 1}</span>
           </button>
         ))}
