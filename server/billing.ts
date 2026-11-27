@@ -84,6 +84,30 @@ export function activePlan(userId: string | null): { plan: PlanId | 'free'; expi
   return { plan: r.plan, expiresAt: r.expires_at };
 }
 
+/**
+ * Admin qo'lda Super beradi (to'lovsiz, masalan sovg'a yoki sinov uchun): hozirgi obuna tugash sanasiga
+ * `days` kun qo'shiladi (obuna yo'q/tugagan bo'lsa — bugundan). Yangi tugash vaqtini qaytaradi.
+ */
+export function grantDays(userId: string, days: number): number {
+  const now = Date.now();
+  const cur = db().prepare('SELECT plan, expires_at FROM subscriptions WHERE user_id = ?').get(userId) as { plan: PlanId; expires_at: number } | undefined;
+  const base = cur && cur.expires_at > now ? cur.expires_at : now;
+  // Jadvalga eng yaqin tarif nomi yoziladi (faqat ko'rinish uchun; amal qilish muddati expires_at'da).
+  const fit = (Object.values(PLANS).filter((p) => p.days <= days).sort((a, b) => b.days - a.days)[0]?.id ?? 'week') as PlanId;
+  const plan: PlanId = cur && cur.expires_at > now && PLANS[cur.plan]?.days > PLANS[fit].days ? cur.plan : fit;
+  const expiresAt = base + days * 86_400_000;
+  db()
+    .prepare('INSERT INTO subscriptions (user_id, plan, expires_at) VALUES (?, ?, ?) ON CONFLICT(user_id) DO UPDATE SET plan = excluded.plan, expires_at = excluded.expires_at')
+    .run(userId, plan, expiresAt);
+  return expiresAt;
+}
+
+/** Admin Super'ni olib qo'yadi. Faol obuna bo'lgan bo'lsa true. */
+export function revokeSuper(userId: string): boolean {
+  const r = db().prepare('DELETE FROM subscriptions WHERE user_id = ? AND expires_at > ?').run(userId, Date.now());
+  return r.changes > 0;
+}
+
 let grantHook: ((userId: string, plan: PlanId) => void) | null = null;
 /** Obuna yoqilganda chaqiriladi (Telegram bot foydalanuvchiga xabar beradi). */
 export function onGrant(fn: (userId: string, plan: PlanId) => void) {

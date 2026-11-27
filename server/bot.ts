@@ -10,7 +10,7 @@ import { confirmTgLogin, tgLoginStatus } from './tglogin.ts';
 import { getUser, upsertSocialUser } from './accounts.ts';
 import { loadDictionary, searchDictionary } from './dictionary.ts';
 import { cardBrand, groupCardNumber } from '../src/shared/card.ts';
-import { PLANS, activePlan, toUsd, usdRate, createCardOrder, createOrder, decideOrder, oldPriceUzs, onGrant, plansPayload, priceUzs, providers, visiblePlans, type PlanId } from './billing.ts';
+import { PLANS, activePlan, toUsd, usdRate, createCardOrder, createOrder, decideOrder, grantDays, oldPriceUzs, onGrant, revokeSuper, plansPayload, priceUzs, providers, visiblePlans, type PlanId } from './billing.ts';
 
 type Tg = (method: string, body: Record<string, unknown>) => Promise<any>;
 type From = { id: number; first_name?: string; last_name?: string; username?: string };
@@ -67,6 +67,33 @@ export function adminChats(): string[] {
     .all() as { subject: string; email: string | null; google_sub: string | null }[];
   return [...new Set(rows.filter((r) => r.google_sub && r.email && emails.includes(r.email.toLowerCase())).map((r) => r.subject))];
 }
+
+// ---------- Admin: Super'ni qo'lda berish ----------
+
+/** «/super» uchun foydalanuvchini topadi: Telegram ID (raqam) yoki email. Topilmasa null. */
+export function findTarget(raw: string): { userId: string; chat: string | null } | null {
+  const t = raw.trim().replace(/^tg/i, '');
+  if (/^\d{1,15}$/.test(t)) {
+    const r = db().prepare("SELECT user_id FROM identities WHERE provider = 'telegram' AND subject = ?").get(t) as { user_id: string } | undefined;
+    return r && getUser(r.user_id) ? { userId: r.user_id, chat: t } : null;
+  }
+  if (raw.includes('@') && !raw.startsWith('@')) {
+    const r = db().prepare('SELECT id FROM users WHERE lower(email) = ?').get(raw.trim().toLowerCase()) as { id: string } | undefined;
+    return r ? { userId: r.id, chat: chatOfUser(r.id) } : null;
+  }
+  return null;
+}
+
+const dateUz = (ms: number) => new Date(ms).toLocaleDateString('ru-RU', { timeZone: 'Asia/Tashkent' });
+const SUPER_HELP = [
+  "🔐 <b>Super'ni qo'lda berish</b> (faqat admin)",
+  '',
+  '<code>/super 123456789 30</code> — Telegram ID egasiga 30 kun Super',
+  '<code>/super ali@mail.uz 7</code> — email bo\'yicha ham bo\'ladi',
+  "<code>/unsuper 123456789</code> — Super'ni olib qo'yish",
+  '',
+  "💡 ID'ni bilmasangiz — odamning istalgan xabarini shu botga <b>forward</b> qiling.",
+].join('\n');
 
 type Kind = 'card' | 'visa';
 const setPlan = (chat: string, plan: `${PlanId}:${Kind}` | null) =>
@@ -338,6 +365,26 @@ export function createBot(tg: Tg, download: (fileId: string) => Promise<{ mime: 
     await send(chat, text, { ...extra, message_effect_id: CONFETTI_EFFECT_ID }).catch(() => send(chat, text, extra).catch(() => {}));
   }
 
+  /** Admin qo'lda Super beradi va foydalanuvchiga xabar yuboradi. Admin uchun natija matnini qaytaradi. */
+  async function adminGrant(target: { userId: string; chat: string | null }, days: number, by: From): Promise<string> {
+    const until = grantDays(target.userId, days);
+    console.log('audit', JSON.stringify({ at: new Date().toISOString(), admin: `tg:${by.id}`, user: target.userId, action: 'grant_super', days }));
+    const name = esc(getUser(target.userId)?.name || 'Foydalanuvchi');
+    if (target.chat) {
+      const text = `🎁 <b>Sizga Super berildi!</b>\n💎 Amal qiladi: <b>${dateUz(until)}</b> gacha\n\nIlovani oching: Hori AI, Gemini Live va cheksiz baliqcha endi siz uchun ochiq!`;
+      const extra = { reply_markup: { inline_keyboard: [[{ text: '📱 Ilovani ochish', url: appUrl() }]] } };
+      await send(target.chat, text, { ...extra, message_effect_id: CONFETTI_EFFECT_ID }).catch(() => send(target.chat!, text, extra).catch(() => {}));
+    }
+    return `✅ <b>${name}</b> ga ${days} kun Super berildi.\n💎 ${dateUz(until)} gacha${target.chat ? '' : "\n<i>(Telegram bog'lanmagan — xabar yuborilmadi)</i>"}`;
+  }
+
+  async function adminRevoke(userId: string): Promise<string> {
+    const had = revokeSuper(userId);
+    console.log('audit', JSON.stringify({ at: new Date().toISOString(), user: userId, action: 'revoke_super', had }));
+    const name = esc(getUser(userId)?.name || 'Foydalanuvchi');
+    return had ? `🚫 <b>${name}</b> dan Super olib qo'yildi.` : `ℹ️ <b>${name}</b> da faol Super yo'q edi.`;
+  }
+
   async function onMessage(msg: any) {
     const chat = String(msg.chat.id);
     if (msg.chat.type !== 'private') return;
@@ -370,8 +417,40 @@ export function createBot(tg: Tg, download: (fileId: string) => Promise<{ mime: 
         link_preview_options: { url: `${appUrl()}/bot-banner.jpg`, prefer_large_media: true, show_above_text: true },
       }).catch(() => send(chat, welcomeText(name), { reply_markup: mainKb() }));
       const isAdmin = adminChats().includes(chat);
-      await send(chat, isAdmin ? '⌨️ Menyu pastda. 🔐 Admin: «📊 Statistika» — faqat sizga ko\'rinadi.' : '⌨️ Tezkor menyu pastda 👇', { reply_markup: menuKb(isAdmin) });
+      await send(chat, isAdmin ? '⌨️ Menyu pastda. 🔐 Admin: «📊 Statistika» va /super (Super berish) — faqat sizga ko\'rinadi.' : '⌨️ Tezkor menyu pastda 👇', { reply_markup: menuKb(isAdmin) });
       return;
+    }
+    const isAdminChat = adminChats().includes(chat);
+    if (/^\/(super|unsuper)(@\w+)?(\s|$)/.test(text)) {
+      if (!isAdminChat) return; // faqat admin — boshqalarga hech narsa ko'rinmaydi
+      const [cmd, who = '', daysRaw = '30'] = text.trim().split(/\s+/);
+      if (!who) return send(chat, SUPER_HELP, { reply_markup: adminKb() });
+      const target = findTarget(who);
+      if (!target) return send(chat, `⚠️ <code>${esc(who)}</code> topilmadi. Odam avval botda /start bosgan bo'lishi kerak (yoki ilovaga shu email bilan kirgan bo'lishi).`);
+      if (cmd.startsWith('/unsuper')) return send(chat, await adminRevoke(target.userId));
+      const days = Number(daysRaw);
+      if (!Number.isInteger(days) || days < 1 || days > 3650) return send(chat, "⚠️ Kunlar soni 1 dan 3650 gacha butun son bo'lsin. Masalan: <code>/super 123456789 30</code>");
+      return send(chat, await adminGrant(target, days, from));
+    }
+    // Admin birovning xabarini forward qilsa — o'sha odamga Super berish tugmalari.
+    const fwd = msg.forward_origin ?? (msg.forward_from ? { type: 'user', sender_user: msg.forward_from } : msg.forward_sender_name ? { type: 'hidden_user' } : null);
+    if (isAdminChat && fwd) {
+      if (fwd.type !== 'user' || !fwd.sender_user?.id) {
+        return send(chat, "🙈 Bu odam Telegram sozlamalarida forward'da hisobini yashirgan. Undan botga /id yozishini so'rang va chiqqan raqam bilan: <code>/super RAQAM 30</code>");
+      }
+      const u = fwd.sender_user as From;
+      const id = String(u.id);
+      const name = [u.first_name, u.last_name].filter(Boolean).join(' ') + (u.username ? ` @${u.username}` : '');
+      const target = findTarget(id);
+      if (!target) return send(chat, `👤 ${esc(name)} (ID <code>${id}</code>)\n\n⚠️ Bu odam hali botda /start bosmagan. Avval botni ochsin, keyin qayta forward qiling.`);
+      const p = activePlan(target.userId);
+      const now = p.plan === 'free' ? 'bepul' : `💎 Super, ${dateUz(p.expiresAt!)} gacha`;
+      return send(chat, `👤 <b>${esc(name)}</b>\nID: <code>${id}</code>\nHozir: ${now}\n\nQancha Super beramiz?`, {
+        reply_markup: { inline_keyboard: [
+          [7, 30, 90, 365].map((d) => ({ text: d === 365 ? '1 yil' : `${d} kun`, callback_data: `sg:${id}:${d}` })),
+          [{ text: "🚫 Super'ni olib qo'yish", callback_data: `su:${id}` }],
+        ] },
+      });
     }
     if (text === '/plans' || text === '/tariflar') return send(chat, plansText(), { reply_markup: plansKb() });
     if (text === '/id' || text === '/myid') return send(chat, `Sizning chat ID: <code>${chat}</code>`);
@@ -454,6 +533,17 @@ export function createBot(tg: Tg, download: (fileId: string) => Promise<{ mime: 
       return send(chat, payText(plan, kind), { reply_markup: payKb(plan, kind) }).catch(() =>
         send(chat, payText(plan, kind), { reply_markup: { inline_keyboard: [[{ text: '⬅️ Boshqa usul', callback_data: `plan:${plan}` }]] } }),
       );
+    }
+    const sg = /^s(g|u):(\d+)(?::(\d+))?$/.exec(data);
+    if (sg) {
+      if (!adminChats().includes(String(q.from.id))) return ack("Ruxsat yo'q", true);
+      const target = findTarget(sg[2]);
+      if (!target) return ack('Foydalanuvchi topilmadi', true);
+      const result = sg[1] === 'g' ? await adminGrant(target, Number(sg[3]), q.from) : await adminRevoke(target.userId);
+      await ack(sg[1] === 'g' ? '✅ Super berildi' : 'Tayyor');
+      if (q.message) await tg('editMessageText', { chat_id: q.message.chat.id, message_id: q.message.message_id, text: result, parse_mode: 'HTML', reply_markup: { inline_keyboard: [] } }).catch(() => send(chat, result));
+      else await send(chat, result);
+      return;
     }
     const rv = /^rv(ok|no):(\d+)$/.exec(data);
     if (rv) {
