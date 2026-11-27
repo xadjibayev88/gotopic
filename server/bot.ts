@@ -489,8 +489,9 @@ export function startBot(token = env('TELEGRAM_BOT_TOKEN')): Bot | null {
     const url = appUrl();
     await tg('setChatMenuButton', { menu_button: { type: 'web_app', text: 'Go Topic App 🚀', web_app: { url } } }).catch(() => {});
     await tg('setMyShortDescription', { short_description: "GoTopic — koreys tilini o'yin tariqasida o'rganing 🇰🇷 TOPIK 1→6. Hori AI ustoz — Super'da 🐯" }).catch(() => {});
-    const methods = [providers().includes('payme') && 'Payme', providers().includes('click') && 'Click', providers().includes('card') && 'Uzcard/Humo', providers().includes('visa') && 'Visa'].filter(Boolean).join(', ') || 'karta';
-    await tg('setMyDescription', { description: `🇰🇷 Go Topic — koreys tilini o'zbek tilida o'rganing.\n\n🗺 O'yin tariqasida darslar: Hangul'dan TOPIK 6 gacha — bepul\n📖 30 000 so'zlik lug'at — so'zni shu botga yozing\n📝 TOPIK mashqlari: grammatika, o'qish, tinglash\n🏆 Haftalik turnir va kunlik seriya\n🐯 Hori AI ustoz va Gemini Live — Super'da\n💎 To'lov: ${methods}\n\nBoshlash uchun «Start» ni bosing 👇` }).catch(() => {});
+    const methods = [providers().includes('payme') && 'Payme', providers().includes('click') && 'Click', providers().includes('card') && 'karta'].filter(Boolean) as string[];
+    const pay = providers().includes('visa') ? (methods.length ? `${methods.join(', ')} yoki Visa` : 'Visa') : methods.join(' yoki ') || 'karta';
+    await tg('setMyDescription', { description: `🇰🇷 GoTopic — koreys tilini o'zbek tilida o'rganing.\n\n🗺 O'yin tariqasida darslar TOPIK 1→6 — bepul\n🏆 Haftalik turnir va kunlik seriya\n🐯 Hori AI va Gemini Live — Super obunada\n💎 Super: 1 hafta, 1 oy yoki 3 oy — ${pay}\n\nBoshlash uchun «Start» ni bosing 👇` }).catch(() => {});
     await tg('setMyCommands', { commands: [{ command: 'start', description: '🚀 Boshlash va ilovaga kirish' }, { command: 'lugat', description: "📖 Lug'at: so'z qidirish" }, { command: 'plans', description: '💎 Super tariflari' }, { command: 'me', description: '👤 Mening obunam' }, { command: 'help', description: '❓ Yordam' }] }).catch(() => {});
     let offset = 0;
     for (;;) {
