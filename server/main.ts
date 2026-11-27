@@ -6,6 +6,7 @@ import { createHash, randomBytes } from 'node:crypto';
 import { extname, join, normalize, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { telegramBotId } from './accounts.ts';
+import { collectStats, recordVisit, statsTokenOk, type VisitSource } from './stats.ts';
 import { startTgLogin, takeTgLogin, tgLoginStatus } from './tglogin.ts';
 import { clearCookie, createSessionToken, currentAiSubject, currentUserId, deleteUser, getProgress, getUser, login, putProgress, register, sessionCookie, upsertGoogleUser, verifyGoogleIdToken, upsertSocialUser, verifyAppleIdToken, verifyFacebookToken, verifyTelegramLogin, verifyTelegramWebApp } from './accounts.ts';
 import { activePlan, click, createCardOrder, createOrder, decideOrder, isAdmin, orderStatus, receiptOf, receiptOwner, reviewOrders, payme, paymeAuthError, paymeAuthorized, paymeInternalError, plansPayload } from './billing.ts';
@@ -59,6 +60,7 @@ const BUCKETS: Record<string, Bucket> = {
   reward: { perMinute: 6, perDay: 40 },
   auth: { perMinute: 10, perDay: 200 },
   tgcheck: { perMinute: 60, perDay: 3000 },
+  visit: { perMinute: 6, perDay: 600 },
   billing: { perMinute: 10, perDay: 100 },
   live: { perMinute: 4, perDay: num('LIVE_TOKENS_PER_DAY', 40) },
 };
@@ -354,6 +356,21 @@ const routeHandlers: RouteTable = Object.freeze(registerClientLogRoute({
     const ok = decideReview(Number(b.id), b.action === 'approve');
     console.log('audit', JSON.stringify({ at: new Date().toISOString(), admin: uid, review: Number(b.id), action: b.action === 'approve' ? 'approve' : 'reject', ok }));
     json(res, ok ? 200 : 409, { ok });
+  },
+
+  // Statistika: ilova ochilganda va har 5 daqiqada — anonim qurilma ID (mehmonlar ham sanaladi).
+  'POST /api/visit': async (req, res) => {
+    if (!originOk(req)) return json(res, 403, { message: 'Ruxsat etilmagan manba' });
+    if (take('visit', clientIp(req))) return json(res, 429, { ok: false });
+    const b = (await readBody(req, 1024).catch(() => ({}))) as { d?: unknown; s?: unknown };
+    const src: VisitSource = b.s === 'app' || b.s === 'tg' ? b.s : 'web';
+    json(res, 200, { ok: recordVisit(String(b.d ?? ''), currentUserId(req), src) });
+  },
+
+  // Ikkinchi ilovaning boti shu raqamlarni oladi (umumiy STATS_TOKEN bilan).
+  'GET /api/stats/peer': (req, res) => {
+    if (!statsTokenOk(req.headers.authorization)) return json(res, 403, { message: "Ruxsat yo'q" });
+    json(res, 200, collectStats());
   },
 
   'GET /api/health': (_q, res) => {
