@@ -10,6 +10,7 @@ import { PinSetupSheet } from '../components/PinLock';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { Folder } from '../components/Folder';
 import { clearPin, hasPin, setPin, verifyPin } from '../engine/applock';
+import { openExternal } from '../engine/telegram';
 import { TAB_MOTIONS, saveTabMotion, useTabMotion } from '../components/TabBar';
 import { themePref, setThemePref, type ThemePref } from '../engine/theme';
 import { useEffect, useState } from 'react';
@@ -225,9 +226,17 @@ export function Profile({ onManageAiConsent }: { onManageAiConsent: () => void }
       </div>
 
       <VideoShelf title="Ilova haqida videolar" />
-      {/* Android telefonda (ilovaning o'zida va Telegram ichida emas) — APK'ni yuklab olish. */}
-      {/Android/i.test(navigator.userAgent) && !window.AndroidAuth && !window.Telegram?.WebApp?.initData && (
-        <a className="btn btn-ghost btn-lg about-link" href="./download/GoTopic.apk" download>
+      {/* Android telefonda (ilovaning o'zidan tashqari) — APK'ni yuklab olish. Telegram ichida havola
+          telefon brauzerida ochiladi, chunki Telegram WebView faylni o'zi yuklab olmaydi. */}
+      {/Android/i.test(navigator.userAgent) && !window.AndroidAuth && (
+        <a
+          className="btn btn-ghost btn-lg about-link"
+          href="./download/GoTopic.apk"
+          download
+          onClick={(e) => {
+            if (openExternal('./download/GoTopic.apk')) e.preventDefault();
+          }}
+        >
           <Ic name="gift" size={18} /> Android ilovasini yuklab olish (APK)
         </a>
       )}
