@@ -1,12 +1,12 @@
-name: Voilà APK yig'ish
+name: Go Topic APK yig'ish
 
 on:
   workflow_dispatch:
     inputs:
       start_url:
-        description: "Ilova ochadigan sayt manzili (Salut serveri), masalan https://salut.uz/"
+        description: "Ilova ochadigan sayt manzili"
         required: true
-        default: "https://voila-fr.up.railway.app/"
+        default: "https://gotopic.up.railway.app/"
 
 permissions:
   contents: write
@@ -33,39 +33,40 @@ jobs:
         with:
           gradle-version: "8.9"
 
-      - name: Build Salut APK
+      - name: Build Go Topic APK
         id: build
         shell: bash
         env:
           START_URL: ${{ inputs.start_url }}
         run: |
           set -euo pipefail
-          props=(-PverCode="${GITHUB_RUN_NUMBER}" -PversionName="1.0.${GITHUB_RUN_NUMBER}" -PstartUrl="${START_URL}" -PadmobAppId="${SALUT_ADMOB_APP_ID:-}")
+          # Eski Go Topic (2.0.x, versionCode 2001) dan yuqori bo'lishi shart — Play Market yangilanishni qabul qilishi uchun.
+          props=(-PverCode="$((3000 + GITHUB_RUN_NUMBER))" -PversionName="3.0.${GITHUB_RUN_NUMBER}" -PstartUrl="${START_URL}" -PadmobAppId="${SALUT_ADMOB_APP_ID:-}")
           release_ready=true
           for value in "$RELEASE_KEYSTORE_BASE64" "$RELEASE_STORE_PASSWORD" "$RELEASE_KEY_ALIAS" "$RELEASE_KEY_PASSWORD"; do
             [[ -z "$value" ]] && release_ready=false
           done
           if [[ "$release_ready" == true ]]; then
             umask 077
-            keystore_file="$RUNNER_TEMP/salut-release.jks"
+            keystore_file="$RUNNER_TEMP/gotopic-release.jks"
             printf '%s' "$RELEASE_KEYSTORE_BASE64" | base64 --decode > "$keystore_file"
             export RELEASE_KEYSTORE_FILE="$keystore_file"
             gradle --no-daemon --stacktrace --console=plain -p android :app:assembleRelease :app:bundleRelease "${props[@]}"
-            cp android/app/build/outputs/apk/release/app-release.apk Salut-release.apk
-            cp android/app/build/outputs/bundle/release/app-release.aab Salut-release.aab
+            cp android/app/build/outputs/apk/release/app-release.apk GoTopic-release.apk
+            cp android/app/build/outputs/bundle/release/app-release.aab GoTopic-release.aab
             echo "variant=release" >> "$GITHUB_OUTPUT"
-            echo "files=Salut-release.apk Salut-release.aab" >> "$GITHUB_OUTPUT"
+            echo "files=GoTopic-release.apk GoTopic-release.aab" >> "$GITHUB_OUTPUT"
           else
             gradle --no-daemon --stacktrace --console=plain -p android :app:assembleDebug "${props[@]}"
-            cp android/app/build/outputs/apk/debug/app-debug.apk Salut-debug.apk
+            cp android/app/build/outputs/apk/debug/app-debug.apk GoTopic-debug.apk
             echo "variant=debug" >> "$GITHUB_OUTPUT"
-            echo "files=Salut-debug.apk" >> "$GITHUB_OUTPUT"
+            echo "files=GoTopic-debug.apk" >> "$GITHUB_OUTPUT"
           fi
 
       - uses: actions/upload-artifact@v4
         with:
-          name: Salut-${{ steps.build.outputs.variant }}
+          name: GoTopic-${{ steps.build.outputs.variant }}
           path: |
-            Salut-*.apk
-            Salut-*.aab
+            GoTopic-*.apk
+            GoTopic-*.aab
           if-no-files-found: error
