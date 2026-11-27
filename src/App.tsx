@@ -216,7 +216,9 @@ export function App() {
   useEffect(() => startScrollReveal(), []);
   const go = (t: Tab) => {
     if (t === tab) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Darslar xaritasi pastdan tepaga — qayta bosilganda tepaga emas, joriy darsga qaytamiz.
+      if (t === 'learn') window.dispatchEvent(new Event('learn:focus'));
+      else window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
     scrolls.current[tab] = window.scrollY;
