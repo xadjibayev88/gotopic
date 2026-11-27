@@ -18,6 +18,7 @@ type From = { id: number; first_name?: string; last_name?: string; username?: st
 const env = (k: string) => (process.env[k] ?? '').trim();
 const som = (n: number) => n.toLocaleString('ru-RU').replace(/ /g, ' ');
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const BRAND = 'Go Topic';
 const appUrl = () => env('PUBLIC_URL') || 'https://gotopic.up.railway.app';
 
 // ---------- Hisob bog'lash ----------
@@ -262,7 +263,29 @@ function meText(userId: string): string {
 
 /** Faqat admin chatida ko'rinadigan doimiy pastki tugma. */
 export const ADMIN_STATS_BUTTON = '📊 Statistika';
-const adminKb = () => ({ keyboard: [[{ text: ADMIN_STATS_BUTTON }]], resize_keyboard: true, is_persistent: true });
+/** Pastki doimiy menyu tugmalari (matni bo'yicha ushlanadi). */
+export const MENU = {
+  app: '🚀 Ilovani ochish',
+  plans: '💎 Super tariflar',
+  me: '👤 Mening obunam',
+  dict: "📖 Lug'at",
+  help: '❓ Yordam',
+} as const;
+const HAS_DICT = true;
+/**
+ * Pastki doimiy menyu — barcha foydalanuvchilarga bir xil; admin chatida qo'shimcha «📊 Statistika» qatori.
+ * «Ilovani ochish» — Mini App tugmasi (web_app), bosilganda ilova Telegram ichida ochiladi.
+ */
+function menuKb(admin: boolean) {
+  const rows: { text: string; web_app?: { url: string } }[][] = [
+    [{ text: MENU.app, web_app: { url: appUrl() } }],
+    [{ text: MENU.plans }, { text: MENU.me }],
+    HAS_DICT ? [{ text: MENU.dict }, { text: MENU.help }] : [{ text: MENU.help }],
+  ];
+  if (admin) rows.push([{ text: ADMIN_STATS_BUTTON }]);
+  return { keyboard: rows, resize_keyboard: true, is_persistent: true, input_field_placeholder: HAS_DICT ? "So'z yozing yoki menyudan tanlang" : 'Menyudan tanlang' };
+}
+const adminKb = () => menuKb(true);
 
 // ---------- Bot mantiqi ----------
 
@@ -344,7 +367,8 @@ export function createBot(tg: Tg, download: (fileId: string) => Promise<{ mime: 
         chat_id: chat, text: welcomeText(name), parse_mode: 'HTML', reply_markup: mainKb(),
         link_preview_options: { url: `${appUrl()}/bot-banner.jpg`, prefer_large_media: true, show_above_text: true },
       }).catch(() => send(chat, welcomeText(name), { reply_markup: mainKb() }));
-      if (adminChats().includes(chat)) await send(chat, '🔐 Admin: statistikani ko\'rish uchun pastdagi «📊 Statistika» tugmasini bosing.', { reply_markup: adminKb() });
+      const isAdmin = adminChats().includes(chat);
+      await send(chat, isAdmin ? '⌨️ Menyu pastda. 🔐 Admin: «📊 Statistika» — faqat sizga ko\'rinadi.' : '⌨️ Tezkor menyu pastda 👇', { reply_markup: menuKb(isAdmin) });
       return;
     }
     if (text === '/plans' || text === '/tariflar') return send(chat, plansText(), { reply_markup: plansKb() });
@@ -356,9 +380,11 @@ export function createBot(tg: Tg, download: (fileId: string) => Promise<{ mime: 
       await send(chat, stats, { reply_markup: adminKb() });
       return;
     }
-    if (text === '/me') return send(chat, meText(userOf(from)), { reply_markup: mainKb() });
-    if (text === '/help' || text === '/yordam') return send(chat, helpText(), { reply_markup: mainKb() });
-    if (/^\/(lugat|dict)\b/.test(text)) return send(chat, dictText(text.replace(/^\/\S+\s*/, '')), { reply_markup: dictKb() });
+    if (text === '/me' || text === MENU.me) return send(chat, meText(userOf(from)), { reply_markup: mainKb() });
+    if (text === MENU.plans) return send(chat, plansText(), { reply_markup: plansKb() });
+    if (text === '/menu') return send(chat, '⌨️ Menyu pastda 👇', { reply_markup: menuKb(adminChats().includes(chat)) });
+    if (text === '/help' || text === '/yordam' || text === MENU.help) return send(chat, helpText(), { reply_markup: mainKb() });
+    if (/^\/(lugat|dict)\b/.test(text) || text === MENU.dict) return send(chat, dictText(text === MENU.dict ? '' : text.replace(/^\/\S+\s*/, '')), { reply_markup: dictKb() });
 
     const file = msg.photo?.length ? { id: msg.photo[msg.photo.length - 1].file_id, mime: 'image/jpeg' } : msg.document ? { id: msg.document.file_id, mime: msg.document.mime_type || '' } : null;
     if (file) {
@@ -367,6 +393,7 @@ export function createBot(tg: Tg, download: (fileId: string) => Promise<{ mime: 
       if (!/^(image\/(png|jpe?g|webp|heic)|application\/pdf)$/.test(file.mime)) return send(chat, '⚠️ Chekni rasm yoki PDF ko\'rinishida yuboring.');
       // Ilovadagi yuklash zonasi kabi: bitta xabar bosqichma-bosqich yangilanadi (▰▱▱ → ▰▰▱ → ✅).
       void tg('sendChatAction', { chat_id: chat, action: 'upload_photo' }).catch(() => {});
+      void tg('setMessageReaction', { chat_id: chat, message_id: msg.message_id, reaction: [{ type: 'emoji', emoji: '👀' }] }).catch(() => {});
       const progress = (await send(chat, `⏳ Chek yuklanmoqda… ${bar(1)}`).catch(() => null)) as { message_id?: number } | null;
       const update = (text: string, extra: Record<string, unknown> = {}) =>
         progress?.message_id
@@ -380,6 +407,7 @@ export function createBot(tg: Tg, download: (fileId: string) => Promise<{ mime: 
       const r = createCardOrder(uid, st.plan, receipt, st.kind);
       if ('error' in r) return update(`⚠️ ${esc(r.error)}`);
       setPlan(chat, null);
+      void tg('setMessageReaction', { chat_id: chat, message_id: msg.message_id, reaction: [{ type: 'emoji', emoji: '👍' }] }).catch(() => {});
       await update(`✅ Chek qabul qilindi (#${r.id}) ${bar(3)}\n⏱ Admin tekshirgach, Super avtomatik yoqiladi va sizga xabar beraman.`);
       const who = [from.first_name, from.last_name].filter(Boolean).join(' ') + (from.username ? ` @${from.username}` : '') + ` (tg ${from.id})`;
       await notifyReceipt(r.id, r.plan, r.amountUzs, `${who}${st.kind === 'visa' ? ' · VISA' : ''}`, receipt);
@@ -455,10 +483,39 @@ export function createBot(tg: Tg, download: (fileId: string) => Promise<{ mime: 
     return ack();
   }
 
+
+  /** Inline rejim: istalgan chatda «@bot so'z» — natijani do'stga yuborish mumkin (BotFather'da /setinline yoqilgan bo'lsa). */
+  async function onInline(q: any) {
+    const query = String(q.query ?? '').trim().slice(0, 60);
+    const results: Record<string, unknown>[] = [];
+    if (query) {
+      try {
+        const r = searchDictionary(loadDictionary(), query);
+        for (const e of r.items.slice(0, 20)) {
+          const mean = (e.uz || e.en).split(';').slice(0, 2).join(';').trim().slice(0, 120);
+          results.push({
+            type: 'article', id: `w${e.id}`.slice(0, 64), title: `${e.word} — ${mean}`.slice(0, 120), description: POS_UZ[e.pos] ?? e.pos ?? '',
+            input_message_content: { message_text: `🇰🇷 <b>${esc(e.word)}</b>${e.pos ? ` <i>${esc(POS_UZ[e.pos] ?? e.pos)}</i>` : ''}\n${esc(mean)}`, parse_mode: 'HTML' },
+            reply_markup: { inline_keyboard: [[{ text: "📖 Lug'atda ochish", url: `${appUrl()}/#/dict` }]] },
+          });
+        }
+      } catch {
+        /* lug'at yuklanmadi */
+      }
+    }
+    results.push({
+      type: 'article', id: 'app', title: '🚀 Ilovani ulashish', description: 'Do\'stingizga ilova havolasini yuboring',
+      input_message_content: { message_text: `${esc(BRAND)} — tilni o'yin tariqasida o'rganing 👇\n${appUrl()}`, parse_mode: 'HTML' },
+      reply_markup: { inline_keyboard: [[{ text: '🚀 Ilovani ochish', url: appUrl() }]] },
+    });
+    await tg('answerInlineQuery', { inline_query_id: q.id, results, cache_time: 300, is_personal: false }).catch(() => {});
+  }
+
   async function handle(update: any) {
     try {
       if (update.message) await onMessage(update.message);
       else if (update.callback_query) await onCallback(update.callback_query);
+      else if (update.inline_query) await onInline(update.inline_query);
     } catch (e) {
       console.error('bot:', (e as Error).message);
     }
@@ -561,16 +618,16 @@ export function startBot(token = env('TELEGRAM_BOT_TOKEN')): Bot | null {
     const methods = [providers().includes('payme') && 'Payme', providers().includes('click') && 'Click', providers().includes('card') && 'karta'].filter(Boolean) as string[];
     const pay = providers().includes('visa') ? (methods.length ? `${methods.join(', ')} yoki Visa` : 'Visa') : methods.join(' yoki ') || 'karta';
     await tg('setMyDescription', { description: `🇰🇷 GoTopic — koreys tilini o'zbek tilida o'rganing.\n\n🗺 O'yin tariqasida darslar TOPIK 1→6 — bepul\n📖 30 000 so'zlik lug'at — so'zni shu botga yozing\n📝 TOPIK mashqlari: grammatika, o'qish, tinglash\n🏆 Haftalik turnir va kunlik seriya\n🐯 Hori AI va Gemini Live — Super obunada\n💎 Super: 1 hafta, 1 oy yoki 3 oy — ${pay}\n\nBoshlash uchun «Start» ni bosing 👇` }).catch(() => {});
-    await tg('setMyCommands', { commands: [{ command: 'start', description: '🚀 Boshlash va ilovaga kirish' }, { command: 'lugat', description: "📖 Lug'at: so'z qidirish" }, { command: 'plans', description: '💎 Super tariflari' }, { command: 'me', description: '👤 Mening obunam' }, { command: 'help', description: '❓ Yordam' }] }).catch(() => {});
+    await tg('setMyCommands', { commands: [{ command: 'start', description: '🚀 Boshlash va ilovaga kirish' }, { command: 'lugat', description: "📖 Lug'at: so'z qidirish" }, { command: 'plans', description: '💎 Super tariflari' }, { command: 'me', description: '👤 Mening obunam' }, { command: 'menu', description: '⌨️ Menyu' }, { command: 'help', description: '❓ Yordam' }] }).catch(() => {});
     // Admin chatida qo'shimcha /stats buyrug'i va doimiy «📊 Statistika» tugmasi (boshqalar ko'rmaydi).
     for (const chat of adminChats()) {
-      await tg('setMyCommands', { commands: [...[{ command: 'start', description: '🚀 Boshlash va ilovaga kirish' }, { command: 'lugat', description: "📖 Lug'at: so'z qidirish" }, { command: 'plans', description: '💎 Super tariflari' }, { command: 'me', description: '👤 Mening obunam' }, { command: 'help', description: '❓ Yordam' }], { command: 'stats', description: '📊 Statistika (admin)' }], scope: { type: 'chat', chat_id: chat } }).catch(() => {});
-      if (!dashOf(chat)?.message_id) await tg('sendMessage', { chat_id: chat, text: '🔐 Admin paneli: «📊 Statistika» tugmasini bosing — hozirgi statistika keladi.', reply_markup: { keyboard: [[{ text: '📊 Statistika' }]], resize_keyboard: true, is_persistent: true } }).catch(() => {});
+      await tg('setMyCommands', { commands: [...[{ command: 'start', description: '🚀 Boshlash va ilovaga kirish' }, { command: 'lugat', description: "📖 Lug'at: so'z qidirish" }, { command: 'plans', description: '💎 Super tariflari' }, { command: 'me', description: '👤 Mening obunam' }, { command: 'menu', description: '⌨️ Menyu' }, { command: 'help', description: '❓ Yordam' }], { command: 'stats', description: '📊 Statistika (admin)' }], scope: { type: 'chat', chat_id: chat } }).catch(() => {});
+      if (!dashOf(chat)?.message_id) await tg('sendMessage', { chat_id: chat, text: '🔐 Admin paneli: «📊 Statistika» tugmasini bosing — hozirgi statistika keladi.', reply_markup: menuKb(true) }).catch(() => {});
     }
     let offset = 0;
     for (;;) {
       try {
-        const ups = (await tg('getUpdates', { offset, timeout: 50, allowed_updates: ['message', 'callback_query'] })) as { update_id: number }[];
+        const ups = (await tg('getUpdates', { offset, timeout: 50, allowed_updates: ['message', 'callback_query', 'inline_query'] })) as { update_id: number }[];
         for (const u of ups) {
           offset = u.update_id + 1;
           await b.handle(u);
