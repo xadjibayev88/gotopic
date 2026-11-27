@@ -4,7 +4,11 @@ let frVoice: SpeechSynthesisVoice | null = null;
 
 type NativeTts = { available(): boolean; speak(text: string, lang: string, rate: number, queue: boolean): void; stop(): void };
 /** Android ilova (WebView) — telefonning TTS dvigateli ko'prik orqali (WebView'da speechSynthesis yo'q). */
-const nativeTts = (): NativeTts | null => (typeof window !== 'undefined' ? ((window as unknown as { AndroidTts?: NativeTts }).AndroidTts ?? null) : null);
+const nativeTts = (): NativeTts | null => {
+  if (typeof window === 'undefined') return null;
+  const n = (window as unknown as { AndroidTts?: NativeTts }).AndroidTts;
+  return n && typeof n.speak === 'function' ? n : null;
+};
 function webTts(): boolean {
   return typeof window !== 'undefined' && 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined';
 }
@@ -25,7 +29,8 @@ function pickVoice() {
     null;
 }
 
-if (ttsSupported()) {
+// Faqat brauzer ovozi bo'lsa (Android ilovada speechSynthesis yo'q — u yerda telefon TTS ko'prigi ishlaydi).
+if (webTts()) {
   pickVoice();
   window.speechSynthesis.addEventListener?.('voiceschanged', pickVoice);
 }
