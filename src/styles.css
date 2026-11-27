@@ -729,6 +729,18 @@ body::before {
 
 /* Yengil rejim: sekin qurilmalarda blur o'chadi — qotmasligi uchun */
 html.lite body::before { animation: none; }
+/* Android ilova (WebView): fon dog'lari, soyalar va sahifa o'tish effektlari minimal — qotmasin */
+html.app body::before { display: none; }
+html.app *, html.app *::before, html.app *::after { box-shadow: none !important; text-shadow: none !important; }
+html.app .bottombar, html.app .topbar { box-shadow: 0 2px 8px rgba(40, 30, 90, .12) !important; }
+/* Yopiq bo'limlar display:none emas — content-visibility:hidden: joylashuvi xotirada qoladi,
+   qaytib o'tilganda sahifa noldan qayta hisoblanmaydi (Android ilovada o'tish qotmaydi). */
+html.app .content { position: relative; }
+html.app .tab-pane[hidden] {
+  display: block !important; content-visibility: hidden; position: absolute; left: 16px; right: 16px; top: 0;
+  height: 0; overflow: hidden; pointer-events: none;
+}
+html.app .pane-morph { animation: none !important; }
 html.lite * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
 html.lite .line, html.lite .panel, html.lite .pcard, html.lite .sheet, html.lite .bottombar, html.lite .topbar, html.lite .vh-section,
 html.lite .char-card, html.lite .fb-card, html.lite .shop-item, html.lite .board, html.lite .settings, html.lite .composer,
@@ -1450,8 +1462,10 @@ html[data-theme='light'] .tab-bulge { filter: drop-shadow(0 8px 18px rgba(76, 10
 .tm-pill .tab-lens { opacity: 0; }
 .tab-pill {
   position: absolute; top: 6px; bottom: 6px; z-index: -1; pointer-events: none;
-  left: calc(6px + (100% - 12px) / var(--tabs) * var(--i)); width: calc((100% - 12px) / var(--tabs));
-  transition: left .48s cubic-bezier(.3, 1.35, .45, 1);
+  /* left emas, transform: sirpanish GPU'da, har kadrda sahifa qayta joylashtirilmaydi (qotmaydi) */
+  left: 6px; width: calc((100% - 12px) / var(--tabs));
+  transform: translateX(calc(100% * var(--i))); will-change: transform;
+  transition: transform .48s cubic-bezier(.3, 1.35, .45, 1);
 }
 .tab-pill-body {
   position: absolute; inset: 0 4px; border-radius: 24px; background: linear-gradient(135deg, #7c5cff, #38bdf8);

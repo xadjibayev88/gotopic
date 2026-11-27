@@ -152,6 +152,24 @@ export function App() {
   const [visited, setVisited] = useState<Tab[]>(() => [readTab()]);
   const scrolls = useRef<Partial<Record<Tab, number>>>({});
   useEffect(() => setVisited((v) => (v.includes(tab) ? v : [...v, tab])), [tab]);
+  // Asosiy bo'limlar foydalanuvchi bo'sh turganda birma-bir oldindan chizib qo'yiladi (yashirin) —
+  // keyin pastki menyudan o'tish faqat ko'rsatish bo'ladi, qotmaydi (ayniqsa Android ilovada).
+  useEffect(() => {
+    const order: Tab[] = ['tutor', 'practice', 'leagues', 'shop', 'profile', 'learn'];
+    const idle = (window as Window & { requestIdleCallback?: (f: () => void, o?: { timeout: number }) => number }).requestIdleCallback ?? ((f: () => void) => window.setTimeout(f, 200));
+    let i = 0;
+    let timer = 0;
+    const step = () => {
+      const next = order[i++];
+      if (!next) return;
+      idle(() => {
+        setVisited((v) => (v.includes(next) ? v : [...v, next]));
+        timer = window.setTimeout(step, 700);
+      }, { timeout: 3000 });
+    };
+    timer = window.setTimeout(step, 2500);
+    return () => clearTimeout(timer);
+  }, []);
   // Har sahifaning o'z joyiga qaytish (yangi sahifa — tepadan).
   const firstPane = useRef(true);
   useLayoutEffect(() => {

@@ -20,7 +20,11 @@ try {
   const saved = localStorage.getItem('salut.lite');
   const nav = navigator as Navigator & { deviceMemory?: number };
   const weak = (nav.deviceMemory ?? 8) <= 3 || (navigator.hardwareConcurrency ?? 8) <= 3;
-  if (saved === '1' || (saved !== '0' && weak)) document.documentElement.classList.add('lite');
+  // Android ilova (WebView) ichida doim yengil rejim: WebView blur va cheksiz animatsiyalarni sekin chizadi.
+  const w = window as Window & { AndroidAuth?: unknown; AndroidAdMob?: unknown };
+  const inApp = !!w.AndroidAuth || !!w.AndroidAdMob || /; wv\)/.test(navigator.userAgent);
+  if (inApp) document.documentElement.classList.add('app');
+  if (inApp || saved === '1' || (saved !== '0' && weak)) document.documentElement.classList.add('lite');
 } catch {
   /* e'tiborsiz */
 }

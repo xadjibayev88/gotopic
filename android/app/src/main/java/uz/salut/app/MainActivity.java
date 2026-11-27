@@ -99,6 +99,14 @@ public final class MainActivity extends Activity {
         root = new FrameLayout(this);
         root.setBackgroundColor(NIGHT);
         setContentView(root);
+        // Android 15 (targetSdk 35) ilovani ekran chetigacha cho'zadi — tizim panellari ostiga kirmaslik uchun joy qoldiramiz.
+        if (Build.VERSION.SDK_INT >= 30) {
+            root.setOnApplyWindowInsetsListener((v, insets) -> {
+                android.graphics.Insets bars = insets.getInsets(android.view.WindowInsets.Type.systemBars() | android.view.WindowInsets.Type.displayCutout());
+                v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+                return android.view.WindowInsets.CONSUMED;
+            });
+        }
 
         webView = new WebView(this);
         webView.setBackgroundColor(NIGHT);
@@ -106,6 +114,8 @@ public final class MainActivity extends Activity {
         webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
         WebSettings ws = webView.getSettings();
+        // Telefondagi katta shrift sozlamasi sahifani buzmasin (pastki menyu sig'masligi shundan).
+        ws.setTextZoom(100);
         ws.setAllowFileAccess(false);
         ws.setAllowContentAccess(false);
         ws.setAllowFileAccessFromFileURLs(false);
