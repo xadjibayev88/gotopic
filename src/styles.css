@@ -3286,11 +3286,11 @@ html:not([data-theme='light']) .hold-btn { color: #FF8FAE; }
 @keyframes hb-pop { 40% { transform: scale(1.04); } }
 .reset-zone { display: flex; flex-direction: column; gap: 6px; align-items: stretch; text-align: center; margin: 8px 0 18px; }
 .reset-zone small { font-size: 12px; }
-.roll { position: relative; display: inline-grid; overflow: hidden; vertical-align: bottom; }
-.roll > span { grid-area: 1 / 1; }
-.roll-new { animation: roll-in .34s cubic-bezier(.2, .9, .3, 1.2) both; }
-.roll-old { animation: roll-out .34s cubic-bezier(.4, 0, .6, 1) both; }
-.roll.down .roll-new { animation-name: roll-in-down; } .roll.down .roll-old { animation-name: roll-out-down; }
+.vroll { position: relative; display: inline-grid; overflow: hidden; vertical-align: bottom; }
+.vroll > span { grid-area: 1 / 1; }
+.vroll-new { animation: roll-in .34s cubic-bezier(.2, .9, .3, 1.2) both; }
+.vroll-old { animation: roll-out .34s cubic-bezier(.4, 0, .6, 1) both; }
+.vroll.down .vroll-new { animation-name: roll-in-down; } .vroll.down .vroll-old { animation-name: roll-out-down; }
 @keyframes roll-in { from { transform: translateY(90%); opacity: 0; } }
 @keyframes roll-out { to { transform: translateY(-90%); opacity: 0; } }
 @keyframes roll-in-down { from { transform: translateY(-90%); opacity: 0; } }
@@ -3310,7 +3310,7 @@ html:not([data-theme='light']) .save-mark.on { color: #C9B8FF; }
 .rv-bubble { position: absolute; left: var(--p); bottom: calc(100% + 4px); transform: translateX(-50%) scale(.85); opacity: .0; padding: 3px 8px; border-radius: 9px; background: linear-gradient(135deg, #B49CFF, #FF8FD0); color: #fff; font-weight: 800; font-size: 12px; font-variant-numeric: tabular-nums; pointer-events: none; transition: opacity .2s, transform .25s cubic-bezier(.3, 1.6, .5, 1); box-shadow: 0 6px 14px -4px rgba(155, 92, 255, .5); white-space: nowrap; }
 .range-val:hover .rv-bubble, .range-val.active .rv-bubble, .range-val:focus-within .rv-bubble { opacity: 1; transform: translateX(-50%) scale(1); }
 .vh2-sheet .range-val { width: 100%; }
-@media (prefers-reduced-motion: reduce) { .roll-new, .roll-old, .save-mark.on .sm-ico svg, .sm-ring, .hb-hold .hb-ico, .hb-done { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .vroll-new, .vroll-old, .save-mark.on .sm-ico svg, .sm-ring, .hb-hold .hb-ico, .hb-done { animation: none !important; } }
 /* Tanishuv: ilova imkoniyatlari va daraja so'rovi */
 .ob-intro { gap: 14px; }
 .ob-features { display: flex; flex-direction: column; gap: 10px; }
