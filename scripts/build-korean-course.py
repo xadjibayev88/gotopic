@@ -48,7 +48,10 @@ def chunk(words):
     size = -(-n // k)
     parts = [words[i:i + size] for i in range(0, n, size)]
     while len(parts) > 1 and len(parts[-1]) < 4:
-        parts[-2] += parts.pop()
+        # Diqqat: `parts[-2] += parts.pop()` noto'g'ri — pop'dan keyin -2 boshqa elementni ko'rsatadi
+        # va birinchi dars so'zlari yo'qolib, ikkinchi dars ikki marta takrorlanardi.
+        tail = parts.pop()
+        parts[-1] = parts[-1] + tail
     return parts
 
 units = []
@@ -85,7 +88,7 @@ def add_unit(title, level, words, sentences, guide, desc):
             sents = ok[:6]
             if len(sents) < 3:
                 raise SystemExit(f"{title} {i + 1}-dars: o'rgatilgan harflardan so'z yetarli emas")
-        title_l = ' '.join(w['fr'] for w in ws) if title.startswith('Hangul') else ', '.join(short(w['uz']) for w in ws[:2]).capitalize()
+        title_l = ' '.join(w['fr'] for w in ws) if title.startswith('Hangul') else ', '.join(list(dict.fromkeys(short(w['uz']).lower() for w in ws))[:2]).capitalize()
         lessons.append({'id': f"{uid}l{i + 1}", 'title': title_l, 'words': ws, 'sentences': sents})
     units.append({'id': uid, 'level': level, 'title': title, 'description': desc, 'color': COLORS[len(units) % len(COLORS)],
                   'guide': guide, 'lessons': lessons})

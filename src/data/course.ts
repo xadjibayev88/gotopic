@@ -573,7 +573,7 @@ export const COURSE: Unit[] = [
    },
    {
     "id": "u3l2",
-    "title": "Xayr, xayr",
+    "title": "Xayr, tanishganimdan xursandman",
     "words": [
      {
       "fr": "안녕히 가세요",
@@ -2281,55 +2281,37 @@ export const COURSE: Unit[] = [
   "lessons": [
    {
     "id": "u13l1",
-    "title": "Qulupnay, apelsin",
+    "title": "Meva, sabzavot",
     "words": [
      {
-      "fr": "딸기",
-      "uz": "qulupnay",
-      "ro": "ttalgi",
+      "fr": "과일",
+      "uz": "meva",
+      "ro": "gwail",
       "emoji": "🍓"
      },
      {
-      "fr": "오렌지",
-      "uz": "apelsin",
-      "ro": "orenji",
-      "emoji": "🍊"
+      "fr": "채소",
+      "uz": "sabzavot",
+      "ro": "chaeso",
+      "emoji": "🥗"
      },
      {
-      "fr": "감자",
-      "uz": "kartoshka",
-      "ro": "gamja",
-      "emoji": "🥔"
+      "fr": "바나나",
+      "uz": "banan",
+      "ro": "banana",
+      "emoji": "🍌"
      },
      {
-      "fr": "양파",
-      "uz": "piyoz",
-      "ro": "yangpa",
-      "emoji": "🧅"
+      "fr": "포도",
+      "uz": "uzum",
+      "ro": "podo",
+      "emoji": "🍇"
      },
      {
-      "fr": "당근",
-      "uz": "sabzi",
-      "ro": "danggeun",
-      "emoji": "🥕"
-     },
-     {
-      "fr": "토마토",
-      "uz": "pomidor",
-      "ro": "tomato",
-      "emoji": "🍅"
-     },
-     {
-      "fr": "오이",
-      "uz": "bodring",
-      "ro": "oi",
-      "emoji": "🥒"
-     },
-     {
-      "fr": "마늘",
-      "uz": "sarimsoq",
-      "ro": "maneul",
-      "emoji": "🧄"
+      "fr": "수박",
+      "uz": "tarvuz",
+      "ro": "subak",
+      "emoji": "🍉"
      }
     ],
     "sentences": [
@@ -2468,58 +2450,37 @@ export const COURSE: Unit[] = [
   "lessons": [
    {
     "id": "u14l1",
-    "title": "Og'iz, quloq",
+    "title": "Tana, bosh",
     "words": [
      {
-      "fr": "입",
-      "uz": "og'iz",
-      "ro": "ip",
-      "emoji": "👄"
+      "fr": "몸",
+      "uz": "tana",
+      "ro": "mom",
+      "emoji": "🧍"
      },
      {
-      "fr": "귀",
-      "uz": "quloq",
-      "ro": "gwi",
-      "emoji": "👂"
+      "fr": "머리",
+      "uz": "bosh",
+      "ro": "meori",
+      "emoji": "🧠"
      },
      {
-      "fr": "목",
-      "uz": "bo'yin",
-      "ro": "mok",
-      "emoji": "🦒"
+      "fr": "얼굴",
+      "uz": "yuz",
+      "ro": "eolgul",
+      "emoji": "🙂"
      },
      {
-      "fr": "어깨",
-      "uz": "yelka",
-      "ro": "eokkae",
-      "emoji": "💪"
+      "fr": "눈",
+      "uz": "ko'z",
+      "ro": "nun",
+      "emoji": "👁️"
      },
      {
-      "fr": "손",
-      "uz": "qo'l (kaft)",
-      "ro": "son",
-      "emoji": "✋",
-      "alt": [
-       "qo'l"
-      ]
-     },
-     {
-      "fr": "다리",
-      "uz": "oyoq",
-      "ro": "dari",
-      "emoji": "🦵"
-     },
-     {
-      "fr": "발",
-      "uz": "oyoq panjasi",
-      "ro": "bal",
-      "emoji": "🦶"
-     },
-     {
-      "fr": "허리",
-      "uz": "bel",
-      "ro": "heori",
-      "emoji": "🧘"
+      "fr": "코",
+      "uz": "burun",
+      "ro": "ko",
+      "emoji": "👃"
      }
     ],
     "sentences": [
