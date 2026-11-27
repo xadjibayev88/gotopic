@@ -74,9 +74,9 @@ export function Roll({ value }: { value: string | number }) {
     });
   }, [value]);
   return (
-    <span className={`roll ${pair.dir < 0 ? 'down' : 'up'}`} key={pair.k}>
-      {pair.prev !== null && motionAllowed() && <span className="roll-old" aria-hidden="true">{pair.prev}</span>}
-      <span className="roll-new">{pair.cur}</span>
+    <span className={`vroll ${pair.dir < 0 ? 'down' : 'up'}`} key={pair.k}>
+      {pair.prev !== null && motionAllowed() && <span className="vroll-old" aria-hidden="true">{pair.prev}</span>}
+      <span className="vroll-new">{pair.cur}</span>
     </span>
   );
 }
