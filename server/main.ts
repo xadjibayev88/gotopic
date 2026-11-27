@@ -6,6 +6,7 @@ import { createHash, randomBytes } from 'node:crypto';
 import { extname, join, normalize, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { telegramBotId } from './accounts.ts';
+import { startTgLogin, takeTgLogin, tgLoginStatus } from './tglogin.ts';
 import { clearCookie, createSessionToken, currentAiSubject, currentUserId, deleteUser, getProgress, getUser, login, putProgress, register, sessionCookie, upsertGoogleUser, verifyGoogleIdToken, upsertSocialUser, verifyAppleIdToken, verifyFacebookToken, verifyTelegramLogin, verifyTelegramWebApp } from './accounts.ts';
 import { activePlan, click, createCardOrder, createOrder, decideOrder, isAdmin, orderStatus, receiptOf, receiptOwner, reviewOrders, payme, paymeAuthError, paymeAuthorized, paymeInternalError, plansPayload } from './billing.ts';
 import { bot, botUsername, createLinkCode, startBot } from './bot.ts';
@@ -56,6 +57,7 @@ const BUCKETS: Record<string, Bucket> = {
   feedback: { perMinute: 4, perDay: num('FEEDBACK_PER_DAY', 40) },
   reward: { perMinute: 6, perDay: 40 },
   auth: { perMinute: 10, perDay: 200 },
+  tgcheck: { perMinute: 60, perDay: 3000 },
   billing: { perMinute: 10, perDay: 100 },
   live: { perMinute: 4, perDay: num('LIVE_TOKENS_PER_DAY', 40) },
 };
@@ -463,12 +465,34 @@ const routeHandlers: RouteTable = Object.freeze(registerClientLogRoute({
     authRoute(req, res, async (b) => {
       if (!env.TELEGRAM_BOT_TOKEN) return { ok: false, status: 503, message: 'Telegram bilan kirish sozlanmagan' } as const;
       try {
+        if (typeof b.loginCode === 'string') {
+          const uid = takeTgLogin(b.loginCode);
+          const user = uid ? getUser(uid) : null;
+          return user ? ({ ok: true, user } as const) : ({ ok: false, status: 401, message: "Telegram'da tasdiqlanmadi — qayta urinib ko'ring" } as const);
+        }
         const p = typeof b.initData === 'string' ? verifyTelegramWebApp(b.initData, env.TELEGRAM_BOT_TOKEN) : verifyTelegramLogin((b.data ?? {}) as Record<string, unknown>, env.TELEGRAM_BOT_TOKEN);
         return { ok: true, user: upsertSocialUser('telegram', p.id, null, p.name, p.avatar) } as const;
       } catch {
         return { ok: false, status: 401, message: "Telegram ma'lumoti tasdiqlanmadi — qayta urinib ko'ring" } as const;
       }
     }),
+
+  // Telegram orqali kirish (brauzer): kod → bot tasdiqlaydi → sayt /check bilan kutadi → POST /api/auth/telegram { loginCode }.
+  'POST /api/auth/telegram/start': (req, res) => {
+    if (!originOk(req)) return json(res, 403, { message: 'Ruxsat etilmagan manba' });
+    const bot = botUsername();
+    if (!bot) return json(res, 503, { message: 'Telegram bilan kirish sozlanmagan' });
+    const limited = take('auth', clientIp(req));
+    if (limited) return json(res, 429, { message: limited });
+    json(res, 200, { code: startTgLogin(), bot });
+  },
+
+  'GET /api/auth/telegram/check': (req, res) => {
+    const limited = take('tgcheck', clientIp(req));
+    if (limited) return json(res, 429, { message: limited });
+    const code = new URL(req.url ?? '/', 'http://x').searchParams.get('code') ?? '';
+    json(res, 200, { status: tgLoginStatus(code.slice(0, 40)) });
+  },
 
   'POST /api/auth/logout': (req, res) => {
     res.setHeader('set-cookie', clearCookie(isSecure(req)));

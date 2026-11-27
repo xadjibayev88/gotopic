@@ -1003,6 +1003,13 @@ html.lite .vivi * { animation: none !important; }
 .about-link { display: block; width: 100%; text-align: center; text-decoration: none; margin: 12px 0 6px; }
 /* Ijtimoiy kirish */
 .social-login { display: grid; gap: 8px; width: 100%; margin-top: 8px; }
+.tg-wait { margin-top: 10px; padding: 12px 14px; border-radius: 18px; background: color-mix(in srgb, #229ED9 10%, var(--surface)); border: 1.5px solid color-mix(in srgb, #229ED9 35%, transparent); display: grid; grid-template-columns: auto 1fr; gap: 6px 10px; align-items: start; font-size: 14px; line-height: 1.35; text-align: left; }
+.tg-wait p { margin: 0; }
+.tg-wait-dot { width: 10px; height: 10px; margin-top: 5px; border-radius: 50%; background: #229ED9; animation: tg-wait-pulse 1.2s ease-in-out infinite; }
+.tg-wait-row { grid-column: 2; display: flex; gap: 14px; font-weight: 700; }
+.tg-wait-row a, .tg-wait .btn-link { color: #229ED9; background: none; border: none; padding: 0; font: inherit; font-weight: 700; text-decoration: none; }
+@keyframes tg-wait-pulse { 50% { transform: scale(.55); opacity: .5; } }
+@media (prefers-reduced-motion: reduce) { .tg-wait-dot { animation: none; } }
 .btn-social { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 13px 14px; border-radius: 999px; font-weight: 700; font-size: 15px; border: none; color: #fff; }
 .btn-social .si { font-weight: 900; font-size: 18px; width: 22px; text-align: center; }
 .btn-social.fb { background: #1877f2; }

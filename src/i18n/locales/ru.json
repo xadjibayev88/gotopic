@@ -1209,5 +1209,13 @@
  "주세요 — bering": "дайте, пожалуйста",
  "타다 — chiqmoq/minmoq": "садиться / ехать",
  "하고 — va": "и",
- "호랑이 — Koreya ramzi": "тигр — символ Кореи"
+ "호랑이 — Koreya ramzi": "тигр — символ Кореи",
+ "✅ Tasdiqlash": "✅ Подтвердить",
+ "Kirish vaqti tugadi — tugmani qayta bosing": "Время входа истекло — нажмите кнопку еще раз",
+ "ni bosing va shu yerga qayting — avtomatik kirasiz.": "нажмите и вернитесь сюда — вход произойдет автоматически.",
+ "Start": "Старт",
+ "Telegram bilan kirish hozir ishlamayapti — boshqa usul bilan kiring": "Вход через Telegram сейчас не работает — выберите другой способ",
+ "Telegram ochilmadimi?": "Telegram не открывается?",
+ "Telegram'da": "В Telegram",
+ "Telegram'da tasdiqlang…": "Подтвердите в Telegram…"
 }
